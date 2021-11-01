@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     double interval = 5.0;
     double lambda = 1.0;
     int matrixSize = 3;
-
+	Environment::Init();
     std::unique_ptr<RQSystem> sys;
     DelayProvider *sigmaDelay = sigmaDelay = new ExponentialDelay();
 

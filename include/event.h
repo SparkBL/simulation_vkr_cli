@@ -2,6 +2,7 @@
 #define CLAIM_H
 #include <vector>
 #include <algorithm>
+#include <limits>
 enum class EventType { FromInputProcess,Called,Orbit,Shift,Served};
 
 class Event{
