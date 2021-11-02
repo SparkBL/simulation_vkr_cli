@@ -1,3 +1,6 @@
+#ifndef NODE_HPP
+#define NODE_HPP
+
 #include "delay.hpp"
 #include "env.hpp"
 #include "router.hpp"
@@ -85,3 +88,5 @@ public:
         }
     }
 };
+
+#endif

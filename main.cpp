@@ -5,10 +5,10 @@
 #include <vector>
 #include <algorithm>
 #include "components.hpp"
+
 void export3DPlot(std::vector<std::vector<double>> unr)
 {
-    std::ofstream file;
-    file.open("example.csv");
+    std::ofstream file("example.csv");
 
     for (int i = 0; i < unr.size(); i++)
     {
@@ -21,7 +21,7 @@ void export3DPlot(std::vector<std::vector<double>> unr)
             else
                 file << unr[i][j] << ";";
         }
-        file << '\n';
+        file << std::endl;
     }
     file.close();
 }
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     double mu1 = 2.0;
     double mu2 = 1.5;
     double alpha = 0.8;
-    double end = 6000000;
+    double end = 1000000;
     double interval = 5.0;
     double lambda = 1.0;
     int matrixSize = 3;
@@ -90,12 +90,13 @@ int main(int argc, char *argv[])
             std::sort(EventQueue.begin(), EventQueue.end());
             Time = EventQueue[0];
             EventQueue.erase(EventQueue.begin());
+            // std::cout << Time << "\r";
         }
         statCollector.GatherStat();
     }
     auto t2 = high_resolution_clock::now();
     duration<double, std::milli> elapsed = t2 - t1;
-    std::cout << "Elapsed - " << elapsed.count() / 60.0 << "s";
+    std::cout << "Elapsed - " << elapsed.count() / 1000 << "s";
     export3DPlot(statCollector.GetDistribution());
     return 0;
 }
