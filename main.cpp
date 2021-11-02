@@ -4,7 +4,6 @@
 #include "delayprovider.h"
 #include "system.h"
 #include <memory>
-#include <thread>
 
 void export3DPlot(std::vector<std::vector<double>> unr, int rowSize)
 {
@@ -51,35 +50,37 @@ int main(int argc, char *argv[])
     double interval = 5.0;
     double lambda = 1.0;
     int matrixSize = 3;
-	Environment::Init();
+
     std::unique_ptr<RQSystem> sys;
     DelayProvider *sigmaDelay = sigmaDelay = new ExponentialDelay();
 
-    double sigmaDelayIntensity = 0.4;
+    double sigmaDelayIntensity = 0.1;
     double sigmaDelayIntensity1 = 0.1;
     const Statistic *stats = nullptr;
 
     bool useMMPP = true;
+    Environment::Init();
     Environment::SetStatInterval(interval);
     Environment::SetMaxTime(time);
 
     DelayProvider *d = new ExponentialDelay();
     Processable *input;
-    Processable *calledInput = new SimpleInputProcess(d, mu2, EventType::Called);
+    Processable *calledInput = new SimpleInputProcess(d, alpha, EventType::Called);
     Orbit *orbit = new Orbit(sigmaDelay, sigmaDelayIntensity, sigmaDelayIntensity1);
     INode *node = new CalledClaimsNode(d, mu1, mu2);
-    /*if (!useMMPP)
+    if (!useMMPP)
     {
         input = new SimpleInputProcess(d, lambda, EventType::FromInputProcess);
         sys.reset(new RQSystem(input, calledInput, orbit, node));
         stats = sys->GetStatistics();
     }
     else
-    {*/
-    input = new MMPPInputProcess(d, shiftProbs, lambdas, matrixSize, EventType::FromInputProcess);
-    sys.reset(new RQSystem(input, calledInput, orbit, node));
-    stats = sys->GetStatistics();
-    // }
+    {
+        input = new MMPPInputProcess(d, shiftProbs, lambdas, matrixSize, EventType::FromInputProcess);
+        sys.reset(new RQSystem(input, calledInput, orbit, node));
+        stats = sys->GetStatistics();
+    }
+    std::cout << "Parameters set. Starting...\n";
     //Env actions
     Environment::SetAction([&sys]
                            { return sys->Process() != nullptr; });
@@ -90,14 +91,15 @@ int main(int argc, char *argv[])
     using std::chrono::high_resolution_clock;
     using std::chrono::milliseconds;
     auto t1 = high_resolution_clock::now();
-    std::thread thd([]
-                    {
-                        while (!Environment::isFinished())
-                        {
-                            Environment::NextMoment();
-                        }
-                    });
-    thd.join();
+    //std::future<void> fut = std::async(
+    //    std::launch::async, []()
+    //    {
+    while (!Environment::isFinished())
+    {
+        Environment::NextMoment();
+    }
+    //   });
+    // fut.wait();
     auto t2 = high_resolution_clock::now();
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 60.0 << "s";
