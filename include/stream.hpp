@@ -18,7 +18,8 @@ class MMPP
     {
         if (almostEqual(shiftTime, Time))
         {
-            double sum = 0, chance = NextDouble();
+            double sum = 0;
+            double chance = NextDouble();
             for (int i = 0; i < Q.size(); i++)
             {
                 if (i != state)
@@ -48,6 +49,7 @@ public:
         EventQueue.push_back(nextProduce.StatusChangeAt);
         state = 0;
         shiftTime = ExponentialDelay(-Q[0][0]);
+        EventQueue.push_back(shiftTime);
     }
 
     void Produce()

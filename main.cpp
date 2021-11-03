@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     double end = 6000000;
     double interval = 5.0;
     double lambda = 1.0;
-    double sigmaDelayIntensity = 0.1;
+    double sigmaDelayIntensity = 0.4;
     double sigmaDelayA = 0.1;
     double sigmaDelayB = 0.4;
     Router *inputChannel = new Router();
@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     Router *outputChannel = new Router();
     Router *calledChannel = new Router();
 
+    // SimpleInput inStream(new ExpDelay(lambda), TypeInput, inputChannel);
     MMPP inStream(L, Q, TypeInput, inputChannel);
     ExpDelay *sigmaDelay = new ExpDelay(sigmaDelayIntensity);
 

@@ -56,7 +56,7 @@ double ExponentialDelay(double intensity)
     return aws(gen) + Time;
 }
 
-bool almostEqual(double a, double b)
+inline bool almostEqual(double a, double b)
 {
     return abs(a - b) <= float64EqualityThreshold;
 }
