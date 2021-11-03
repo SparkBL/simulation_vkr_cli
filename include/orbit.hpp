@@ -9,7 +9,7 @@
 
 class Orbit
 {
-    std::vector<Request> requests;
+    std::vector<Request *> requests;
     Delay *delay;
     Router *orbitChannel;
     Router *orbitAppendChannel;
@@ -25,10 +25,10 @@ public:
     {
         for (int i = 0; i < orbitAppendChannel->Len(); i++)
         {
-            Request req = orbitAppendChannel->Pop();
-            req.StatusChangeAt = delay->Get();
-            EventQueue.push_back(req.StatusChangeAt);
-            req.Status = statusTravel;
+            Request *req = orbitAppendChannel->Pop();
+            req->StatusChangeAt = delay->Get();
+            EventQueue.push_back(req->StatusChangeAt);
+            req->Status = statusTravel;
             requests.push_back(req);
         }
     }
@@ -38,9 +38,9 @@ public:
         {
             for (int i = 0; i < requests.size(); i++)
             {
-                if (almostEqual(requests[i].StatusChangeAt, Time))
+                if (almostEqual(requests[i]->StatusChangeAt, Time))
                 {
-                    Request ret = requests[i];
+                    Request *ret = requests[i];
                     requests.erase(requests.begin() + i);
                     orbitChannel->Push(ret);
                     return;

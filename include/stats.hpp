@@ -31,14 +31,14 @@ public:
     {
         for (int i = 0; i < outputChannel->Len(); i++)
         {
-            Request r = outputChannel->Pop();
-            while (r.StatusChangeAt > curInterval)
+            Request *r = outputChannel->Pop();
+            while (r->StatusChangeAt > curInterval)
             {
                 intervalStats.push_back(cur);
                 cur = IntervalStat{input : 0, called : 0};
                 curInterval += Interval;
             }
-            switch (r.Type)
+            switch (r->Type)
             {
             case TypeInput:
                 cur.input++;
@@ -47,6 +47,7 @@ public:
                 cur.called++;
                 break;
             }
+            delete r;
         }
     }
 

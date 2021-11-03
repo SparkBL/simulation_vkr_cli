@@ -7,7 +7,7 @@
 #include "request.hpp"
 class Node
 {
-    Request nowServing;
+    Request *nowServing;
     Delay *inputDelay;
     Delay *calledDelay;
     Router *inChannel;
@@ -32,58 +32,58 @@ public:
         this->orbitChannel = orbitChannel;
         this->orbitAppendChannel = orbitAppendChannel;
         this->outChannel = outChannel;
-        this->nowServing = Request{Status : statusServed};
+        this->nowServing = new Request{Status : statusServed};
     }
 
     void Produce()
     {
-        if (nowServing.Status == statusServing && almostEqual(nowServing.StatusChangeAt, Time))
+        if (nowServing->Status == statusServing && almostEqual(nowServing->StatusChangeAt, Time))
         {
-            nowServing.Status = statusServed;
+            nowServing->Status = statusServed;
             outChannel->Push(nowServing);
         }
         if (inChannel->Len() > 0)
         {
-            if (nowServing.Status == statusServing)
+            if (nowServing->Status == statusServing)
             {
                 orbitAppendChannel->Push(inChannel->Pop());
             }
             else
             {
                 nowServing = inChannel->Pop();
-                nowServing.StatusChangeAt = inputDelay->Get();
-                nowServing.Status = statusServing;
-                EventQueue.push_back(nowServing.StatusChangeAt);
+                nowServing->StatusChangeAt = inputDelay->Get();
+                nowServing->Status = statusServing;
+                EventQueue.push_back(nowServing->StatusChangeAt);
             }
         }
 
         if (orbitChannel->Len() > 0)
         {
-            if (nowServing.Status == statusServing)
+            if (nowServing->Status == statusServing)
             {
                 orbitAppendChannel->Push(orbitChannel->Pop());
             }
             else
             {
                 nowServing = orbitChannel->Pop();
-                nowServing.StatusChangeAt = inputDelay->Get();
-                nowServing.Status = statusServing;
-                EventQueue.push_back(nowServing.StatusChangeAt);
+                nowServing->StatusChangeAt = inputDelay->Get();
+                nowServing->Status = statusServing;
+                EventQueue.push_back(nowServing->StatusChangeAt);
             }
         }
 
         if (callChannel->Len() > 0)
         {
-            if (nowServing.Status != statusServing)
+            if (nowServing->Status != statusServing)
             {
                 nowServing = callChannel->Pop();
-                nowServing.StatusChangeAt = calledDelay->Get();
-                nowServing.Status = statusServing;
-                EventQueue.push_back(nowServing.StatusChangeAt);
+                nowServing->StatusChangeAt = calledDelay->Get();
+                nowServing->Status = statusServing;
+                EventQueue.push_back(nowServing->StatusChangeAt);
             }
             else
             {
-                callChannel->Pop();
+                delete callChannel->Pop();
             }
         }
     }

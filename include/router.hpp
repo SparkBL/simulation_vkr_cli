@@ -5,12 +5,12 @@
 #include "request.hpp"
 class Router
 {
-    std::vector<Request> q;
+    std::vector<Request *> q;
 
 public:
-    Request Pop()
+    Request *Pop()
     {
-        Request ret = *q.begin();
+        Request *ret = *q.begin();
         q.erase(q.begin());
         return ret;
     }
@@ -20,7 +20,7 @@ public:
         return q.size();
     }
 
-    void Push(Request request)
+    void Push(Request *request)
     {
         q.push_back(request);
     }
