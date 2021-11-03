@@ -38,13 +38,13 @@ class MMPP
     }
 
 public:
-    MMPP(std::vector<std::vector<double>> L, std::vector<std::vector<double>> Q, const int &RequstType, Router *channel)
+    MMPP(std::vector<std::vector<double>> L, std::vector<std::vector<double>> Q, int RequestType, Router *channel)
     {
-        this->RequestType;
+        this->RequestType = RequestType;
         this->L = L;
         this->Q = Q;
         this->channel = channel;
-        nextProduce = Request{Type : RequstType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0][0])};
+        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0][0])};
         EventQueue.push_back(nextProduce.StatusChangeAt);
         state = 0;
         shiftTime = ExponentialDelay(-Q[0][0]);
@@ -70,17 +70,17 @@ class SimpleInput
     Router *channel;
 
 public:
-    SimpleInput(Delay *delay, const int &RequestType, Router *channel)
+    SimpleInput(Delay *delay, int RequestType, Router *channel)
     {
         this->delay = delay;
         this->RequestType = RequestType;
         this->channel = channel;
         nextProduce = Request{
-            Type :
-                RequestType,
+            Type : RequestType,
             Status : statusTravel,
             StatusChangeAt : delay->Get()
         };
+        EventQueue.push_back(nextProduce.StatusChangeAt);
     }
 
     void Produce()

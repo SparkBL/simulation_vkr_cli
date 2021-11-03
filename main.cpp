@@ -4,7 +4,9 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include "components.hpp"
+#include <thread>
+#include <future>
+#include "include/components.hpp"
 
 void export3DPlot(std::vector<std::vector<double>> unr)
 {
@@ -46,14 +48,12 @@ int main(int argc, char *argv[])
     double mu1 = 2.0;
     double mu2 = 1.5;
     double alpha = 0.8;
-    double end = 1000000;
+    double end = 6000000;
     double interval = 5.0;
     double lambda = 1.0;
-    int matrixSize = 3;
     double sigmaDelayIntensity = 0.1;
     double sigmaDelayA = 0.1;
     double sigmaDelayB = 0.4;
-
     Router *inputChannel = new Router();
     Router *orbitChannel = new Router();
     Router *orbitAppendChannel = new Router();
@@ -66,11 +66,10 @@ int main(int argc, char *argv[])
     SimpleInput callStream(new ExpDelay(alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
     Node node(new ExpDelay(mu1), new ExpDelay(mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
-    StatCollector statCollector(outputChannel);
     Time = 0;
     End = end;
     Interval = interval;
-
+    StatCollector statCollector(outputChannel);
     std::cout << "Parameters set. Starting...\n";
 
     using std::chrono::duration;
@@ -78,6 +77,27 @@ int main(int argc, char *argv[])
     using std::chrono::high_resolution_clock;
     using std::chrono::milliseconds;
     auto t1 = high_resolution_clock::now();
+    std::promise<void> exitSignal;
+    std::future<void> futureObj = exitSignal.get_future();
+    std::thread logging([&futureObj]
+                        {
+                            while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
+                            {
+                                using namespace std::chrono_literals;
+                                std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
+                                std::this_thread::sleep_for(1000ms);
+                            }
+                            std::cout << std::endl;
+                        });
+
+    std::thread stat([&futureObj, &statCollector]
+                     {
+                         while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
+                         {
+                             statCollector.GatherStat();
+                         }
+                     });
+
     while (Time < End)
     {
         inStream.Produce();
@@ -90,11 +110,12 @@ int main(int argc, char *argv[])
             std::sort(EventQueue.begin(), EventQueue.end());
             Time = EventQueue[0];
             EventQueue.erase(EventQueue.begin());
-            // std::cout << Time << "\r";
         }
-        statCollector.GatherStat();
     }
     auto t2 = high_resolution_clock::now();
+    exitSignal.set_value();
+    logging.join();
+    stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s";
     export3DPlot(statCollector.GetDistribution());

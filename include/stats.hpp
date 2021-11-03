@@ -23,7 +23,7 @@ public:
     StatCollector(Router *outputChannel)
     {
         this->outputChannel = outputChannel;
-        this->curInterval = Time + Interval;
+        this->curInterval = Interval;
         this->cur = IntervalStat{input : 0, called : 0};
     }
 
@@ -64,8 +64,8 @@ public:
                 distSizeY = intervalStats[i].called;
             }
         }
-        std::vector<double> y(distSizeY, 0.0);
-        std::vector<std::vector<double>> distr(distSizeX, y);
+        std::vector<double> y(distSizeY + 1, 0.0);
+        std::vector<std::vector<double>> distr(distSizeX + 1, y);
 
         for (int i = 0; i < intervalStats.size(); i++)
         {
