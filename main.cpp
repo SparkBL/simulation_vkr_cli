@@ -90,16 +90,17 @@ int main(int argc, char *argv[])
                             std::cout << std::endl;
                         });
 
-    std::thread stat([&futureObj, &statCollector]
+    /* std::thread stat([&futureObj, &statCollector]
                      {
                          while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                          {
                              statCollector.GatherStat();
                          }
-                     });
+                     });*/
 
     while (Time < End)
     {
+        statCollector.GatherStat();
         inStream.Produce();
         orbit.Produce();
         callStream.Produce();
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
     auto t2 = high_resolution_clock::now();
     exitSignal.set_value();
     logging.join();
-    stat.join();
+    //stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s";
     export3DPlot(statCollector.GetDistribution());
