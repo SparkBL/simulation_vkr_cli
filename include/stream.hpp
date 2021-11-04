@@ -13,7 +13,7 @@ class MMPP
     int RequestType;
     int state;
     double shiftTime;
-    Request *nextProduce;
+    Request nextProduce;
     Router *channel;
 
     void shift()
@@ -30,9 +30,9 @@ class MMPP
                     if (chance <= sum)
                     {
                         state = i;
-                        nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
+                        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
                         shiftTime = ExponentialDelay(-Q[state][state]);
-                        EventQueue.push_back(nextProduce->StatusChangeAt);
+                        EventQueue.push_back(nextProduce.StatusChangeAt);
                         EventQueue.push_back(shiftTime);
                     }
                 }
@@ -47,8 +47,8 @@ public:
         this->L = L;
         this->Q = Q;
         this->channel = channel;
-        nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0])};
-        EventQueue.push_back(nextProduce->StatusChangeAt);
+        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0])};
+        EventQueue.push_back(nextProduce.StatusChangeAt);
         state = 0;
         shiftTime = ExponentialDelay(-Q[0][0]);
         EventQueue.push_back(shiftTime);
@@ -57,18 +57,18 @@ public:
     void Produce()
     {
         shift();
-        if (nextProduce->StatusChangeAt == Time)
+        if (nextProduce.StatusChangeAt == Time)
         {
             channel->Push(nextProduce);
-            nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
-            EventQueue.push_back(nextProduce->StatusChangeAt);
+            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
+            EventQueue.push_back(nextProduce.StatusChangeAt);
         }
     }
 };
 
 class SimpleInput
 {
-    Request *nextProduce;
+    Request nextProduce;
     Delay *delay;
     int RequestType;
     Router *channel;
@@ -79,21 +79,21 @@ public:
         this->delay = delay;
         this->RequestType = RequestType;
         this->channel = channel;
-        nextProduce = new Request{
+        nextProduce = Request{
             Type : RequestType,
             Status : statusTravel,
             StatusChangeAt : delay->Get()
         };
-        EventQueue.push_back(nextProduce->StatusChangeAt);
+        EventQueue.push_back(nextProduce.StatusChangeAt);
     }
 
     void Produce()
     {
-        if (nextProduce->StatusChangeAt == Time)
+        if (nextProduce.StatusChangeAt == Time)
         {
             channel->Push(nextProduce);
-            nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : delay->Get()};
-            EventQueue.push_back(nextProduce->StatusChangeAt);
+            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : delay->Get()};
+            EventQueue.push_back(nextProduce.StatusChangeAt);
         }
     }
 };

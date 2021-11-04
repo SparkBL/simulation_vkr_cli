@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     double mu1 = 2.0;
     double mu2 = 1.5;
     double alpha = 0.8;
-    double end = 600000;
+    double end = 6000000;
     double interval = 5.0;
     double lambda = 1.0;
     double sigmaDelayIntensity = 0.4;
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         callStream.Produce();
         node.Produce();
         orbit.Append();
-        if (EventQueue.size() > 0)
+        if (!EventQueue.empty())
         {
 
             auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(default_build_type "Release")
+if(EXISTS "${CMAKE_SOURCE_DIR}/debug")
+  set(default_build_type "Debug")
+endif()
 message("Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
 # set the project name
 project(rqsim)
@@ -30,5 +34,5 @@ include(GNUInstallDirs)
 # add the executable
 add_executable(rqsim ${SOURCES})
 target_include_directories(rqsim PRIVATE ${INCLUDE_DIR})
-
+target_compile_options(rqsim PRIVATE -pthread -lpthread -O1 -O2 -O3 -Ofast -fgcse-sm -fgcse-las)
 #target_link_libraries(rqsim easy_profiler) 

@@ -9,7 +9,7 @@
 #include <algorithm>
 class Orbit
 {
-    std::vector<Request *> requests;
+    std::vector<Request> requests;
     Delay *delay;
     Router *orbitChannel;
     Router *orbitAppendChannel;
@@ -23,19 +23,18 @@ public:
     }
     void Append()
     {
-        for (int i = 0; i < orbitAppendChannel->Len(); i++)
+        while (!orbitAppendChannel->IsEmpty())
         {
-            Request *req = orbitAppendChannel->Pop();
-            req->StatusChangeAt = delay->Get();
-            EventQueue.push_back(req->StatusChangeAt);
-            req->Status = statusTravel;
+            Request req = orbitAppendChannel->Pop();
+            req.StatusChangeAt = delay->Get();
+            EventQueue.push_back(req.StatusChangeAt);
             requests.push_back(req);
         }
     }
     void Produce()
     {
-        auto iterator = std::find_if(requests.begin(), requests.end(), [&](const Request *elem)
-                                     { return elem->StatusChangeAt == Time; });
+        auto iterator = std::find_if(requests.begin(), requests.end(), [](const Request elem)
+                                     { return elem.StatusChangeAt == Time; });
         if (iterator != requests.end())
         {
             orbitChannel->Push(*iterator);

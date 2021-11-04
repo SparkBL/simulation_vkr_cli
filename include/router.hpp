@@ -5,13 +5,13 @@
 #include "request.hpp"
 class Router
 {
-    std::queue<Request *> q;
+    std::vector<Request> q;
 
 public:
-    Request *Pop()
+    Request Pop()
     {
-        Request *ret = q.front();
-        q.pop();
+        Request ret = q.front();
+        q.erase(q.begin());
         return ret;
     }
 
@@ -20,9 +20,14 @@ public:
         return q.size();
     }
 
-    void Push(Request *request)
+    void Push(Request request)
     {
-        q.push(request);
+        q.push_back(request);
+    }
+
+    bool IsEmpty()
+    {
+        return q.empty();
     }
 };
 

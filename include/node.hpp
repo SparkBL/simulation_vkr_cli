@@ -8,7 +8,7 @@
 //#include "easy/profiler.h"
 class Node
 {
-    Request *nowServing;
+    Request nowServing;
     Delay *inputDelay;
     Delay *calledDelay;
     Router *inChannel;
@@ -33,63 +33,59 @@ public:
         this->orbitChannel = orbitChannel;
         this->orbitAppendChannel = orbitAppendChannel;
         this->outChannel = outChannel;
-        this->nowServing = new Request{Status : statusServed};
+        this->nowServing = Request{Status : statusServed};
     }
 
     void Produce()
     {
-        //  EASY_FUNCTION(profiler::colors::Red100);
-        if (nowServing->Status == statusServing && nowServing->StatusChangeAt == Time)
+        if (nowServing.Status == statusServing && nowServing.StatusChangeAt == Time)
         {
-            //   EASY_BLOCK("filling output", profiler::colors::Red);
-            nowServing->Status = statusServed;
+            nowServing.Status = statusServed;
             outChannel->Push(nowServing);
         }
-        if (inChannel->Len() > 0)
+        if (!inChannel->IsEmpty())
         {
-            //  EASY_BLOCK("Processing input", profiler::colors::Red200);
-            if (nowServing->Status == statusServing)
+            if (nowServing.Status == statusServing)
             {
                 orbitAppendChannel->Push(inChannel->Pop());
             }
             else
             {
                 nowServing = inChannel->Pop();
-                nowServing->StatusChangeAt = inputDelay->Get();
-                nowServing->Status = statusServing;
-                EventQueue.push_back(nowServing->StatusChangeAt);
+                nowServing.StatusChangeAt = inputDelay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
             }
         }
 
-        if (orbitChannel->Len() > 0)
+        if (!orbitChannel->IsEmpty())
         {
             // EASY_BLOCK("Processing orbit", profiler::colors::Red300);
-            if (nowServing->Status == statusServing)
+            if (nowServing.Status == statusServing)
             {
                 orbitAppendChannel->Push(orbitChannel->Pop());
             }
             else
             {
                 nowServing = orbitChannel->Pop();
-                nowServing->StatusChangeAt = inputDelay->Get();
-                nowServing->Status = statusServing;
-                EventQueue.push_back(nowServing->StatusChangeAt);
+                nowServing.StatusChangeAt = inputDelay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
             }
         }
 
-        if (callChannel->Len() > 0)
+        if (!callChannel->IsEmpty())
         {
-            //  EASY_BLOCK("Processing called", profiler::colors::Red400);
-            if (nowServing->Status != statusServing)
+            if (nowServing.Status != statusServing)
             {
                 nowServing = callChannel->Pop();
-                nowServing->StatusChangeAt = calledDelay->Get();
-                nowServing->Status = statusServing;
-                EventQueue.push_back(nowServing->StatusChangeAt);
+                nowServing.StatusChangeAt = calledDelay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
             }
             else
             {
-                delete callChannel->Pop();
+                callChannel->Pop();
             }
         }
     }
