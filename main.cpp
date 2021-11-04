@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     double mu1 = 2.0;
     double mu2 = 1.5;
     double alpha = 0.8;
-    double end = 6000000;
+    double end = 600000;
     double interval = 5.0;
     double lambda = 1.0;
     double sigmaDelayIntensity = 0.4;
@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     std::future<void> futureObj = exitSignal.get_future();
     std::thread logging([&futureObj]
                         {
+                            //  EASY_FUNCTION(profiler::colors::Amber100);
                             while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                             {
                                 using namespace std::chrono_literals;
@@ -109,9 +110,14 @@ int main(int argc, char *argv[])
         orbit.Append();
         if (EventQueue.size() > 0)
         {
-            std::sort(EventQueue.begin(), EventQueue.end());
-            Time = EventQueue[0];
-            EventQueue.erase(EventQueue.begin());
+
+            auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
+                                        [](double c1, double c2)
+                                        {
+                                            return c1 < c2;
+                                        });
+            Time = *min;
+            EventQueue.erase(min);
         }
     }
     auto t2 = high_resolution_clock::now();

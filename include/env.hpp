@@ -10,7 +10,7 @@ func Init() {
 #ifndef ENV_HPP
 #define ENV_HPP
 #include <vector>
-
+#include <algorithm>
 std::vector<double> EventQueue;
 double Time;
 double End;

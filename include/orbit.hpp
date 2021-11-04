@@ -6,7 +6,7 @@
 #include "router.hpp"
 #include "request.hpp"
 #include <vector>
-
+#include <algorithm>
 class Orbit
 {
     std::vector<Request *> requests;
@@ -34,18 +34,12 @@ public:
     }
     void Produce()
     {
-        if (requests.size() > 0)
+        auto iterator = std::find_if(requests.begin(), requests.end(), [&](const Request *elem)
+                                     { return elem->StatusChangeAt == Time; });
+        if (iterator != requests.end())
         {
-            for (int i = 0; i < requests.size(); i++)
-            {
-                if (almostEqual(requests[i]->StatusChangeAt, Time))
-                {
-                    Request *ret = requests[i];
-                    requests.erase(requests.begin() + i);
-                    orbitChannel->Push(ret);
-                    return;
-                }
-            }
+            orbitChannel->Push(*iterator);
+            requests.erase(iterator);
         }
     }
 };

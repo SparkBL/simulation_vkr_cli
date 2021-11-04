@@ -5,6 +5,7 @@
 #include "request.hpp"
 #include "router.hpp"
 #include "delay.hpp"
+
 class MMPP
 {
     std::vector<std::vector<double>> L, Q;
@@ -16,7 +17,7 @@ class MMPP
 
     void shift()
     {
-        if (almostEqual(shiftTime, Time))
+        if (shiftTime == Time)
         {
             double sum = 0;
             double chance = NextDouble();
@@ -55,7 +56,7 @@ public:
     void Produce()
     {
         shift();
-        if (almostEqual(nextProduce->StatusChangeAt, Time))
+        if (nextProduce->StatusChangeAt == Time)
         {
             channel->Push(nextProduce);
             nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state][state])};
@@ -87,7 +88,7 @@ public:
 
     void Produce()
     {
-        if (almostEqual(nextProduce->StatusChangeAt, Time))
+        if (nextProduce->StatusChangeAt == Time)
         {
             channel->Push(nextProduce);
             nextProduce = new Request{Type : RequestType, Status : statusTravel, StatusChangeAt : delay->Get()};

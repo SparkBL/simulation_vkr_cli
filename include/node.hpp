@@ -5,6 +5,7 @@
 #include "env.hpp"
 #include "router.hpp"
 #include "request.hpp"
+//#include "easy/profiler.h"
 class Node
 {
     Request *nowServing;
@@ -37,13 +38,16 @@ public:
 
     void Produce()
     {
-        if (nowServing->Status == statusServing && almostEqual(nowServing->StatusChangeAt, Time))
+        //  EASY_FUNCTION(profiler::colors::Red100);
+        if (nowServing->Status == statusServing && nowServing->StatusChangeAt == Time)
         {
+            //   EASY_BLOCK("filling output", profiler::colors::Red);
             nowServing->Status = statusServed;
             outChannel->Push(nowServing);
         }
         if (inChannel->Len() > 0)
         {
+            //  EASY_BLOCK("Processing input", profiler::colors::Red200);
             if (nowServing->Status == statusServing)
             {
                 orbitAppendChannel->Push(inChannel->Pop());
@@ -59,6 +63,7 @@ public:
 
         if (orbitChannel->Len() > 0)
         {
+            // EASY_BLOCK("Processing orbit", profiler::colors::Red300);
             if (nowServing->Status == statusServing)
             {
                 orbitAppendChannel->Push(orbitChannel->Pop());
@@ -74,6 +79,7 @@ public:
 
         if (callChannel->Len() > 0)
         {
+            //  EASY_BLOCK("Processing called", profiler::colors::Red400);
             if (nowServing->Status != statusServing)
             {
                 nowServing = callChannel->Pop();

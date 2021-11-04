@@ -1,17 +1,17 @@
 #ifndef ROUTER_HPP
 #define ROUTER_HPP
 
-#include <vector>
+#include <queue>
 #include "request.hpp"
 class Router
 {
-    std::vector<Request *> q;
+    std::queue<Request *> q;
 
 public:
     Request *Pop()
     {
-        Request *ret = *q.begin();
-        q.erase(q.begin());
+        Request *ret = q.front();
+        q.pop();
         return ret;
     }
 
@@ -22,7 +22,7 @@ public:
 
     void Push(Request *request)
     {
-        q.push_back(request);
+        q.push(request);
     }
 };
 

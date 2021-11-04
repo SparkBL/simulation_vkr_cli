@@ -5,7 +5,7 @@
 #include "env.hpp"
 #include "router.hpp"
 #include "request.hpp"
-
+//#include "easy/profiler.h"
 struct IntervalStat
 {
     int input;
@@ -29,6 +29,7 @@ public:
 
     void GatherStat()
     {
+        //   EASY_FUNCTION(profiler::colors::BlueA100);
         for (int i = 0; i < outputChannel->Len(); i++)
         {
             Request *r = outputChannel->Pop();
