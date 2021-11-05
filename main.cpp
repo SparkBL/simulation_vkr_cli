@@ -8,9 +8,9 @@
 #include <future>
 #include "include/components.hpp"
 
-void export3DPlot(std::vector<std::vector<double>> unr)
+void export3DPlot(std::vector<std::vector<double>> unr, std::string filename)
 {
-    std::ofstream file("example.csv");
+    std::ofstream file(filename);
 
     for (int i = 0; i < unr.size(); i++)
     {
@@ -43,18 +43,9 @@ void export3DPlot(std::vector<std::vector<double>> unr)
 
 int main(int argc, char *argv[])
 {
-    /*  std::vector<std::vector<double>> Q = {{-0.020015, 0.020015}, {0.006721, -0.006721}};
-    std::vector<double> L = {4, 0};
-    double mu1 = 5;
-    double mu2 = 2.5;
-    double alpha = 1.2;
-    double end = 6000000;
-    double interval = 8.0;
-    double lambda = 1.0;
-    double sigmaDelayIntensity = 0.01;
-    double sigmaDelayA = 0.1;
-    double sigmaDelayB = 0.4;*/
-    Config conf = ParseConfig("conf.json");
+    std::vector<std::string> args(argv, argv + argc);
+
+    Config conf = ParseConfig(args[1]);
 
     Router *inputChannel = new Router();
     Router *orbitChannel = new Router();
@@ -127,6 +118,6 @@ int main(int argc, char *argv[])
     //stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s";
-    export3DPlot(statCollector.GetDistribution());
+    export3DPlot(statCollector.GetDistribution(), args[2]);
     return 0;
 }
