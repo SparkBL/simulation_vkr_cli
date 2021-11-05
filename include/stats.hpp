@@ -84,4 +84,16 @@ public:
     }
 };
 
+/*class TimeStatCollector
+{
+    double distr[100][100];
+    Router *outputChannel;
+    int maxInput, maxCalled;
+
+public:
+    TimedStatCollector()
+    {
+    }
+};*/
+
 #endif

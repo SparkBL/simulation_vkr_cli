@@ -43,17 +43,19 @@ void export3DPlot(std::vector<std::vector<double>> unr)
 
 int main(int argc, char *argv[])
 {
-    std::vector<std::vector<double>> Q = {{-0.2, 0.1, 0.1}, {0.3, -0.5, 0.2}, {0.2, 0.4, -0.6}};
-    std::vector<double> L = {0.94, 1.25, 1.56};
-    double mu1 = 2.0;
-    double mu2 = 1.5;
-    double alpha = 0.8;
+    /*  std::vector<std::vector<double>> Q = {{-0.020015, 0.020015}, {0.006721, -0.006721}};
+    std::vector<double> L = {4, 0};
+    double mu1 = 5;
+    double mu2 = 2.5;
+    double alpha = 1.2;
     double end = 6000000;
-    double interval = 5.0;
+    double interval = 8.0;
     double lambda = 1.0;
-    double sigmaDelayIntensity = 0.4;
+    double sigmaDelayIntensity = 0.01;
     double sigmaDelayA = 0.1;
-    double sigmaDelayB = 0.4;
+    double sigmaDelayB = 0.4;*/
+    Config conf = ParseConfig("conf.json");
+
     Router *inputChannel = new Router();
     Router *orbitChannel = new Router();
     Router *orbitAppendChannel = new Router();
@@ -61,15 +63,15 @@ int main(int argc, char *argv[])
     Router *calledChannel = new Router();
 
     // SimpleInput inStream(new ExpDelay(lambda), TypeInput, inputChannel);
-    MMPP inStream(L, Q, TypeInput, inputChannel);
-    ExpDelay *sigmaDelay = new ExpDelay(sigmaDelayIntensity);
+    MMPP inStream(conf.L, conf.Q, TypeInput, inputChannel);
+    ExpDelay *sigmaDelay = new ExpDelay(conf.Sigma);
 
-    SimpleInput callStream(new ExpDelay(alpha), TypeCalled, calledChannel);
+    SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
-    Node node(new ExpDelay(mu1), new ExpDelay(mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
+    Node node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
     Time = 0;
-    End = end;
-    Interval = interval;
+    End = conf.End;
+    Interval = conf.Interval;
     StatCollector statCollector(outputChannel);
     std::cout << "Parameters set. Starting...\n";
 
@@ -82,7 +84,6 @@ int main(int argc, char *argv[])
     std::future<void> futureObj = exitSignal.get_future();
     std::thread logging([&futureObj]
                         {
-                            //  EASY_FUNCTION(profiler::colors::Amber100);
                             while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                             {
                                 using namespace std::chrono_literals;

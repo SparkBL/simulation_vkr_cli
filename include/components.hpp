@@ -9,4 +9,5 @@
 #include "router.hpp"
 #include "stats.hpp"
 #include "stream.hpp"
+#include "config.hpp"
 #endif

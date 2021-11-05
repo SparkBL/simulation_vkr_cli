@@ -15,6 +15,7 @@ std::vector<double> EventQueue;
 void Init()
 {
 	EventQueue.reserve(10);
+	Time = 0;
 }
 double Time;
 double End;
