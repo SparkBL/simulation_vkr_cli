@@ -60,7 +60,6 @@ public:
 
         if (!orbitChannel->IsEmpty())
         {
-            // EASY_BLOCK("Processing orbit", profiler::colors::Red300);
             if (nowServing.Status == statusServing)
             {
                 orbitAppendChannel->Push(orbitChannel->Pop());

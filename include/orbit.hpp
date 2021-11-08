@@ -33,12 +33,15 @@ public:
     }
     void Produce()
     {
-        auto iterator = std::find_if(requests.begin(), requests.end(), [](const Request elem)
-                                     { return elem.StatusChangeAt == Time; });
-        if (iterator != requests.end())
+        for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
         {
-            orbitChannel->Push(*iterator);
-            requests.erase(iterator);
+            if (requests[i].StatusChangeAt == Time)
+            {
+                orbitChannel->Push(requests[i]);
+                requests.erase(requests.begin() + i);
+                // --i;
+                return;
+            }
         }
     }
 };

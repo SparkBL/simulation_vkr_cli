@@ -29,8 +29,7 @@ public:
 
     void GatherStat()
     {
-        //   EASY_FUNCTION(profiler::colors::BlueA100);
-        for (int i = 0; i < outputChannel->Len(); i++)
+        while (!outputChannel->IsEmpty())
         {
             Request r = outputChannel->Pop();
             while (r.StatusChangeAt > curInterval)
@@ -70,7 +69,7 @@ public:
 
         for (int i = 0; i < intervalStats.size(); i++)
         {
-            distr[intervalStats[i].input][intervalStats[i].called]++;
+            distr[intervalStats[i].input][intervalStats[i].called] += 1.0;
         }
         double norm = double(intervalStats.size());
         for (int i = 0; i < distr.size(); i++)
@@ -82,18 +81,94 @@ public:
         }
         return distr;
     }
-};
 
-/*class TimeStatCollector
-{
-    double distr[100][100];
-    Router *outputChannel;
-    int maxInput, maxCalled;
-
-public:
-    TimedStatCollector()
+    std::vector<double> GetSummaryDistribution()
     {
+        double distSize = 0;
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            if (intervalStats[i].input + intervalStats[i].called > distSize)
+            {
+                distSize = intervalStats[i].input + intervalStats[i].called;
+            }
+        }
+        std::vector<double> distr(distSize + 1);
+
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            distr[intervalStats[i].input + intervalStats[i].called] += 1.0;
+        }
+        double norm = double(intervalStats.size());
+        for (int i = 0; i < distr.size(); i++)
+        {
+            distr[i] /= norm;
+        }
+        return distr;
     }
-};*/
+
+    std::vector<double> GetInputDistribution()
+    {
+        double distSize = 0;
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            if (intervalStats[i].input > distSize)
+            {
+                distSize = intervalStats[i].input;
+            }
+        }
+        std::vector<double> distr(distSize + 1);
+
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            distr[intervalStats[i].input] += 1.0;
+        }
+        double norm = double(intervalStats.size());
+        for (int i = 0; i < distr.size(); i++)
+        {
+            distr[i] /= norm;
+        }
+        return distr;
+    }
+
+    std::vector<double> GetCalledDistribution()
+    {
+        double distSize = 0;
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            if (intervalStats[i].called > distSize)
+            {
+                distSize = intervalStats[i].called;
+            }
+        }
+        std::vector<double> distr(distSize + 1);
+
+        for (int i = 0; i < intervalStats.size(); i++)
+        {
+            distr[intervalStats[i].called] += 1.0;
+        }
+        double norm = double(intervalStats.size());
+        for (int i = 0; i < distr.size(); i++)
+        {
+            distr[i] /= norm;
+        }
+        return distr;
+    }
+
+    double GetMeanInput()
+    {
+        double sum = 0;
+        for (auto it = intervalStats.begin(); it != intervalStats.end(); it++)
+            sum += double(it->input);
+        return sum / double(intervalStats.size());
+    }
+
+    double GetMeanCalled()
+    {
+        double sum = 0;
+        for (auto it = intervalStats.begin(); it != intervalStats.end(); it++)
+            sum += double(it->called);
+        return sum / double(intervalStats.size());
+    }
+};
 
 #endif

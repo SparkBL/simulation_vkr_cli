@@ -20,4 +20,12 @@ double Time;
 double End;
 double Interval;
 
+class Worker
+{
+	double Time;
+	double End;
+	double Interval;
+	std::vector<double> EventQueue;
+};
+
 #endif

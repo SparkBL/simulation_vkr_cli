@@ -52,11 +52,13 @@ int main(int argc, char *argv[])
     Router *orbitAppendChannel = new Router();
     Router *outputChannel = new Router();
     Router *calledChannel = new Router();
+    Stream *inStream;
+    if (conf.InputType == "mmpp")
+        inStream = new MMPP(conf.L, conf.Q, TypeInput, inputChannel);
+    if (conf.InputType == "simple")
+        inStream = new SimpleInput(new ExpDelay(conf.LSimple), TypeInput, inputChannel);
 
-    // SimpleInput inStream(new ExpDelay(lambda), TypeInput, inputChannel);
-    MMPP inStream(conf.L, conf.Q, TypeInput, inputChannel);
     ExpDelay *sigmaDelay = new ExpDelay(conf.Sigma);
-
     SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
     Node node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
@@ -95,14 +97,13 @@ int main(int argc, char *argv[])
     while (Time < End)
     {
         statCollector.GatherStat();
-        inStream.Produce();
+        inStream->Produce();
         orbit.Produce();
         callStream.Produce();
         node.Produce();
         orbit.Append();
         if (!EventQueue.empty())
         {
-
             auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
                                         [](double c1, double c2)
                                         {
@@ -115,9 +116,10 @@ int main(int argc, char *argv[])
     auto t2 = high_resolution_clock::now();
     exitSignal.set_value();
     logging.join();
-    //stat.join();
+    //  stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
-    std::cout << "Elapsed - " << elapsed.count() / 1000 << "s";
+    std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
+              << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
     export3DPlot(statCollector.GetDistribution(), args[2]);
     return 0;
 }

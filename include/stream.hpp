@@ -6,7 +6,13 @@
 #include "router.hpp"
 #include "delay.hpp"
 
-class MMPP
+class Stream
+{
+public:
+    virtual void Produce() = 0;
+};
+
+class MMPP : public Stream
 {
     std::vector<std::vector<double>> Q;
     std::vector<double> L;
@@ -61,12 +67,13 @@ public:
         {
             channel->Push(nextProduce);
             nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
-            EventQueue.push_back(nextProduce.StatusChangeAt);
+            if (nextProduce.StatusChangeAt < shiftTime)
+                EventQueue.push_back(nextProduce.StatusChangeAt);
         }
     }
 };
 
-class SimpleInput
+class SimpleInput : public Stream
 {
     Request nextProduce;
     Delay *delay;
