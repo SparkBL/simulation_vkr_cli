@@ -28,18 +28,17 @@ void export3DPlot(std::vector<std::vector<double>> unr, std::string filename)
     file.close();
 }
 
-/*void export2DPlot()
+void export2DPlot(std::vector<double> unr, std::string filename)
 {
-    std::vector<double> unr = stats->GetSummaryDistribution();
-    out.setCodec("UTF-8");
+    std::ofstream file(filename);
     for (size_t i = 0; i < unr.size(); i++)
     {
         if (!(unr[i] > 0.0000000))
             unr[i] = 0;
-        out << unr[i] << '\n';
+        file << unr[i] << '\n';
     }
     file.close();
-}*/
+}
 
 int main(int argc, char *argv[])
 {
@@ -96,12 +95,6 @@ int main(int argc, char *argv[])
     Init();
     while (Time < End)
     {
-        statCollector.GatherStat();
-        inStream->Produce();
-        orbit.Produce();
-        callStream.Produce();
-        node.Produce();
-        orbit.Append();
         if (!EventQueue.empty())
         {
             auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
@@ -112,6 +105,12 @@ int main(int argc, char *argv[])
             Time = *min;
             EventQueue.erase(min);
         }
+        inStream->Produce();
+        orbit.Produce();
+        callStream.Produce();
+        node.Produce();
+        orbit.Append();
+        statCollector.GatherStat();
     }
     auto t2 = high_resolution_clock::now();
     exitSignal.set_value();
@@ -121,5 +120,6 @@ int main(int argc, char *argv[])
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
               << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
     export3DPlot(statCollector.GetDistribution(), args[2]);
+    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
     return 0;
 }

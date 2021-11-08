@@ -39,7 +39,6 @@ public:
             {
                 orbitChannel->Push(requests[i]);
                 requests.erase(requests.begin() + i);
-                // --i;
                 return;
             }
         }

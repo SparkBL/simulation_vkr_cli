@@ -171,4 +171,93 @@ public:
     }
 };
 
+class TimedStatCollector
+{
+    std::vector<std::vector<double>> distr;
+    Router *outputChannel;
+    int maxInput, maxCalled, curInputCount, curCalledCount;
+    double prevInput, prevCalled;
+    std::vector<double> curInputQueue, curCalledQueue;
+
+public:
+    TimedStatCollector(Router *outputChannel)
+    {
+        this->outputChannel = outputChannel;
+        maxInput = 0;
+        maxCalled = 0;
+        curInputCount = 0;
+        curCalledCount = 0;
+        std::vector<double> y(150, 0.0);
+        distr = std::vector<std::vector<double>>(150, y);
+    }
+    void GatherStat()
+    {
+        while (!outputChannel->IsEmpty())
+        {
+            Request r = outputChannel->Pop();
+            switch (r.Type)
+            {
+            case TypeInput:
+                while (!curInputQueue.empty())
+                {
+                    if (*curInputQueue.begin() < r.StatusChangeAt)
+                    {
+                        distr[curInputCount][curCalledCount] += curInputQueue[0] - prevInput;
+                        curInputCount--;
+                        prevInput = curInputQueue[0];
+                        curInputQueue.erase(curInputQueue.begin());
+                    }
+                    else
+                        break;
+                }
+                distr[curInputCount][curCalledCount] += r.StatusChangeAt - prevInput;
+                curInputCount++;
+                curInputQueue.push_back(r.StatusChangeAt + Interval);
+                prevInput = r.StatusChangeAt;
+                if (curInputCount > maxInput)
+                {
+                    maxInput = curInputCount;
+                }
+                break;
+            case TypeCalled:
+                while (!curCalledQueue.empty())
+                {
+                    if (*curCalledQueue.begin() < r.StatusChangeAt)
+                    {
+                        distr[curInputCount][curCalledCount] += curCalledQueue[0] - prevInput;
+                        curCalledCount--;
+                        prevCalled = curCalledQueue[0];
+                        curCalledQueue.erase(curCalledQueue.begin());
+                    }
+                    else
+                        break;
+                }
+                distr[curInputCount][curCalledCount] += r.StatusChangeAt - prevCalled;
+                curCalledCount++;
+                curCalledQueue.push_back(r.StatusChangeAt + Interval);
+                prevCalled = r.StatusChangeAt;
+                if (curCalledCount > maxCalled)
+                {
+                    maxCalled = curCalledCount;
+                }
+                break;
+            }
+        }
+    }
+
+    std::vector<std::vector<double>> GetDistribution()
+    {
+        double norm = 0.0;
+        for (int i = 0; i < distr.size(); i++)
+            for (int j = 0; j < distr[i].size(); j++)
+                norm += distr[i][j];
+        std::vector<double> y(maxInput, 0.0);
+        std::vector<std::vector<double>> ret(maxCalled, y);
+
+        for (int i = 0; i < distr.size(); i++)
+            for (int j = 0; j < distr[i].size(); j++)
+                ret[i][j] = distr[i][j] / norm;
+        return ret;
+    }
+};
 #endif

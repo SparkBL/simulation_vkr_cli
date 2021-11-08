@@ -1,18 +1,18 @@
 {
     "input_type":"mmpp", 
     "sigma_delay_type":"exp",
-    "sigma": 0.01,
+    "sigma": 1,
     "sigmaA":0.3,
     "sigmaB": 0.4,
     "L":[0.01,2,0.1],
-    "LSimple" : 1,
+    "LSimple" : 1.08,
     "Q":[
     [-0.4,0.1,0.3],
     [0.09,-0.2,0.11],
     [0.03,0.27,-0.3]],
     "mu1": 5,
     "mu2": 2.5,
-    "alpha" :1.2,
-    "end" : 15000000,
+    "alpha" :0,
+    "end" : 70000000,
     "interval" : 8
 }

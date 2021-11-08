@@ -40,6 +40,7 @@ class MMPP : public Stream
                         shiftTime = ExponentialDelay(-Q[state][state]);
                         EventQueue.push_back(nextProduce.StatusChangeAt);
                         EventQueue.push_back(shiftTime);
+                        return;
                     }
                 }
             }
@@ -68,7 +69,9 @@ public:
             channel->Push(nextProduce);
             nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
             if (nextProduce.StatusChangeAt < shiftTime)
+            {
                 EventQueue.push_back(nextProduce.StatusChangeAt);
+            }
         }
     }
 };
