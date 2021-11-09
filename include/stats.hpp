@@ -247,15 +247,17 @@ public:
 
     std::vector<std::vector<double>> GetDistribution()
     {
+        maxInput++;
+        maxCalled++;
         double norm = 0.0;
         for (int i = 0; i < distr.size(); i++)
             for (int j = 0; j < distr[i].size(); j++)
                 norm += distr[i][j];
-        std::vector<double> y(maxInput, 0.0);
-        std::vector<std::vector<double>> ret(maxCalled, y);
+        std::vector<double> y(maxCalled, 0.0);
+        std::vector<std::vector<double>> ret(maxInput, y);
 
-        for (int i = 0; i < distr.size(); i++)
-            for (int j = 0; j < distr[i].size(); j++)
+        for (int i = 0; i < maxInput; i++)
+            for (int j = 0; j < maxCalled; j++)
                 ret[i][j] = distr[i][j] / norm;
         return ret;
     }

@@ -20,6 +20,7 @@ struct Config
     double Alpha;
     double End;
     double Interval;
+    std::string OutFilename;
 };
 
 Config ParseConfig(std::string fileName)
@@ -42,6 +43,7 @@ Config ParseConfig(std::string fileName)
     conf.Alpha = j_complete.value("alpha", 0.8);
     conf.End = j_complete.value("end", 100000);
     conf.Interval = j_complete.value("interval", 5);
+    conf.OutFilename = j_complete.value("output_file", "out.csv");
     return conf;
 }
 #endif // CONFIG_H

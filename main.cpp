@@ -65,8 +65,6 @@ int main(int argc, char *argv[])
     End = conf.End;
     Interval = conf.Interval;
     StatCollector statCollector(outputChannel);
-    std::cout << "Parameters set. Starting...\n";
-
     using std::chrono::duration;
     using std::chrono::duration_cast;
     using std::chrono::high_resolution_clock;
@@ -76,22 +74,16 @@ int main(int argc, char *argv[])
     std::future<void> futureObj = exitSignal.get_future();
     std::thread logging([&futureObj]
                         {
+                            std::cout << "Parameters set. Starting...\n";
                             while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                             {
+
                                 using namespace std::chrono_literals;
                                 std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
                                 std::this_thread::sleep_for(1000ms);
                             }
                             std::cout << std::endl;
                         });
-
-    /* std::thread stat([&futureObj, &statCollector]
-                     {
-                         while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
-                         {
-                             statCollector.GatherStat();
-                         }
-                     });*/
     Init();
     while (Time < End)
     {
@@ -119,7 +111,7 @@ int main(int argc, char *argv[])
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
               << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
-    export3DPlot(statCollector.GetDistribution(), args[2]);
-    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
+    export3DPlot(statCollector.GetDistribution(), conf.OutFilename);
+    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + conf.OutFilename);
     return 0;
 }
