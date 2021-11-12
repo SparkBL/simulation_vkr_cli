@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
+#include <iomanip>
 struct Config
 {
     std::string InputType;
@@ -27,29 +27,29 @@ std::ostream &operator<<(std::ostream &os, const Config &conf)
 {
     std::stringstream LL, QQ;
     for (const auto &i : conf.L)
-        LL << i << ";";
+        LL << std::right << std::setw(10) << i;
     for (const auto &i : conf.Q)
     {
         for (const auto &j : i)
-            QQ << j << ";";
+            QQ << std::right << std::setw(10) << j;
         QQ << std::endl;
     }
-    return os << "Input type: " << conf.InputType << std::endl
-              << "Sigma delay type: " << conf.SigmaDelayType << std::endl
-              << "Sigma: " << conf.Sigma << std::endl
-              << "Sigma A: " << conf.SigmaA << std::endl
-              << "Sigma B: " << conf.SigmaB << std::endl
-              << "Lambda simple: " << conf.LSimple << std::endl
-              << "Mu 1: " << conf.Mu1 << std::endl
-              << "Mu 2: " << conf.Mu2 << std::endl
-              << "Alpha: " << conf.Alpha << std::endl
-              << "End: " << conf.End << std::endl
-              << "Interval: " << conf.Interval << std::endl
-              << "Output file: " << conf.OutFilename << std::endl
-              << "Lambda: " << std::endl
-              << LL.str() << std::endl
-              << "Q: " << std::endl
-              << QQ.str() << std::endl;
+    return os << "Input type: " << std::setw(40 - std::strlen("Input type: ")) << std::right << conf.InputType << std::endl
+              << "Sigma delay type: " << std::setw(40 - std::strlen("Sigma delay type: ")) << std::right << conf.SigmaDelayType << std::endl
+              << "Sigma: " << std::setw(40 - std::strlen("Sigma: ")) << std::right << conf.Sigma << std::endl
+              << "Sigma A: " << std::setw(40 - std::strlen("Sigma A: ")) << std::right << conf.SigmaA << std::endl
+              << "Sigma B: " << std::setw(40 - std::strlen("Sigma B: ")) << std::right << conf.SigmaB << std::endl
+              << "Lambda simple: " << std::setw(40 - std::strlen("Lambda simple: ")) << std::right << conf.LSimple << std::endl
+              << "Mu 1: " << std::setw(40 - std::strlen("Mu 1: ")) << std::right << conf.Mu1 << std::endl
+              << "Mu 2: " << std::setw(40 - std::strlen("Mu 2: ")) << std::right << conf.Mu2 << std::endl
+              << "Alpha: " << std::setw(40 - std::strlen("Alpha: ")) << std::right << conf.Alpha << std::endl
+              << "End: " << std::setw(40 - std::strlen("End: ")) << std::right << conf.End << std::endl
+              << "Interval: " << std::setw(40 - std::strlen("Interval: ")) << std::right << conf.Interval << std::endl
+              << "Output file: " << std::setw(40 - std::strlen("Output file: ")) << std::right << conf.OutFilename << std::endl
+              << "Lambda: " << std::setw(40 - std::strlen("Lambda: ")) << std::right << std::endl
+              << std::setw(40 - LL.str().length()) << std::right << LL.str() << std::endl
+              << "Q: " << std::setw(40 - std::strlen("Q: ")) << std::right << std::endl
+              << std::setw(40 - QQ.str().length()) << std::right << QQ.str() << std::endl;
 }
 
 Config ParseConfig(std::string fileName)
