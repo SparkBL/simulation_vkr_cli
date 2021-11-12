@@ -57,7 +57,11 @@ int main(int argc, char *argv[])
     if (conf.InputType == "simple")
         inStream = new SimpleInput(new ExpDelay(conf.LSimple), TypeInput, inputChannel);
 
-    ExpDelay *sigmaDelay = new ExpDelay(conf.Sigma);
+    Delay *sigmaDelay;
+    if (conf.SigmaDelayType == "exp")
+        sigmaDelay = new ExpDelay(conf.Sigma);
+    if (conf.SigmaDelayType == "uniform")
+        sigmaDelay = new UniformDelay(conf.SigmaA, conf.SigmaB);
     SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
     Node node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
@@ -72,8 +76,9 @@ int main(int argc, char *argv[])
     auto t1 = high_resolution_clock::now();
     std::promise<void> exitSignal;
     std::future<void> futureObj = exitSignal.get_future();
-    std::thread logging([&futureObj]
+    std::thread logging([&futureObj, &conf]
                         {
+                            std::cout << conf;
                             std::cout << "Parameters set. Starting...\n";
                             while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                             {
@@ -111,7 +116,7 @@ int main(int argc, char *argv[])
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
               << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
-    export3DPlot(statCollector.GetDistribution(), conf.OutFilename);
-    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + conf.OutFilename);
+    export3DPlot(statCollector.GetDistribution(), args[2]);
+    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
     return 0;
 }

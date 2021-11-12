@@ -23,6 +23,35 @@ struct Config
     std::string OutFilename;
 };
 
+std::ostream &operator<<(std::ostream &os, const Config &conf)
+{
+    std::stringstream LL, QQ;
+    for (const auto &i : conf.L)
+        LL << i << ";";
+    for (const auto &i : conf.Q)
+    {
+        for (const auto &j : i)
+            QQ << j << ";";
+        QQ << std::endl;
+    }
+    return os << "Input type: " << conf.InputType << std::endl
+              << "Sigma delay type: " << conf.SigmaDelayType << std::endl
+              << "Sigma: " << conf.Sigma << std::endl
+              << "Sigma A: " << conf.SigmaA << std::endl
+              << "Sigma B: " << conf.SigmaB << std::endl
+              << "Lambda simple: " << conf.LSimple << std::endl
+              << "Mu 1: " << conf.Mu1 << std::endl
+              << "Mu 2: " << conf.Mu2 << std::endl
+              << "Alpha: " << conf.Alpha << std::endl
+              << "End: " << conf.End << std::endl
+              << "Interval: " << conf.Interval << std::endl
+              << "Output file: " << conf.OutFilename << std::endl
+              << "Lambda: " << std::endl
+              << LL.str() << std::endl
+              << "Q: " << std::endl
+              << QQ.str() << std::endl;
+}
+
 Config ParseConfig(std::string fileName)
 {
     std::ifstream in(fileName);
