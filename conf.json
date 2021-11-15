@@ -2,8 +2,10 @@
     "input_type":"mmpp", 
     "sigma_delay_type":"uniform",
     "sigma": 0.01,
-    "sigmaA":0,
-    "sigmaB": 200,
+    "sigma_a":0,
+    "sigma_b": 200,
+    "sigma_gamma_k" : 0,
+    "sigma_gamma_teta" : 0,
     "L":[1,1,1],
     "LSimple" : 1,
     "Q":[

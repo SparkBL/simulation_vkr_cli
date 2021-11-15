@@ -20,15 +20,16 @@ public:
 class ExpDelay : public Delay
 {
     double Intensity;
+    std::exponential_distribution<double> aws;
 
 public:
     ExpDelay(double intensity)
     {
         this->Intensity = intensity;
+        aws = std::exponential_distribution<double>(Intensity);
     }
     double Get()
     {
-        auto aws = std::exponential_distribution<double>(Intensity);
         return aws(gen) + Time;
     }
 };
@@ -36,16 +37,35 @@ public:
 class UniformDelay : public Delay
 {
     double A, B;
+    std::uniform_real_distribution<double> aws;
 
 public:
     UniformDelay(double A, double B)
     {
         this->A = A;
         this->B = B;
+        aws = std::uniform_real_distribution<double>(A, B);
     }
     double Get()
     {
-        auto aws = std::uniform_real_distribution<double>(A, B);
+        return aws(gen) + Time;
+    }
+};
+
+class GammaDelay : public Delay
+{
+    double K, Teta;
+    std::gamma_distribution<double> aws;
+
+public:
+    GammaDelay(double K, double Teta)
+    {
+        this->K = K;
+        this->Teta = Teta;
+        aws = std::gamma_distribution<double>(K, Teta);
+    }
+    double Get()
+    {
         return aws(gen) + Time;
     }
 };

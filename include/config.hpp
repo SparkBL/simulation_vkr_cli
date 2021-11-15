@@ -12,6 +12,7 @@ struct Config
     std::string SigmaDelayType;
     double Sigma;
     double SigmaA, SigmaB;
+    double SigmaGammaK, SigmaGammaTeta;
     std::vector<double> L;
     double LSimple;
     std::vector<std::vector<double>> Q;
@@ -39,6 +40,8 @@ std::ostream &operator<<(std::ostream &os, const Config &conf)
               << "Sigma: " << std::setw(40 - std::strlen("Sigma: ")) << std::right << conf.Sigma << std::endl
               << "Sigma A: " << std::setw(40 - std::strlen("Sigma A: ")) << std::right << conf.SigmaA << std::endl
               << "Sigma B: " << std::setw(40 - std::strlen("Sigma B: ")) << std::right << conf.SigmaB << std::endl
+              << "Sigma Gamma K: " << std::setw(40 - std::strlen("Sigma Gamma K: ")) << std::right << conf.SigmaGammaK << std::endl
+              << "Sigma Gamma Teta: " << std::setw(40 - std::strlen("Sigma Gamma Teta: ")) << std::right << conf.SigmaGammaTeta << std::endl
               << "Lambda simple: " << std::setw(40 - std::strlen("Lambda simple: ")) << std::right << conf.LSimple << std::endl
               << "Mu 1: " << std::setw(40 - std::strlen("Mu 1: ")) << std::right << conf.Mu1 << std::endl
               << "Mu 2: " << std::setw(40 - std::strlen("Mu 2: ")) << std::right << conf.Mu2 << std::endl
@@ -62,8 +65,10 @@ Config ParseConfig(std::string fileName)
     conf.InputType = j_complete.value("input_type", "mmpp");
     conf.SigmaDelayType = j_complete.value("sigma_delay_type", "exp");
     conf.Sigma = j_complete.value("sigma", 0.4);
-    conf.SigmaA = j_complete.value("sigmaA", 0.3);
-    conf.SigmaB = j_complete.value("sigmaB", 0.4);
+    conf.SigmaA = j_complete.value("sigma_a", 0.3);
+    conf.SigmaB = j_complete.value("sigma_b", 0.4);
+    conf.SigmaGammaK = j_complete.value("sigma_gamma_k", 0.0);
+    conf.SigmaGammaTeta = j_complete.value("sigma_gamma_teta", 0.0);
     conf.L = j_complete.value("L", std::vector<double>{0, 0, 0});
     conf.LSimple = j_complete.value("LSimple", 1);
     conf.Q = j_complete.value("Q", std::vector<std::vector<double>>{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}});

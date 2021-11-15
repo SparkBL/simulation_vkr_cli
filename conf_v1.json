@@ -1,9 +1,11 @@
 {
     "input_type":"mmpp", 
-    "sigma_delay_type":"exp",
-    "sigma": 0.001,
-    "sigmaA":0,
-    "sigmaB": 200,
+    "sigma_delay_type":"uniform",
+    "sigma": 0.01,
+    "sigma_a":0,
+    "sigma_b": 200,
+    "sigma_gamma_k" : 0,
+    "sigma_gamma_teta" : 0,
     "L":[1,1,1],
     "LSimple" : 1,
     "Q":[
@@ -13,6 +15,6 @@
     "mu1": 5,
     "mu2": 5,
     "alpha" :0.6,
-    "end" : 45000000,
+    "end" : 60000000,
     "interval" : 40
 }

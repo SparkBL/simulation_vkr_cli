@@ -19,9 +19,9 @@ void export3DPlot(std::vector<std::vector<double>> unr, std::string filename)
             if (!(unr[i][j] > 0.0000000))
                 unr[i][j] = 0;
             if (j + 1 == unr[i].size())
-                file << unr[i][j];
+                file << std::setprecision(7) << unr[i][j];
             else
-                file << unr[i][j] << ";";
+                file << std::setprecision(7) << unr[i][j] << ";";
         }
         file << std::endl;
     }
@@ -35,7 +35,7 @@ void export2DPlot(std::vector<double> unr, std::string filename)
     {
         if (!(unr[i] > 0.0000000))
             unr[i] = 0;
-        file << unr[i] << '\n';
+        file << std::setprecision(7) << unr[i] << '\n';
     }
     file.close();
 }
@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
         sigmaDelay = new ExpDelay(conf.Sigma);
     if (conf.SigmaDelayType == "uniform")
         sigmaDelay = new UniformDelay(conf.SigmaA, conf.SigmaB);
+    if (conf.SigmaDelayType == "gamma")
+        sigmaDelay = new GammaDelay(conf.SigmaGammaK, conf.SigmaGammaTeta);
     SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
     Node node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
