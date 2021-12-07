@@ -5,8 +5,8 @@
 #include "env.hpp"
 #include "router.hpp"
 #include "request.hpp"
-//#include "easy/profiler.h"
-class Node
+
+class Node : public Producer
 {
     Request nowServing;
     Delay *inputDelay;
@@ -88,6 +88,46 @@ public:
             }
         }
     }
+};
+
+class SimpleNode : public Producer
+{
+    Request nowServing;
+    Delay *delay;
+    Router *inChannel;
+    Router *outChannel;
+
+public:
+    SimpleNode(Delay *delay, Router *inChannel, Router *outChannel)
+    {
+        this->delay = delay;
+        this->inChannel = inChannel;
+        this->outChannel = outChannel;
+        this->nowServing = Request{Status : statusServed};
+    }
+
+    void Produce()
+    {
+        if (nowServing.Status == statusServing && nowServing.StatusChangeAt == Time)
+        {
+            nowServing.Status = statusServed;
+            outChannel->Push(nowServing);
+        }
+        if (!inChannel->IsEmpty())
+        {
+            if (nowServing.Status != statusServing)
+            {
+                nowServing = inChannel->Pop();
+                nowServing.StatusChangeAt = delay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
+            }
+        }
+    }
+};
+
+class OrbitNode : Producer
+{
 };
 
 #endif

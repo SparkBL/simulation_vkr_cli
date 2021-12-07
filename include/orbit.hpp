@@ -7,7 +7,14 @@
 #include "request.hpp"
 #include <vector>
 #include <algorithm>
-class Orbit
+
+class IOrbit : public Producer
+{
+public:
+    virtual void Append() = 0;
+};
+
+class Orbit : IOrbit
 {
     std::vector<Request> requests;
     Delay *delay;

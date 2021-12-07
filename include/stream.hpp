@@ -6,13 +6,14 @@
 #include "router.hpp"
 #include "delay.hpp"
 
-class Stream
+class IStream
 {
 public:
+    virtual ~IStream(){};
     virtual void Produce() = 0;
 };
 
-class MMPP : public Stream
+class MMPP : public IStream
 {
     std::vector<std::vector<double>> Q;
     std::vector<double> L;
@@ -76,7 +77,7 @@ public:
     }
 };
 
-class SimpleInput : public Stream
+class SimpleInput : public IStream
 {
     Request nextProduce;
     Delay *delay;

@@ -57,7 +57,7 @@ std::ostream &operator<<(std::ostream &os, const Config &conf)
 
 Config ParseConfig(std::string fileName)
 {
-    std::ifstream in(fileName);
+    std::ifstream in(fileName, std::ios::in);
     using json = nlohmann::json;
     json j_complete;
     in >> j_complete;

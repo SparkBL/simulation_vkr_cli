@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     Router *orbitAppendChannel = new Router();
     Router *outputChannel = new Router();
     Router *calledChannel = new Router();
-    Stream *inStream;
+    IStream *inStream;
     if (conf.InputType == "mmpp")
         inStream = new MMPP(conf.L, conf.Q, TypeInput, inputChannel);
     if (conf.InputType == "simple")
@@ -89,8 +89,7 @@ int main(int argc, char *argv[])
                                 std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
                                 std::this_thread::sleep_for(1000ms);
                             }
-                            std::cout << std::endl;
-                        });
+                            std::cout << std::endl; });
     Init();
     while (Time < End)
     {

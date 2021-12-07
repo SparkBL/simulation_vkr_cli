@@ -11,7 +11,16 @@ func Init() {
 #define ENV_HPP
 #include <vector>
 #include <algorithm>
-std::vector<double> EventQueue;
+
+class Producer
+{
+public:
+	virtual ~Producer(){};
+	virtual void Produce() = 0;
+};
+
+std::vector<double>
+	EventQueue;
 void Init()
 {
 	EventQueue.reserve(10);
@@ -19,13 +28,5 @@ void Init()
 double Time;
 double End;
 double Interval;
-
-class Worker
-{
-	double Time;
-	double End;
-	double Interval;
-	std::vector<double> EventQueue;
-};
 
 #endif
