@@ -12,13 +12,6 @@ func Init() {
 #include <vector>
 #include <algorithm>
 
-class Producer
-{
-public:
-	virtual ~Producer(){};
-	virtual void Produce() = 0;
-};
-
 std::vector<double>
 	EventQueue;
 void Init()

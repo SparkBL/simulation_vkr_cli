@@ -5,6 +5,7 @@
 #include "request.hpp"
 #include "router.hpp"
 #include "delay.hpp"
+#include "producer.hpp"
 
 class IStream
 {

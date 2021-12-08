@@ -1,0 +1,58 @@
+{
+  "elements": [
+    {
+      "label": "node1",
+      "type": "rqtnode",
+      "parameters": { "mu1": 1, "mu2": 1 }
+    },
+    {
+      "label": "input",
+      "type": "mmpp",
+      "parameters": {
+        "L": [1, 1, 1],
+        "Q": [
+          [-0.4, 0.3, 0.1],
+          [0.5, -0.6, 0.1],
+          [0.3, 0.6, -0.9]
+        ]
+      }
+    },
+    {
+      "label": "called_input",
+      "type": "simple",
+      "parameters": { "intensity": 1 }
+    },
+    {
+      "type": "orbit",
+      "label": "orbit",
+      "parameters": { "delay_type": "exponential", "intensity": 0.5 }
+    }
+  ],
+  "stats": [{ "element": "node1", "slot": "output" }],
+  "flow": [
+    {
+      "from": "input",
+      "to": "node1",
+      "from_slot": "output",
+      "to_slot": "input"
+    },
+    {
+      "from": "called_input",
+      "to": "node1",
+      "from_slot": "output",
+      "to_slot": "called_input"
+    },
+    {
+      "from": "node1",
+      "to": "orbit",
+      "from_slot": "orbital",
+      "to_slot": "input"
+    },
+    {
+      "from": "orbit",
+      "to": "node1",
+      "from_slot": "output",
+      "to_slot": "input"
+    }
+  ]
+}

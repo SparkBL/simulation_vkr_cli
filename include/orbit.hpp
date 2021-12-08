@@ -2,6 +2,7 @@
 #define ORBIT_HPP
 
 #include "env.hpp"
+#include "producer.hpp"
 #include "delay.hpp"
 #include "router.hpp"
 #include "request.hpp"

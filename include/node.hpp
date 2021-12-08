@@ -3,10 +3,11 @@
 
 #include "delay.hpp"
 #include "env.hpp"
+#include "producer.hpp"
 #include "router.hpp"
 #include "request.hpp"
 
-class Node : public Producer
+class RQNode : public Producer
 {
     Request nowServing;
     Delay *inputDelay;
@@ -18,13 +19,13 @@ class Node : public Producer
     Router *outChannel;
 
 public:
-    Node(Delay *inputDelay,
-         Delay *calledDelay,
-         Router *inChannel,
-         Router *callChannel,
-         Router *orbitChannel,
-         Router *orbitAppendChannel,
-         Router *outChannel)
+    RQNode(Delay *inputDelay,
+           Delay *calledDelay,
+           Router *inChannel,
+           Router *callChannel,
+           Router *orbitChannel,
+           Router *orbitAppendChannel,
+           Router *outChannel)
     {
         this->inputDelay = inputDelay;
         this->calledDelay = calledDelay;
