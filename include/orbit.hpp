@@ -15,7 +15,7 @@ public:
     virtual void Append() = 0;
 };
 
-class Orbit : IOrbit
+class Orbit : public Producer
 {
 protected:
     std::vector<Request> requests;
@@ -68,14 +68,14 @@ public:
         while (!orbitAppendChannel->IsEmpty())
         {
             Request req = orbitAppendChannel->Pop();
-            req.StatusChangeAt = delay->Get();
-            EventQueue.push_back(req.StatusChangeAt);
-            requests.push_back(req);
             stateChannel->Push(Request{
                 Type : TypeState,
                 Status : statusArrive,
-                StatusChangeAt : Time,
+                StatusChangeAt : req.StatusChangeAt,
             });
+            req.StatusChangeAt = delay->Get();
+            EventQueue.push_back(req.StatusChangeAt);
+            requests.push_back(req);
         }
     }
     void Produce()

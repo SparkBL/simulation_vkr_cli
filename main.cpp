@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         sigmaDelay = new GammaDelay(conf.SigmaGammaK, conf.SigmaGammaTeta);
     SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
-    RQNode node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
+    RQTNode node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
     Time = 0;
     End = conf.End;
     Interval = conf.Interval;
