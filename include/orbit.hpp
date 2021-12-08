@@ -16,6 +16,7 @@ public:
 
 class Orbit : IOrbit
 {
+protected:
     std::vector<Request> requests;
     Delay *delay;
     Router *orbitChannel;
@@ -46,6 +47,45 @@ public:
             {
                 orbitChannel->Push(requests[i]);
                 requests.erase(requests.begin() + i);
+                return;
+            }
+        }
+    }
+};
+
+class StateOrbit : Orbit
+{
+    Router *stateChannel;
+
+public:
+    StateOrbit(Delay *delay, Router *orbitChannel, Router *orbitAppendChannel, Router *stateChannel) : Orbit(delay, orbitChannel, orbitAppendChannel)
+    {
+        this->stateChannel = stateChannel;
+    }
+    void Append()
+    {
+        while (!orbitAppendChannel->IsEmpty())
+        {
+            Request req = orbitAppendChannel->Pop();
+            req.StatusChangeAt = delay->Get();
+            EventQueue.push_back(req.StatusChangeAt);
+            requests.push_back(req);
+            stateChannel->Push(Request{
+                Type : TypeState,
+                Status : statusArrive,
+                StatusChangeAt : Time,
+            });
+        }
+    }
+    void Produce()
+    {
+        for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
+        {
+            if (requests[i].StatusChangeAt == Time)
+            {
+                orbitChannel->Push(requests[i]);
+                requests.erase(requests.begin() + i);
+                stateChannel->Push(Request{Type : TypeState, Status : statusLeave, StatusChangeAt : Time});
                 return;
             }
         }

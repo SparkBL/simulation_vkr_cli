@@ -128,6 +128,65 @@ public:
 
 class OrbitNode : Producer
 {
+    Request nowServing;
+    Delay *delay;
+    Router *inChannel;
+    Router *orbitChannel;
+    Router *orbitAppendChannel;
+    Router *outChannel;
+
+public:
+    OrbitNode(Delay *delay,
+              Router *inChannel,
+              Router *orbitChannel,
+              Router *orbitAppendChannel,
+              Router *outChannel)
+    {
+        this->delay = delay;
+        this->inChannel = inChannel;
+        this->orbitChannel = orbitChannel;
+        this->orbitAppendChannel = orbitAppendChannel;
+        this->outChannel = outChannel;
+        this->nowServing = Request{Status : statusServed};
+    }
+
+    void Produce()
+    {
+        if (nowServing.Status == statusServing && nowServing.StatusChangeAt == Time)
+        {
+            nowServing.Status = statusServed;
+            outChannel->Push(nowServing);
+        }
+        if (!inChannel->IsEmpty())
+        {
+            if (nowServing.Status == statusServing)
+            {
+                orbitAppendChannel->Push(inChannel->Pop());
+            }
+            else
+            {
+                nowServing = inChannel->Pop();
+                nowServing.StatusChangeAt = delay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
+            }
+        }
+
+        if (!orbitChannel->IsEmpty())
+        {
+            if (nowServing.Status == statusServing)
+            {
+                orbitAppendChannel->Push(orbitChannel->Pop());
+            }
+            else
+            {
+                nowServing = orbitChannel->Pop();
+                nowServing.StatusChangeAt = delay->Get();
+                nowServing.Status = statusServing;
+                EventQueue.push_back(nowServing.StatusChangeAt);
+            }
+        }
+    }
 };
 
 #endif

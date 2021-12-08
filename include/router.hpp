@@ -8,26 +8,48 @@ class Router
     std::vector<Request> q;
 
 public:
-    Request Pop()
+    virtual Request Pop()
     {
         Request ret = q.front();
         q.erase(q.begin());
         return ret;
     }
 
-    int Len()
+    virtual int Len()
     {
         return q.size();
     }
 
-    void Push(Request request)
+    virtual void Push(Request request)
     {
         q.push_back(request);
     }
 
-    bool IsEmpty()
+    virtual bool IsEmpty()
     {
         return q.empty();
+    }
+};
+
+class NoneRouter : public Router
+{
+public:
+    Request Pop() override
+    {
+        return Request{};
+    }
+    int Len()
+    {
+        return 0;
+    }
+
+    void Push(Request request)
+    {
+    }
+
+    bool IsEmpty()
+    {
+        return true;
     }
 };
 

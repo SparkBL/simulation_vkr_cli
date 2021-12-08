@@ -262,4 +262,57 @@ public:
         return ret;
     }
 };
+
+class OrbitStatCollector
+{
+    std::vector<double> distr;
+    Router *outputChannel;
+    int curCount, maxCount;
+    double curTime;
+
+public:
+    OrbitStatCollector(Router *outputChannel)
+    {
+        this->outputChannel = outputChannel;
+        curCount = maxCount = 0;
+        curTime = 0.0;
+        distr = std::vector<double>(1000, 0.0);
+    }
+
+    void GatherStat()
+    {
+        while (!outputChannel->IsEmpty())
+        {
+            Request r = outputChannel->Pop();
+            distr[curCount] = r.StatusChangeAt - curTime;
+            curTime = r.StatusChangeAt;
+            switch (r.Status)
+            {
+            case statusArrive:
+            {
+                curCount++;
+                if (maxCount < curCount)
+                    maxCount = curCount;
+                break;
+            }
+            case statusLeave:
+            {
+                curCount--;
+                break;
+            }
+            }
+        }
+    }
+
+    std::vector<double> GetDistribution()
+    {
+        double norm = 0.0;
+        for (int i = 0; i < maxCount + 1; i++)
+            norm += distr[i];
+
+        for (int i = 0; i < maxCount + 1; i++)
+            distr[i] = distr[i] / norm;
+        return std::vector<double>(distr.begin(), distr.begin() + maxCount);
+    }
+};
 #endif
