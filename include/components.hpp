@@ -10,4 +10,5 @@
 #include "stats.hpp"
 #include "stream.hpp"
 #include "config.hpp"
+#include "string_switch.hpp"
 #endif

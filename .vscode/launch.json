@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-            "args": ["conf.json", "test_out.csv"],
+            "args": ["newconf_ref.json", "test_out.csv"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

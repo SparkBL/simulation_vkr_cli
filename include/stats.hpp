@@ -14,16 +14,25 @@ struct IntervalStat
 
 class StatCollector
 {
+public:
+    virtual ~StatCollector() {}
+    virtual void GatherStat() = 0;
+};
+
+class TOutputStatCollector : public StatCollector
+{
     std::vector<IntervalStat> intervalStats;
     Router *outputChannel;
     IntervalStat cur;
     double curInterval;
+    double interval;
 
 public:
-    StatCollector(Router *outputChannel)
+    TOutputStatCollector(Router *outputChannel, double interval)
     {
         this->outputChannel = outputChannel;
-        this->curInterval = Interval;
+        this->interval = interval;
+        this->curInterval = interval;
         this->cur = IntervalStat{input : 0, called : 0};
     }
 
@@ -36,7 +45,7 @@ public:
             {
                 intervalStats.push_back(cur);
                 cur = IntervalStat{input : 0, called : 0};
-                curInterval += Interval;
+                curInterval += interval;
             }
             switch (r.Type)
             {
@@ -171,18 +180,20 @@ public:
     }
 };
 
-class TimedStatCollector
+class TimedStatCollector : public StatCollector
 {
     std::vector<std::vector<double>> distr;
     Router *outputChannel;
     int maxInput, maxCalled, curInputCount, curCalledCount;
     double prevInput, prevCalled;
+    double interval;
     std::vector<double> curInputQueue, curCalledQueue;
 
 public:
-    TimedStatCollector(Router *outputChannel)
+    TimedStatCollector(Router *outputChannel, double interval)
     {
         this->outputChannel = outputChannel;
+        this->interval = interval;
         maxInput = 0;
         maxCalled = 0;
         curInputCount = 0;
@@ -212,7 +223,7 @@ public:
                 }
                 distr[curInputCount][curCalledCount] += r.StatusChangeAt - prevInput;
                 curInputCount++;
-                curInputQueue.push_back(r.StatusChangeAt + Interval);
+                curInputQueue.push_back(r.StatusChangeAt + interval);
                 prevInput = r.StatusChangeAt;
                 if (curInputCount > maxInput)
                 {
@@ -234,7 +245,7 @@ public:
                 }
                 distr[curInputCount][curCalledCount] += r.StatusChangeAt - prevCalled;
                 curCalledCount++;
-                curCalledQueue.push_back(r.StatusChangeAt + Interval);
+                curCalledQueue.push_back(r.StatusChangeAt + interval);
                 prevCalled = r.StatusChangeAt;
                 if (curCalledCount > maxCalled)
                 {
@@ -263,7 +274,7 @@ public:
     }
 };
 
-class OrbitStatCollector
+class OrbitStatCollector : public StatCollector
 {
     std::vector<double> distr;
     Router *outputChannel;

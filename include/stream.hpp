@@ -7,14 +7,7 @@
 #include "delay.hpp"
 #include "producer.hpp"
 
-class IStream
-{
-public:
-    virtual ~IStream(){};
-    virtual void Produce() = 0;
-};
-
-class MMPP : public IStream
+class MMPP : public Producer
 {
     std::vector<std::vector<double>> Q;
     std::vector<double> L;
@@ -78,7 +71,7 @@ public:
     }
 };
 
-class SimpleInput : public IStream
+class SimpleInput : public Producer
 {
     Request nextProduce;
     Delay *delay;

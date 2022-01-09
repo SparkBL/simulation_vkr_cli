@@ -7,7 +7,7 @@
 #include "router.hpp"
 #include "request.hpp"
 
-class RQNode : public Producer
+class RQTNode : public Producer
 {
     Request nowServing;
     Delay *inputDelay;
@@ -19,13 +19,13 @@ class RQNode : public Producer
     Router *outChannel;
 
 public:
-    RQNode(Delay *inputDelay,
-           Delay *calledDelay,
-           Router *inChannel,
-           Router *callChannel,
-           Router *orbitChannel,
-           Router *orbitAppendChannel,
-           Router *outChannel)
+    RQTNode(Delay *inputDelay,
+            Delay *calledDelay,
+            Router *inChannel,
+            Router *callChannel,
+            Router *orbitChannel,
+            Router *orbitAppendChannel,
+            Router *outChannel)
     {
         this->inputDelay = inputDelay;
         this->calledDelay = calledDelay;
@@ -127,7 +127,7 @@ public:
     }
 };
 
-class OrbitNode : Producer
+class RQNode : public Producer
 {
     Request nowServing;
     Delay *delay;
@@ -137,11 +137,11 @@ class OrbitNode : Producer
     Router *outChannel;
 
 public:
-    OrbitNode(Delay *delay,
-              Router *inChannel,
-              Router *orbitChannel,
-              Router *orbitAppendChannel,
-              Router *outChannel)
+    RQNode(Delay *delay,
+           Router *inChannel,
+           Router *orbitChannel,
+           Router *orbitAppendChannel,
+           Router *outChannel)
     {
         this->delay = delay;
         this->inChannel = inChannel;

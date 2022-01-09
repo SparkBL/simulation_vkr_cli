@@ -44,33 +44,137 @@ int main(int argc, char *argv[])
 {
     std::vector<std::string> args(argv, argv + argc);
 
-    Config conf = ParseConfig(args[1]);
+    std::ifstream in(args[1], std::ios::in);
+    using json = nlohmann::json;
+    json j_complete;
+    in >> j_complete;
+    json elements = j_complete.at("elements");
+    std::map<std::string, Producer *> producers;
+    std::map<std::string, Orbit *> orbits;
+    std::map<std::string, Router *> routers;
+    std::vector<StatCollector *> stats;
+    for (auto &element : elements)
+    {
+        if (element.at("label").get<std::string>().size() < 1)
+        {
+            std::cout << "Label is too short: " << element.at("label").get<std::string>() << std::endl;
+            return;
+        }
+        SWITCH(element.value("type", ""))
+        {
+            CASE("simple_i") :
+            {
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                Router *r = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r));
+                Producer *s = new SimpleInput(new ExpDelay(intensity), TypeInput, new NoneRouter());
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), s));
+                break;
+            }
+            CASE("mmpp_i") :
+            {
+                Router *r = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r));
+                Producer *s = new MMPP(element.at("parameters").value("L", std::vector<double>{0, 0, 0}), element.at("parameters").value("Q", std::vector<std::vector<double>>{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}), TypeInput, r);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), s));
+                break;
+            }
+            CASE("simple_n") :
+            {
+                Router *r = new NoneRouter(), *r1 = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                Producer *n = new SimpleNode(new ExpDelay(intensity), r, r1);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
+                break;
+            }
+            CASE("rq_n") :
+            {
+                Router *r = new NoneRouter(), *r1 = new NoneRouter(), *r2 = new NoneRouter(), *r3 = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_input", r2));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_output", r3));
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                Producer *n = new RQNode(new ExpDelay(intensity), r, r2, r3, r1);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
+                break;
+            }
+            CASE("rqt_n") :
+            {
+                Router *r = new NoneRouter(), *r1 = new NoneRouter(), *r2 = new NoneRouter(), *r3 = new NoneRouter(), *r4 = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_input", r2));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_output", r3));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_called_input", r4));
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                double called_intensity = element.at("parameters").value("called_intensity", 0.0);
+                Producer *n = new RQTNode(new ExpDelay(intensity), new ExpDelay(called_intensity), r, r4, r2, r3, r1);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
+                break;
+            }
+            CASE("base_o") :
+            {
+                Router *r = new NoneRouter(), *r1 = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                Producer *n = new Orbit(new ExpDelay(intensity), r1, r);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
+                break;
+            }
+            CASE("state_o") :
+            {
+                Router *r = new NoneRouter(), *r1 = new NoneRouter(), *s = new NoneRouter();
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
+                routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_state", s));
+                double intensity = element.at("parameters").value("intensity", 0.0);
+                Producer *n = new StateOrbit(new ExpDelay(intensity), r1, r, s);
+                producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
+                break;
+            }
+        default:
+        {
+            std::cout << "Unrecognized elements type: " << element.value("type", "") << std::endl;
+            return;
+        }
+        }
+    }
+    json flow = j_complete.at("flow");
+    for (auto &path : flow)
+    {
+        Router *r = new Router();
+        delete routers.at(path.value("from", "") + "_" + path.value("from_slot", ""));
+        routers.at(path.value("from", "") + "_" + path.value("from_slot", "")) = r;
+        delete routers.at(path.value("to", "") + "_" + path.value("to_slot", ""));
+        routers.at(path.value("to", "") + "_" + path.value("to_slot", "")) = r;
+    }
+    json stat = j_complete.at("stats");
+    for (auto &e : stat)
+    {
+        SWITCH(e.value("type", ""))
+        {
+            CASE("td_output") :
+            {
+                StatCollector *r = new TOutputStatCollector(routers[e.value("element", "") + e.value("slot", "")], e.value("interval", 5));
+                stats.push_back(r);
+                break;
+            }
+            CASE("orbit") :
+            {
+                StatCollector *r = new OrbitStatCollector(routers[e.value("element", "") + e.value("slot", "")]);
+                stats.push_back(r);
+                break;
+            }
+        }
+    }
 
-    Router *inputChannel = new Router();
-    Router *orbitChannel = new Router();
-    Router *orbitAppendChannel = new Router();
-    Router *outputChannel = new Router();
-    Router *calledChannel = new Router();
-    IStream *inStream;
-    if (conf.InputType == "mmpp")
-        inStream = new MMPP(conf.L, conf.Q, TypeInput, inputChannel);
-    if (conf.InputType == "simple")
-        inStream = new SimpleInput(new ExpDelay(conf.LSimple), TypeInput, inputChannel);
-
-    Delay *sigmaDelay;
-    if (conf.SigmaDelayType == "exp")
-        sigmaDelay = new ExpDelay(conf.Sigma);
-    if (conf.SigmaDelayType == "uniform")
-        sigmaDelay = new UniformDelay(conf.SigmaA, conf.SigmaB);
-    if (conf.SigmaDelayType == "gamma")
-        sigmaDelay = new GammaDelay(conf.SigmaGammaK, conf.SigmaGammaTeta);
-    SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
-    Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
-    RQTNode node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
     Time = 0;
-    End = conf.End;
-    Interval = conf.Interval;
-    StatCollector statCollector(outputChannel);
+    End = j_complete.value("end", 0);
+
     using std::chrono::duration;
     using std::chrono::duration_cast;
     using std::chrono::high_resolution_clock;
@@ -78,9 +182,8 @@ int main(int argc, char *argv[])
     auto t1 = high_resolution_clock::now();
     std::promise<void> exitSignal;
     std::future<void> futureObj = exitSignal.get_future();
-    std::thread logging([&futureObj, &conf]
+    std::thread logging([&futureObj]
                         {
-                            std::cout << conf;
                             std::cout << "Parameters set. Starting...\n";
                             while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
                             {

@@ -54,7 +54,7 @@ public:
     }
 };
 
-class StateOrbit : Orbit
+class StateOrbit : public Orbit
 {
     Router *stateChannel;
 
