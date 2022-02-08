@@ -192,7 +192,8 @@ int main(int argc, char *argv[])
                                 std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
                                 std::this_thread::sleep_for(1000ms);
                             }
-                            std::cout << std::endl; });
+                            std::cout << std::endl;
+                        });
     Init();
     while (Time < End)
     {

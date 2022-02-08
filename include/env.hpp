@@ -3,8 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-std::vector<double>
-	EventQueue;
+std::vector<double> EventQueue;
 void Init()
 {
 	EventQueue.reserve(10);
