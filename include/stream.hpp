@@ -6,7 +6,8 @@
 #include "router.hpp"
 #include "delay.hpp"
 #include "producer.hpp"
-
+//namespace streams
+//{
 class MMPP : public Producer
 {
     std::vector<std::vector<double>> Q;
@@ -15,7 +16,7 @@ class MMPP : public Producer
     int state;
     double shiftTime;
     Request nextProduce;
-    Router *channel;
+    OutSlot channel;
 
     void shift()
     {
@@ -31,9 +32,9 @@ class MMPP : public Producer
                     if (chance <= sum)
                     {
                         state = i;
-                        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
-                        shiftTime = ExponentialDelay(-Q[state][state]);
-                        EventQueue.push_back(nextProduce.StatusChangeAt);
+                        nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[state])};
+                        shiftTime = GetExponentialDelay(-Q[state][state]);
+                        EventQueue.push_back(nextProduce.status_change_at);
                         EventQueue.push_back(shiftTime);
                         return;
                     }
@@ -48,24 +49,24 @@ public:
         this->RequestType = RequestType;
         this->L = L;
         this->Q = Q;
-        this->channel = channel;
-        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0])};
-        EventQueue.push_back(nextProduce.StatusChangeAt);
+        this->channel.Connect(channel);
+        nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[0])};
+        EventQueue.push_back(nextProduce.status_change_at);
         state = 0;
-        shiftTime = ExponentialDelay(-Q[0][0]);
+        shiftTime = GetExponentialDelay(-Q[0][0]);
         EventQueue.push_back(shiftTime);
     }
 
-    void Produce()
+    void Produce() override
     {
         shift();
-        if (nextProduce.StatusChangeAt == Time)
+        if (nextProduce.status_change_at == Time)
         {
-            channel->Push(nextProduce);
-            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
-            if (nextProduce.StatusChangeAt < shiftTime)
+            channel.Push(nextProduce);
+            nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[state])};
+            if (nextProduce.status_change_at < shiftTime)
             {
-                EventQueue.push_back(nextProduce.StatusChangeAt);
+                EventQueue.push_back(nextProduce.status_change_at);
             }
         }
     }
@@ -76,31 +77,31 @@ class SimpleInput : public Producer
     Request nextProduce;
     Delay *delay;
     int RequestType;
-    Router *channel;
+    OutSlot channel;
 
 public:
     SimpleInput(Delay *delay, int RequestType, Router *channel)
     {
         this->delay = delay;
         this->RequestType = RequestType;
-        this->channel = channel;
+        this->channel.Connect(channel);
         nextProduce = Request{
-            Type : RequestType,
-            Status : statusTravel,
-            StatusChangeAt : delay->Get()
+            type : RequestType,
+            status : statusTravel,
+            status_change_at : delay->Get()
         };
-        EventQueue.push_back(nextProduce.StatusChangeAt);
+        EventQueue.push_back(nextProduce.status_change_at);
     }
 
-    void Produce()
+    void Produce() override
     {
-        if (nextProduce.StatusChangeAt == Time)
+        if (nextProduce.status_change_at == Time)
         {
-            channel->Push(nextProduce);
-            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : delay->Get()};
-            EventQueue.push_back(nextProduce.StatusChangeAt);
+            channel.Push(nextProduce);
+            nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : delay->Get()};
+            EventQueue.push_back(nextProduce.status_change_at);
         }
     }
 };
-
+//;
 #endif

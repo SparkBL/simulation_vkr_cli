@@ -3,7 +3,7 @@
     {
       "label": "node1",
       "type": "rqtnode",
-      "parameters": { "mu1": 1, "mu2": 1 }
+      "parameters": [{"mu_1":{ "delay_type": "exponential","intentisty":1}},{"mu_2":{ "delay_type": "exponential","intentisty":1}}]
     },
     {
       "label": "input",

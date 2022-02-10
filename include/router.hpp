@@ -3,54 +3,119 @@
 
 #include <queue>
 #include "request.hpp"
-class Router
-{
-    std::vector<Request> q;
 
-public:
-    virtual Request Pop()
+//namespace connections
+//{
+    class Router
     {
-        Request ret = q.front();
-        q.erase(q.begin());
-        return ret;
-    }
+        std::vector<Request> q_;
+        friend class InSlot;
+        friend class OutSlot;
 
-    virtual int Len()
-    {
-        return q.size();
-    }
+    private:
+        virtual Request Pop()
+        {
+            Request ret = q_.front();
+            q_.erase(q_.begin());
+            return ret;
+        }
 
-    virtual void Push(Request request)
-    {
-        q.push_back(request);
-    }
+        virtual int Len()
+        {
+            return q_.size();
+        }
 
-    virtual bool IsEmpty()
-    {
-        return q.empty();
-    }
-};
+        virtual void Push(Request request)
+        {
+            q_.push_back(request);
+        }
 
-class NoneRouter : public Router
-{
-public:
-    Request Pop() override
-    {
-        return Request{};
-    }
-    int Len()
-    {
-        return 0;
-    }
+        virtual bool IsEmpty()
+        {
+            return q_.empty();
+        }
+    };
 
-    void Push(Request request)
+    class NoneRouter : public Router
     {
-    }
+    public:
+        Request Pop() override
+        {
+            return Request{};
+        }
+        int Len()
+        {
+            return 0;
+        }
 
-    bool IsEmpty()
+        void Push(Request request)
+        {
+        }
+
+        bool IsEmpty()
+        {
+            return true;
+        }
+    };
+
+    class InSlot
     {
-        return true;
-    }
-};
 
+        Router *r_;
+
+    public:
+        InSlot(Router *in)
+        {
+            r_ = in;
+        }
+        InSlot() {}
+
+        void Connect(Router *in)
+        {
+            r_ = in;
+        }
+
+        int Len()
+        {
+            return r_->Len();
+        }
+        bool IsEmpty()
+        {
+            return r_->IsEmpty();
+        }
+
+        Request Pop()
+        {
+            return r_->Pop();
+        }
+    };
+
+    class OutSlot
+    {
+        friend class Router;
+        Router *r_;
+
+    public:
+        OutSlot(Router *in)
+        {
+            r_ = in;
+        }
+        OutSlot() {}
+
+        void Connect(Router *in)
+        {
+            r_ = in;
+        }
+
+        int Len()
+        {
+            return r_->Len();
+        }
+
+        void Push(Request request)
+        {
+            r_->Push(request);
+        }
+    };
+//};
 #endif

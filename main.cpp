@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <thread>
 #include <future>
-#include "include/components.hpp"
+#include "components.hpp"
 
 void export3DPlot(std::vector<std::vector<double>> unr, std::string filename)
 {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
                 double intensity = element.at("parameters").value("intensity", 0.0);
                 Router *r = new NoneRouter();
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r));
-                Producer *s = new SimpleInput(new ExpDelay(intensity), TypeInput, new NoneRouter());
+                Producer *s = new SimpleInput(new ExponentialDelay(intensity), typeInput, new NoneRouter());
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), s));
                 break;
             }
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
             {
                 Router *r = new NoneRouter();
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r));
-                Producer *s = new MMPP(element.at("parameters").value("L", std::vector<double>{0, 0, 0}), element.at("parameters").value("Q", std::vector<std::vector<double>>{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}), TypeInput, r);
+                Producer *s = new MMPP(element.at("parameters").value("L", std::vector<double>{0, 0, 0}), element.at("parameters").value("Q", std::vector<std::vector<double>>{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}), typeInput, r);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), s));
                 break;
             }
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
                 double intensity = element.at("parameters").value("intensity", 0.0);
-                Producer *n = new SimpleNode(new ExpDelay(intensity), r, r1);
+                Producer *n = new SimpleNode(new ExponentialDelay(intensity), r, r1);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
                 break;
             }
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_input", r2));
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_orbit_output", r3));
                 double intensity = element.at("parameters").value("intensity", 0.0);
-                Producer *n = new RQNode(new ExpDelay(intensity), r, r2, r3, r1);
+                Producer *n = new RQNode(new ExponentialDelay(intensity), r, r2, r3, r1);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
                 break;
             }
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_called_input", r4));
                 double intensity = element.at("parameters").value("intensity", 0.0);
                 double called_intensity = element.at("parameters").value("called_intensity", 0.0);
-                Producer *n = new RQTNode(new ExpDelay(intensity), new ExpDelay(called_intensity), r, r4, r2, r3, r1);
+                Producer *n = new RQTNode(new ExponentialDelay(intensity), new ExponentialDelay(called_intensity), r, r4, r2, r3, r1);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
                 break;
             }
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_input", r));
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
                 double intensity = element.at("parameters").value("intensity", 0.0);
-                Producer *n = new Orbit(new ExpDelay(intensity), r1, r);
+                Producer *n = new Orbit(new ExponentialDelay(intensity), r1, r);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
                 break;
             }
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_output", r1));
                 routers.insert(std::pair<std::string, Router *>(element.value("label", "") + "_state", s));
                 double intensity = element.at("parameters").value("intensity", 0.0);
-                Producer *n = new StateOrbit(new ExpDelay(intensity), r1, r, s);
+                Producer *n = new StateOrbit(new ExponentialDelay(intensity), r1, r, s);
                 producers.insert(std::pair<std::string, Producer *>(element.value("label", ""), n));
                 break;
             }

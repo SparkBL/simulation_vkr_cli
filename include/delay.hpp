@@ -6,8 +6,9 @@
 #include <random>
 #include <vector>
 #include <time.h>
-
-const double float64EqualityThreshold = 1e-11;
+//namespace delays
+//{
+const double float64_equality_threshold = 1e-11;
 std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<double> distribution(0, 1);
@@ -17,68 +18,68 @@ public:
     virtual double Get() = 0;
 };
 
-class ExpDelay : public Delay
+class ExponentialDelay : public Delay
 {
-    double Intensity;
-    std::exponential_distribution<double> aws;
+    double intensity_;
+    std::exponential_distribution<double> aws_;
 
 public:
-    ExpDelay(double intensity)
+    ExponentialDelay(double intensity)
     {
-        this->Intensity = intensity;
-        aws = std::exponential_distribution<double>(Intensity);
+        this->intensity_ = intensity;
+        aws_ = std::exponential_distribution<double>(intensity_);
     }
-    double Get()
+    double Get() override
     {
-        return aws(gen) + Time;
+        return aws_(gen) + Time;
     }
 };
 
 class UniformDelay : public Delay
 {
-    double A, B;
-    std::uniform_real_distribution<double> aws;
+    double a_, b_;
+    std::uniform_real_distribution<double> aws_;
 
 public:
-    UniformDelay(double A, double B)
+    UniformDelay(double a, double b)
     {
-        this->A = A;
-        this->B = B;
-        aws = std::uniform_real_distribution<double>(A, B);
+        this->a_ = a;
+        this->b_ = b;
+        aws_ = std::uniform_real_distribution<double>(a_, b_);
     }
-    double Get()
+    double Get() override
     {
-        return aws(gen) + Time;
+        return aws_(gen) + Time;
     }
 };
 
 class GammaDelay : public Delay
 {
-    double K, Teta;
-    std::gamma_distribution<double> aws;
+    double k_, teta_;
+    std::gamma_distribution<double> aws_;
 
 public:
-    GammaDelay(double K, double Teta)
+    GammaDelay(double k, double teta)
     {
-        this->K = K;
-        this->Teta = Teta;
-        aws = std::gamma_distribution<double>(K, Teta);
+        this->k_ = k;
+        this->teta_ = teta;
+        aws_ = std::gamma_distribution<double>(k_, teta_);
     }
-    double Get()
+    double Get() override
     {
-        return aws(gen) + Time;
+        return aws_(gen) + Time;
     }
 };
 
-double ExponentialDelay(double intensity)
+inline double GetExponentialDelay(double intensity)
 {
     auto aws = std::exponential_distribution<double>(intensity);
     return aws(gen) + Time;
 }
 
-double NextDouble()
+inline double NextDouble()
 {
     return distribution(gen);
 }
-
+//};
 #endif

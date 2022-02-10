@@ -2,7 +2,8 @@
 #define ENV_HPP
 #include <vector>
 #include <algorithm>
-
+//namespace env
+//{
 std::vector<double> EventQueue;
 void Init()
 {
@@ -11,4 +12,11 @@ void Init()
 double Time;
 double End;
 
+/*struct ModelEnv
+	{
+		static double Time;
+		static double End;
+		std::vector<double> EventQueue;
+	};*/
+//};
 #endif
