@@ -21,20 +21,10 @@ class RQTNode : public Producer
 
 public:
     RQTNode(Delay *input_delay,
-            Delay *called_delay,
-            Router *in_channel,
-            Router *call_channel,
-            Router *orbit_channel,
-            Router *orbit_append_channel,
-            Router *out_channel)
+            Delay *called_delay)
     {
         this->input_delay_ = input_delay;
         this->called_delay_ = called_delay;
-        this->in_channel_.Connect(in_channel);
-        this->call_channel_.Connect(call_channel);
-        this->orbit_channel_.Connect(orbit_channel);
-        this->orbit_append_channel_.Connect(orbit_append_channel);
-        this->out_channel_.Connect(out_channel);
         this->now_serving_ = Request{status : statusServed};
     }
 
@@ -90,6 +80,26 @@ public:
             }
         }
     }
+
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "in_slot")
+            return &in_channel_;
+        if (slot_name == "call_slot")
+            return &call_channel_;
+        if (slot_name == "orbit_slot")
+            return &orbit_channel_;
+        if (slot_name == "orbit_append_slot")
+            return &orbit_append_channel_;
+        if (slot_name == "out_slot")
+            return &out_channel_;
+        return nullptr;
+    }
+
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"in_slot", "call_slot", "orbit_slot", "orbit_append_slot", "out_slot"};
+    }
 };
 
 class SimpleNode : public Producer
@@ -100,11 +110,9 @@ class SimpleNode : public Producer
     OutSlot out_channel_;
 
 public:
-    SimpleNode(Delay *delay, Router *in_channel, Router *out_channel)
+    SimpleNode(Delay *delay)
     {
         this->delay_ = delay;
-        this->in_channel_.Connect(in_channel);
-        this->out_channel_.Connect(out_channel);
         this->now_serving_ = Request{status : statusServed};
     }
 
@@ -126,6 +134,18 @@ public:
             }
         }
     }
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "in_slot")
+            return &in_channel_;
+        if (slot_name == "out_slot")
+            return &out_channel_;
+        return nullptr;
+    }
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"in_slot", "orbit_slot"};
+    }
 };
 
 class RQNode : public Producer
@@ -138,17 +158,9 @@ class RQNode : public Producer
     OutSlot out_channel_;
 
 public:
-    RQNode(Delay *delay,
-           Router *in_channel,
-           Router *orbit_channel,
-           Router *orbit_append_channel,
-           Router *out_channel)
+    RQNode(Delay *delay)
     {
         this->delay_ = delay;
-        this->in_channel_.Connect(in_channel);
-        this->orbit_channel_.Connect(orbit_channel);
-        this->orbit_append_channel_.Connect(orbit_append_channel);
-        this->out_channel_.Connect(out_channel);
         this->now_serving_ = Request{status : statusServed};
     }
 
@@ -188,6 +200,22 @@ public:
                 EventQueue.push_back(now_serving_.status_change_at);
             }
         }
+    }
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "in_slot")
+            return &in_channel_;
+        if (slot_name == "orbit_slot")
+            return &orbit_channel_;
+        if (slot_name == "orbit_append_slot")
+            return &orbit_append_channel_;
+        if (slot_name == "out_slot")
+            return &out_channel_;
+        return nullptr;
+    }
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"in_slot", "orbit_slot", "orbit_append_slot", "out_slot"};
     }
 };
 //};

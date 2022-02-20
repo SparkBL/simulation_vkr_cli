@@ -10,32 +10,32 @@
 //{
 class MMPP : public Producer
 {
-    std::vector<std::vector<double>> Q;
-    std::vector<double> L;
-    int RequestType;
-    int state;
-    double shiftTime;
-    Request nextProduce;
-    OutSlot channel;
+    std::vector<std::vector<double>> q_;
+    std::vector<double> l_;
+    int request_type_;
+    int state_;
+    double shift_time_;
+    Request next_produce_;
+    OutSlot channel_;
 
     void shift()
     {
-        if (shiftTime == Time)
+        if (shift_time_ == Time)
         {
             double sum = 0;
             double chance = NextDouble();
-            for (int i = 0; i < Q.size(); i++)
+            for (int i = 0; i < q_.size(); i++)
             {
-                if (i != state)
+                if (i != state_)
                 {
-                    sum += Q[state][i] / (-Q[state][state]);
+                    sum += q_[state_][i] / (-q_[state_][state_]);
                     if (chance <= sum)
                     {
-                        state = i;
-                        nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[state])};
-                        shiftTime = GetExponentialDelay(-Q[state][state]);
-                        EventQueue.push_back(nextProduce.status_change_at);
-                        EventQueue.push_back(shiftTime);
+                        state_ = i;
+                        next_produce_ = Request{type : request_type_, status : statusTravel, status_change_at : GetExponentialDelay(l_[state_])};
+                        shift_time_ = GetExponentialDelay(-q_[state_][state_]);
+                        EventQueue.push_back(next_produce_.status_change_at);
+                        EventQueue.push_back(shift_time_);
                         return;
                     }
                 }
@@ -44,63 +44,84 @@ class MMPP : public Producer
     }
 
 public:
-    MMPP(std::vector<double> L, std::vector<std::vector<double>> Q, int RequestType, Router *channel)
+    MMPP(std::vector<double> l, std::vector<std::vector<double>> q, int request_type)
     {
-        this->RequestType = RequestType;
-        this->L = L;
-        this->Q = Q;
-        this->channel.Connect(channel);
-        nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[0])};
-        EventQueue.push_back(nextProduce.status_change_at);
-        state = 0;
-        shiftTime = GetExponentialDelay(-Q[0][0]);
-        EventQueue.push_back(shiftTime);
+        this->request_type_ = request_type;
+        this->l_ = l;
+        this->q_ = q;
+        next_produce_ = Request{type : request_type_, status : statusTravel, status_change_at : GetExponentialDelay(l_[0])};
+        EventQueue.push_back(next_produce_.status_change_at);
+        state_ = 0;
+        shift_time_ = GetExponentialDelay(-q_[0][0]);
+        EventQueue.push_back(shift_time_);
     }
 
     void Produce() override
     {
         shift();
-        if (nextProduce.status_change_at == Time)
+        if (next_produce_.status_change_at == Time)
         {
-            channel.Push(nextProduce);
-            nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : GetExponentialDelay(L[state])};
-            if (nextProduce.status_change_at < shiftTime)
+            channel_.Push(next_produce_);
+            next_produce_ = Request{type : request_type_, status : statusTravel, status_change_at : GetExponentialDelay(l_[state_])};
+            if (next_produce_.status_change_at < shift_time_)
             {
-                EventQueue.push_back(nextProduce.status_change_at);
+                EventQueue.push_back(next_produce_.status_change_at);
             }
         }
+    }
+
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "out_slot")
+            return &channel_;
+        return nullptr;
+    }
+
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"out_slot"};
     }
 };
 
 class SimpleInput : public Producer
 {
-    Request nextProduce;
-    Delay *delay;
-    int RequestType;
-    OutSlot channel;
+    Request next_produce_;
+    Delay *delay_;
+    int request_type_;
+    OutSlot channel_;
 
 public:
-    SimpleInput(Delay *delay, int RequestType, Router *channel)
+    SimpleInput(Delay *delay, int request_type)
     {
-        this->delay = delay;
-        this->RequestType = RequestType;
-        this->channel.Connect(channel);
-        nextProduce = Request{
-            type : RequestType,
+        this->delay_ = delay;
+        this->request_type_ = request_type;
+        next_produce_ = Request{
+            type : request_type_,
             status : statusTravel,
-            status_change_at : delay->Get()
+            status_change_at : delay_->Get()
         };
-        EventQueue.push_back(nextProduce.status_change_at);
+        EventQueue.push_back(next_produce_.status_change_at);
     }
 
     void Produce() override
     {
-        if (nextProduce.status_change_at == Time)
+        if (next_produce_.status_change_at == Time)
         {
-            channel.Push(nextProduce);
-            nextProduce = Request{type : RequestType, status : statusTravel, status_change_at : delay->Get()};
-            EventQueue.push_back(nextProduce.status_change_at);
+            channel_.Push(next_produce_);
+            next_produce_ = Request{type : request_type_, status : statusTravel, status_change_at : delay_->Get()};
+            EventQueue.push_back(next_produce_.status_change_at);
         }
+    }
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "out_slot")
+            return &channel_;
+        return nullptr;
+    }
+
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"out_slot"};
     }
 };
 //;

@@ -25,11 +25,9 @@ protected:
     InSlot orbit_append_channel_;
 
 public:
-    Orbit(Delay *delay, Router *orbit_channel, Router *orbit_append_channel)
+    Orbit(Delay *delay)
     {
         this->delay_ = delay;
-        this->orbit_channel_.Connect(orbit_channel);
-        this->orbit_append_channel_.Connect(orbit_append_channel);
     }
     void Append() override
     {
@@ -52,6 +50,18 @@ public:
                 return;
             }
         }
+    }
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "orbit_slot")
+            return &orbit_channel_;
+        if (slot_name == "orbit_append_slot")
+            return &orbit_append_channel_;
+        return nullptr;
+    }
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"orbit_slot", "orbit_append_slot"};
     }
 };
 
