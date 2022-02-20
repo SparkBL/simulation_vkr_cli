@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 
+#include "json.hpp"
 #include "delay.hpp"
 #include "node.hpp"
 #include "orbit.hpp"
@@ -15,15 +16,14 @@ class ProducerFactory
 {
 public:
     virtual ~ProducerFactory() {} // Allow proper inheritance
-    virtual Producer *Create() = 0;
+    virtual Producer *Create(nlohmann::json parameters) = 0;
 };
 
 class RQTNodeFactory : public ProducerFactory
 {
-    template <class... ArgTypes>
-    RQTNode *Create(ArgTypes... args) override
+    RQTNode *Create(nlohmann::json parameters) override
     {
-        return new RQTNode(args);
+        return new RQTNode(parameters);
     }
 };
 
