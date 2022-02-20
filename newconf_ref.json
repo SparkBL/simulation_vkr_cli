@@ -47,10 +47,11 @@
       "label": "called_input",
       "type": "simple",
       "parameters": {
-        "mu": {
+        "l": {
           "delay_type": "exponential",
           "intentisty": 1
-        }
+        },
+        "request_type": 1
       }
     },
     {
