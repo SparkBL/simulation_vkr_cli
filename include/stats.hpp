@@ -14,7 +14,7 @@ struct IntervalStat
     int called;
 };
 
-class StatCollector
+class StatCollector : public Producer
 {
 public:
     virtual ~StatCollector() {}
@@ -30,15 +30,14 @@ class TOutputStatCollector : public StatCollector
     double interval_;
 
 public:
-    TOutputStatCollector(Router *output_channel, double interval)
+    TOutputStatCollector(double interval)
     {
-        this->output_channel_.Connect(output_channel);
         this->interval_ = interval;
         this->cur_interval_ = interval;
         this->cur_ = IntervalStat{input : 0, called : 0};
     }
 
-    void GatherStat()
+    void Produce()
     {
         while (!output_channel_.IsEmpty())
         {
@@ -179,6 +178,18 @@ public:
         for (auto it = interval_stats_.begin(); it != interval_stats_.end(); it++)
             sum += double(it->called);
         return sum / double(interval_stats_.size());
+    }
+
+    Slot *operator[](std::string slot_name) override
+    {
+        if (slot_name == "in_slot")
+            return &output_channel_;
+        return nullptr;
+    }
+
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"in_slot"};
     }
 };
 
