@@ -81,7 +81,7 @@ public:
         }
     }
 
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "in_slot")
             return &in_channel_;
@@ -134,7 +134,7 @@ public:
             }
         }
     }
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "in_slot")
             return &in_channel_;
@@ -201,7 +201,7 @@ public:
             }
         }
     }
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "in_slot")
             return &in_channel_;

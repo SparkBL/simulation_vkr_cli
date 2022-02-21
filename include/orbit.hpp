@@ -51,7 +51,7 @@ public:
             }
         }
     }
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "orbit_slot")
             return &orbit_channel_;

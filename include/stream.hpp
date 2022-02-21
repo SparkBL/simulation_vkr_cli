@@ -70,7 +70,7 @@ public:
         }
     }
 
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "out_slot")
             return &channel_;
@@ -112,7 +112,7 @@ public:
             EventQueue.push_back(next_produce_.status_change_at);
         }
     }
-    Slot *operator[](std::string slot_name) override
+    Slot *SlotAt(std::string slot_name) override
     {
         if (slot_name == "out_slot")
             return &channel_;
