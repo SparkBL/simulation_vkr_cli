@@ -10,6 +10,7 @@
 #include "node.hpp"
 #include "orbit.hpp"
 #include "stream.hpp"
+#include "stats.hpp"
 //std::map<std::string, typename> creation_mapping();
 
 class DelayFactory
@@ -138,6 +139,15 @@ class OrbitFactory : public ProducerFactory
     {
         Delay *d = DelayTypeFactory::Create(parameters.at("sigma").value("delay_type", "exponential"), parameters.at("sigma"));
         return new Orbit(d);
+    }
+};
+
+class TOutputStatCollectorFactory : public ProducerFactory
+{
+    TOutputStatCollector *Create(nlohmann::json parameters) override
+    {
+        double interval = parameters.value("interval", 10);
+        return new TOutputStatCollector(interval);
     }
 };
 

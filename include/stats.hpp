@@ -18,7 +18,7 @@ class StatCollector : public Producer
 {
 public:
     virtual ~StatCollector() {}
-    virtual void GatherStat() = 0;
+    // virtual void GatherStat() = 0;
 };
 
 class TOutputStatCollector : public StatCollector
