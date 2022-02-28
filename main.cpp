@@ -76,33 +76,15 @@ int main(int argc, char *argv[])
                             }
                             std::cout << std::endl;
                         });
-    while (Time < End)
-    {
-        if (!EventQueue.empty())
-        {
-            auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
-                                        [](double c1, double c2)
-                                        {
-                                            return c1 < c2;
-                                        });
-            Time = *min;
-            EventQueue.erase(min);
-        }
-        inStream->Produce();
-        orbit.Produce();
-        callStream.Produce();
-        node.Produce();
-        orbit.Append();
-        statCollector.GatherStat();
-    }
+
     auto t2 = high_resolution_clock::now();
     exitSignal.set_value();
     logging.join();
     //  stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
-    std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
-              << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
-    export3DPlot(statCollector.GetDistribution(), args[2]);
-    export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
+    // std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
+    //           << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
+    // export3DPlot(statCollector.GetDistribution(), args[2]);
+    // export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
     return 0;
 }

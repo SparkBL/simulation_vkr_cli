@@ -32,6 +32,29 @@ public:
 		producers_.at(to_label)->SlotAt(to_slot)->Connect(r);
 		producers_.at(from_label)->SlotAt(from_slot)->Connect(r);
 	}
+
+	void Simulate()
+	{
+		while (Time < End)
+		{
+			if (!EventQueue.empty())
+			{
+				auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
+											[](double c1, double c2)
+											{
+												return c1 < c2;
+											});
+				Time = *min;
+				EventQueue.erase(min);
+			}
+			/*inStream->Produce();
+			orbit.Produce();
+			callStream.Produce();
+			node.Produce();
+			orbit.Append();
+			statCollector.GatherStat();*/
+		}
+	}
 };
 
 std::vector<double> EventQueue;
