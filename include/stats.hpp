@@ -5,6 +5,7 @@
 #include "env.hpp"
 #include "router.hpp"
 #include "request.hpp"
+#include "math.h"
 //#include "easy/profiler.h"
 struct IntervalStat
 {
@@ -168,6 +169,23 @@ public:
         for (auto it = intervalStats.begin(); it != intervalStats.end(); it++)
             sum += double(it->called);
         return sum / double(intervalStats.size());
+    }
+
+    double GetMeanSqInput()
+    {
+        double sum = 0;
+        for (auto it = intervalStats.begin(); it != intervalStats.end(); it++)
+            sum += double(it->input) * double(it->input);
+        return sum / double(intervalStats.size());
+    }
+
+    double GetDispersionInput()
+    {
+        return GetMeanSqInput() - GetMeanInput() * GetMeanInput();
+    }
+    double GetVariationInput()
+    {
+        return std::sqrt(GetDispersionInput()) / GetMeanInput();
     }
 };
 
