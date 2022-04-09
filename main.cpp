@@ -89,7 +89,8 @@ int main(int argc, char *argv[])
                                 std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
                                 std::this_thread::sleep_for(1000ms);
                             }
-                            std::cout << std::endl; });
+                            std::cout << std::endl;
+                        });
     Init();
     while (Time < End)
     {
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
     //  stat.join();
     duration<double, std::milli> elapsed = t2 - t1;
     std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
-              << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled();
+              << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled() << "; Var input - " << statCollector.GetVariationIntervalInput() << "; Disp input: " << statCollector.GetDispersionIntervalInput();
     export3DPlot(statCollector.GetDistribution(), args[2]);
     export2DPlot(statCollector.GetSummaryDistribution(), "summary" + args[2]);
     return 0;

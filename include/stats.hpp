@@ -16,6 +16,8 @@ struct IntervalStat
 class StatCollector
 {
     std::vector<IntervalStat> intervalStats;
+    std::vector<double> inputDeltas;
+    double lastDelta = 0;
     Router *outputChannel;
     IntervalStat cur;
     double curInterval;
@@ -43,6 +45,8 @@ public:
             {
             case TypeInput:
                 cur.input++;
+                inputDeltas.push_back(r.StatusChangeAt - lastDelta);
+                lastDelta = r.StatusChangeAt;
                 break;
             case TypeCalled:
                 cur.called++;
@@ -171,7 +175,32 @@ public:
         return sum / double(intervalStats.size());
     }
 
-    double GetMeanSqInput()
+    double GetMeanIntervalInput()
+    {
+        double sum = 0;
+        for (auto it = inputDeltas.begin(); it != inputDeltas.end(); it++)
+            sum += *it;
+        return sum / double(inputDeltas.size());
+    }
+
+    double GetSqMeanIntervalInput()
+    {
+        double sum = 0;
+        for (auto it = inputDeltas.begin(); it != inputDeltas.end(); it++)
+            sum += *it * *it;
+        return sum / double(inputDeltas.size());
+    }
+    double GetDispersionIntervalInput()
+    {
+        return GetSqMeanIntervalInput() - GetMeanIntervalInput() * GetMeanIntervalInput();
+    }
+
+    double GetVariationIntervalInput()
+    {
+        return std::sqrt(GetDispersionIntervalInput()) / GetMeanIntervalInput();
+    }
+
+    /* double GetMeanSqInput()
     {
         double sum = 0;
         for (auto it = intervalStats.begin(); it != intervalStats.end(); it++)
@@ -186,7 +215,7 @@ public:
     double GetVariationInput()
     {
         return std::sqrt(GetDispersionInput()) / GetMeanInput();
-    }
+    }*/
 };
 
 class TimedStatCollector
