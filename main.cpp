@@ -55,18 +55,18 @@ int main(int argc, char *argv[])
     if (conf.InputType == "mmpp")
         inStream = new MMPP(conf.L, conf.Q, TypeInput, inputChannel);
     if (conf.InputType == "simple")
-        inStream = new SimpleInput(new ExpDelay(conf.LSimple), TypeInput, inputChannel);
+        inStream = new SimpleInput(new ExponentialDelay(conf.LSimple), TypeInput, inputChannel);
 
     Delay *sigmaDelay;
     if (conf.SigmaDelayType == "exp")
-        sigmaDelay = new ExpDelay(conf.Sigma);
+        sigmaDelay = new ExponentialDelay(conf.Sigma);
     if (conf.SigmaDelayType == "uniform")
         sigmaDelay = new UniformDelay(conf.SigmaA, conf.SigmaB);
     if (conf.SigmaDelayType == "gamma")
         sigmaDelay = new GammaDelay(conf.SigmaGammaK, conf.SigmaGammaTeta);
-    SimpleInput callStream(new ExpDelay(conf.Alpha), TypeCalled, calledChannel);
+    SimpleInput callStream(new ExponentialDelay(conf.Alpha), TypeCalled, calledChannel);
     Orbit orbit(sigmaDelay, orbitChannel, orbitAppendChannel);
-    RQTNode node(new ExpDelay(conf.Mu1), new ExpDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
+    RQTNode node(new ExponentialDelay(conf.Mu1), new ExponentialDelay(conf.Mu2), inputChannel, calledChannel, orbitChannel, orbitAppendChannel, outputChannel);
     Time = 0;
     End = conf.End;
     Interval = conf.Interval;

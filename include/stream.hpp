@@ -38,8 +38,8 @@ class MMPP : public IStream
                     if (chance <= sum)
                     {
                         state = i;
-                        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
-                        shiftTime = ExponentialDelay(-Q[state][state]);
+                        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : GetExponentialDelay(L[state])};
+                        shiftTime = GetExponentialDelay(-Q[state][state]);
                         EventQueue.push_back(nextProduce.StatusChangeAt);
                         EventQueue.push_back(shiftTime);
                         return;
@@ -56,10 +56,10 @@ public:
         this->L = L;
         this->Q = Q;
         this->channel = channel;
-        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[0])};
+        nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : GetExponentialDelay(L[0])};
         EventQueue.push_back(nextProduce.StatusChangeAt);
         state = 0;
-        shiftTime = ExponentialDelay(-Q[0][0]);
+        shiftTime = GetExponentialDelay(-Q[0][0]);
         EventQueue.push_back(shiftTime);
     }
 
@@ -69,7 +69,7 @@ public:
         if (nextProduce.StatusChangeAt == Time)
         {
             channel->Push(nextProduce);
-            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : ExponentialDelay(L[state])};
+            nextProduce = Request{Type : RequestType, Status : statusTravel, StatusChangeAt : GetExponentialDelay(L[state])};
             if (nextProduce.StatusChangeAt < shiftTime)
             {
                 EventQueue.push_back(nextProduce.StatusChangeAt);
