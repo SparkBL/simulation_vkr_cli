@@ -2,20 +2,21 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe сборка активного файла",
-            "command": "H:/Programms/msys2/mingw64/bin/g++.exe",
+            "label": "C/C++: g++ сборка активного файла",
+            "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-pthread",
-                "-lpthread",
-                "--std=c++17"
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-I",
+                "./include/",
+                "--std=c++17",
+                "-pthread"
             ],
             "options": {
-                "cwd": "H:/Programms/msys2/mingw64/bin"
+                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$gcc"
