@@ -1,0 +1,75 @@
+{
+    "input": {
+        "type": "mmpp_input",
+        "parameters": {
+            "L": [
+                1,
+                1,
+                1
+            ],
+            "Q": [
+                [
+                    -0.4,
+                    0.3,
+                    0.1
+                ],
+                [
+                    0.5,
+                    -0.6,
+                    0.1
+                ],
+                [
+                    0.3,
+                    0.6,
+                    -0.9
+                ]
+            ],
+            "request_type": 0
+        }
+    },
+    "node": {
+        "type": "rqt_node",
+        "parameters": {
+            "mu_1": {
+                "delay_type": "exponential",
+                "intensity": 3
+            },
+            "mu_2": {
+                "delay_type": "exponential",
+                "intensity": 3
+            }
+        }
+    },
+    "called_input": {
+        "type": "simple_input",
+        "parameters": {
+            "l": {
+                "delay_type": "exponential",
+                "intensity": 0
+            },
+            "request_type": 1
+        }
+    },
+    "orbit": {
+        "type": "orbit",
+        "parameters": {
+            "sigma": {
+                "delay_type": "exponential",
+                "intensity": 0.01
+            }
+        }
+    },
+    "stat": {
+        "type": "stat_collector",
+        "parameters": {
+            "interval": 5
+        }
+    },
+    "end": 15000000,
+    "exports": [
+        "distr",
+        "summary_distr",
+        "chars"
+    ],
+    "export_prefix": "test_"
+}

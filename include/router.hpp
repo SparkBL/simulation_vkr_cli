@@ -3,31 +3,37 @@
 
 #include <queue>
 #include "request.hpp"
+
+// namespace connections
+//{
 class Router
 {
-    std::vector<Request> q;
-
 public:
+    std::vector<Request> q_;
+    friend class InSlot;
+    friend class OutSlot;
+    friend class Slot;
+
     virtual Request Pop()
     {
-        Request ret = q.front();
-        q.erase(q.begin());
+        Request ret = q_.front();
+        q_.erase(q_.begin());
         return ret;
     }
 
     virtual int Len()
     {
-        return q.size();
+        return q_.size();
     }
 
     virtual void Push(Request request)
     {
-        q.push_back(request);
+        q_.push_back(request);
     }
 
     virtual bool IsEmpty()
     {
-        return q.empty();
+        return q_.empty();
     }
 };
 
@@ -53,4 +59,63 @@ public:
     }
 };
 
+class Slot
+{
+protected:
+    Router *r_;
+
+public:
+    Slot(Router *r)
+    {
+        r_ = r;
+    }
+    Slot() {}
+
+    void Connect(Router *in)
+    {
+        r_ = in;
+    }
+};
+
+class InSlot : public Slot
+{
+
+public:
+    InSlot(Router *in) : Slot(in) {}
+    InSlot() : Slot() {}
+
+    int Len()
+    {
+        return Slot::r_->Len();
+    }
+    bool IsEmpty()
+    {
+        return Slot::r_->IsEmpty();
+    }
+
+    Request Pop()
+    {
+        return Slot::r_->Pop();
+    }
+};
+
+class OutSlot : public Slot
+{
+
+public:
+    OutSlot(Router *in) : Slot(in) {}
+    OutSlot() : Slot() {}
+
+    int Len()
+    {
+        return Slot::r_->Len();
+    }
+
+    void Push(Request request)
+    {
+        Slot::r_->Push(request);
+    }
+};
+
+//};
 #endif

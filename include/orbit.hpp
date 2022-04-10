@@ -14,83 +14,94 @@ class IOrbit : public Producer
 public:
     virtual void Append() = 0;
 };
-
-class Orbit : public Producer
+// namespace orbits
+//{
+class Orbit : public IOrbit
 {
 protected:
-    std::vector<Request> requests;
-    Delay *delay;
-    Router *orbitChannel;
-    Router *orbitAppendChannel;
+    std::vector<Request> requests_;
+    Delay *delay_;
+    OutSlot orbit_channel_;
+    InSlot orbit_append_channel_;
 
 public:
-    Orbit(Delay *delay, Router *orbitChannel, Router *orbitAppendChannel)
+    Orbit(Delay *delay)
     {
-        this->delay = delay;
-        this->orbitChannel = orbitChannel;
-        this->orbitAppendChannel = orbitAppendChannel;
+        this->delay_ = delay;
     }
-    void Append()
+    void Append() override
     {
-        while (!orbitAppendChannel->IsEmpty())
+        while (!orbit_append_channel_.IsEmpty())
         {
-            Request req = orbitAppendChannel->Pop();
-            req.StatusChangeAt = delay->Get();
-            EventQueue.push_back(req.StatusChangeAt);
-            requests.push_back(req);
+            Request req = orbit_append_channel_.Pop();
+            req.status_change_at = delay_->Get();
+            EventQueue.push_back(req.status_change_at);
+            requests_.push_back(req);
         }
     }
-    void Produce()
+    void Produce() override
     {
-        for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
+        for (std::vector<Request>::size_type i = 0; i != requests_.size(); i++)
         {
-            if (requests[i].StatusChangeAt == Time)
+            if (requests_[i].status_change_at == Time)
             {
-                orbitChannel->Push(requests[i]);
-                requests.erase(requests.begin() + i);
+                orbit_channel_.Push(requests_[i]);
+                requests_.erase(requests_.begin() + i);
                 return;
             }
         }
     }
+    Slot *SlotAt(std::string slot_name) override
+    {
+        if (slot_name == "orbit_slot")
+            return &orbit_channel_;
+        if (slot_name == "orbit_append_slot")
+            return &orbit_append_channel_;
+        return nullptr;
+    }
+    std::vector<std::string> GetSlotNames() override
+    {
+        return std::vector<std::string>{"orbit_slot", "orbit_append_slot"};
+    }
+    std::string Tag() override { return "orbit"; }
 };
 
-class StateOrbit : Orbit
+/*class StateOrbit : public Orbit
 {
     Router *stateChannel;
-
 public:
-    StateOrbit(Delay *delay, Router *orbitChannel, Router *orbitAppendChannel, Router *stateChannel) : Orbit(delay, orbitChannel, orbitAppendChannel)
+    StateOrbit(Delay *delay, Router *orbit_channel_, Router *orbit_append_channel_, Router *stateChannel) : Orbit(delay, orbit_channel_, orbit_append_channel_)
     {
         this->stateChannel = stateChannel;
     }
     void Append()
     {
-        while (!orbitAppendChannel->IsEmpty())
+        while (!orbit_append_channel_->IsEmpty())
         {
-            Request req = orbitAppendChannel->Pop();
+            Request req = orbit_append_channel_->Pop();
             stateChannel->Push(Request{
-                Type : TypeState,
-                Status : statusArrive,
-                StatusChangeAt : req.StatusChangeAt,
+                type : typeState,
+                status : statusArrive,
+                status_change_at : req.status_change_at,
             });
-            req.StatusChangeAt = delay->Get();
-            EventQueue.push_back(req.StatusChangeAt);
-            requests.push_back(req);
+            req.status_change_at = delay->Get();
+            EventQueue.push_back(req.status_change_at);
+            requests_.push_back(req);
         }
     }
     void Produce()
     {
-        for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
+        for (std::vector<Request>::size_type i = 0; i != requests_.size(); i++)
         {
-            if (requests[i].StatusChangeAt == Time)
+            if (requests_[i].status_change_at == Time)
             {
-                orbitChannel->Push(requests[i]);
-                requests.erase(requests.begin() + i);
-                stateChannel->Push(Request{Type : TypeState, Status : statusLeave, StatusChangeAt : Time});
+                orbit_channel_->Push(requests_[i]);
+                requests_.erase(requests_.begin() + i);
+                stateChannel->Push(Request{type : typeState, status : statusLeave, status_change_at : Time});
                 return;
             }
         }
     }
-};
-
+};*/
+//};
 #endif
