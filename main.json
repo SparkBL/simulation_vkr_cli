@@ -71,5 +71,6 @@
         "summary_distr",
         "chars"
     ],
-    "export_prefix": "test_"
+    "export_prefix": "test_",
+    "export_dir": "results"
 }

@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     json orbit_param = params.at("orbit");
     json stat_param = params.at("stat");
     std::string prefix = params.at("export_prefix").get<std::string>();
+    std::string export_dir = params.at("export_dir").get<std::string>();
     std::vector<std::string> exports = params.at("exports").get<std::vector<std::string>>();
 
     DelayTypeFactory::RegisterFactory("exponential", new ExponentialDelayFactory());
@@ -89,16 +90,16 @@ int main(int argc, char *argv[])
     duration<double, std::milli> elapsed = t2 - t1;
     StatCollector *stat_collector_c = static_cast<StatCollector *>(stat_collector);
     if (std::find(exports.begin(), exports.end(), "distr") != exports.end())
-        exportMatrix(stat_collector_c->GetDistribution(), prefix + "distr.csv");
+        exportMatrix(stat_collector_c->GetDistribution(), "./" + export_dir + "/" + prefix + "distr.csv");
 
     if (std::find(exports.begin(), exports.end(), "summary_distr") != exports.end())
-        exportVector(stat_collector_c->GetSummaryDistribution(), prefix + "summary_distr.csv");
+        exportVector(stat_collector_c->GetSummaryDistribution(), "./" + export_dir + "/" + prefix + "summary_distr.csv");
 
     if (std::find(exports.begin(), exports.end(), "chars") != exports.end())
     {
         std::vector<std::string> labels = {"elapsed", "mean_input", "mean_called", "variation_input", "variation_called"};
         std::vector<double> values = {elapsed.count() / 1000, stat_collector_c->GetMeanInput(), stat_collector_c->GetMeanCalled(), stat_collector_c->GetVariationIntervalInput(), stat_collector_c->GetVariationIntervalCalled()};
-        exportChars(labels, values, prefix + "chars.csv");
+        exportChars(labels, values, "./" + export_dir + "/" + prefix + "chars.csv");
     }
 
     return 0;
