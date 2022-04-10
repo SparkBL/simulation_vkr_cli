@@ -18,8 +18,6 @@ int main(int argc, char *argv[])
     // stringify args
     std::vector<std::string> args(argv, argv + argc);
 
-    // Config conf = ParseConfig(args[1]);
-
     std::ifstream in(args[1], std::ios::in);
     using json = nlohmann::json;
     json params;
@@ -66,19 +64,6 @@ int main(int argc, char *argv[])
     using std::chrono::high_resolution_clock;
     using std::chrono::milliseconds;
     auto t1 = high_resolution_clock::now();
-    /* std::promise<void> exitSignal;
-     std::future<void> futureObj = exitSignal.get_future();
-     std::thread logging([&futureObj]
-                         {
-                              std::cout << "Parameters set. Starting...\n";
-                              while (futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
-                              {
-
-                                  using namespace std::chrono_literals;
-                                  std::cout << "\r\e[K" << std::flush << "Time passed - " << Time;
-                                  std::this_thread::sleep_for(1000ms);
-                              }
-                              std::cout << std::endl; });*/
     Init();
     while (Time < End)
     {
@@ -100,12 +85,8 @@ int main(int argc, char *argv[])
         stat_collector->Produce();
     }
     auto t2 = high_resolution_clock::now();
-    // exitSignal.set_value();
-    // logging.join();
-    //   stat.join();
+
     duration<double, std::milli> elapsed = t2 - t1;
-    // std::cout << "Elapsed - " << elapsed.count() / 1000 << "s" << std::endl
-    //          << "Mean input - " << statCollector.GetMeanInput() << "; Mean called - " << statCollector.GetMeanCalled() << "; Var input - " << statCollector.GetVariationIntervalInput() << "; Disp input: " << statCollector.GetDispersionIntervalInput();
     StatCollector *stat_collector_c = static_cast<StatCollector *>(stat_collector);
     if (std::find(exports.begin(), exports.end(), "distr") != exports.end())
         exportMatrix(stat_collector_c->GetDistribution(), prefix + "distr.csv");
