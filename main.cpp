@@ -99,6 +99,12 @@ int main(int argc, char *argv[])
     {
         std::vector<std::string> labels = {"elapsed", "mean_input", "mean_called", "variation_input", "variation_called"};
         std::vector<double> values = {elapsed.count() / 1000, stat_collector_c->GetMeanInput(), stat_collector_c->GetMeanCalled(), stat_collector_c->GetVariationIntervalInput(), stat_collector_c->GetVariationIntervalCalled()};
+        if (std::find(params.begin(), params.end(), "info") != params.end())
+            for (auto &el : params.at("info").items())
+            {
+                labels.push_back(el.key());
+                values.push_back(el.value());
+            }
         exportChars(labels, values, "./" + export_dir + "/" + prefix + "chars.csv");
     }
 
