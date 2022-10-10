@@ -2,41 +2,23 @@
     "input": {
         "type": "mmpp_input",
         "parameters": {
-            "L": [
-                1,
-                1,
-                1
-            ],
-            "Q": [
-                [
-                    -0.4,
-                    0.3,
-                    0.1
-                ],
-                [
-                    0.5,
-                    -0.6,
-                    0.1
-                ],
-                [
-                    0.3,
-                    0.6,
-                    -0.9
-                ]
-            ],
+            "L": [0.079,0.539,0.102],
+            "Q": [[-0.359,0.191,0.168],
+                [0.286,-0.41,0.123],
+                [0.302,0.075,-0.378]],
             "request_type": 0
-        }
-    },
+			}
+		},
     "node": {
         "type": "rqt_node",
         "parameters": {
             "mu_1": {
                 "delay_type": "exponential",
-                "intensity": 3
+                "intensity": 1.2
             },
             "mu_2": {
                 "delay_type": "exponential",
-                "intensity": 3
+                "intensity": 1.0
             }
         }
     },
@@ -47,7 +29,8 @@
                 "delay_type": "exponential",
                 "intensity": 0
             },
-            "request_type": 1
+            "request_type": 1,
+            "intensity": 0.0
         }
     },
     "orbit": {
@@ -55,22 +38,16 @@
         "parameters": {
             "sigma": {
                 "delay_type": "exponential",
-                "intensity": 0.01
+                "intensity": 0.81
             }
         }
     },
     "stat": {
         "type": "stat_collector",
-        "parameters": {
-            "interval": 5
-        }
+        "parameters": {"interval": 10}
     },
-    "end": 15000000,
-    "exports": [
-        "distr",
-        "summary_distr",
-        "chars"
-    ],
-    "export_prefix": "test_",
-    "export_dir": "results"
+    "end": 10000000,
+    "exports": ["chars","distr"],
+    "export_prefix": "example_",
+    "export_dir": "results",
 }
