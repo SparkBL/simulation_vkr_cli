@@ -1,5 +1,6 @@
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
+
 // namespace enums
 //{
 const int typeInput = 0;
@@ -14,7 +15,7 @@ const int statusArrive = 4;
 //};
 struct Request
 {
-    int type;
+    int rtype;
     int status;
     double status_change_at;
 };

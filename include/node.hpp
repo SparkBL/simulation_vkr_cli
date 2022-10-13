@@ -2,10 +2,15 @@
 #define NODE_HPP
 
 #include "delay.hpp"
-#include "env.hpp"
+#include "model.hpp"
 #include "producer.hpp"
 #include "router.hpp"
 #include "request.hpp"
+#include <unordered_map>
+#include <utils.hpp>
+#include "python3.8/Python.h"
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 // namespace nodes
 //{
 class RQTNode : public Producer
@@ -26,11 +31,13 @@ public:
         this->input_delay_ = input_delay;
         this->called_delay_ = called_delay;
         this->now_serving_ = Request{status : statusServed};
+        inputs_ = {{"in_slot", &in_channel_}, {"called_slot", &call_channel_}, {"orbit_slot", &orbit_channel_}};
+        outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
     }
 
-    void Produce() override
+    std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == Time)
+        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
         {
             now_serving_.status = statusServed;
             out_channel_.Push(now_serving_);
@@ -44,9 +51,9 @@ public:
             else
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.status_change_at = input_delay_->Get();
+                now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
         }
 
@@ -59,9 +66,9 @@ public:
             else
             {
                 now_serving_ = orbit_channel_.Pop();
-                now_serving_.status_change_at = input_delay_->Get();
+                now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
         }
 
@@ -70,40 +77,25 @@ public:
             if (now_serving_.status != statusServing)
             {
                 now_serving_ = call_channel_.Pop();
-                now_serving_.status_change_at = called_delay_->Get();
+                now_serving_.status_change_at = called_delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
             else
             {
                 call_channel_.Pop();
             }
         }
+        return GetEvents();
     }
 
-    Slot *SlotAt(std::string slot_name) override
+    std::string Tag() override
     {
-        if (slot_name == "in_slot")
-            return &in_channel_;
-        if (slot_name == "called_slot")
-            return &call_channel_;
-        if (slot_name == "orbit_slot")
-            return &orbit_channel_;
-        if (slot_name == "orbit_append_slot")
-            return &orbit_append_channel_;
-        if (slot_name == "out_slot")
-            return &out_channel_;
-        return nullptr;
+        return "rqt_node";
     }
-
-    std::vector<std::string> GetSlotNames() override
-    {
-        return std::vector<std::string>{"in_slot", "called_slot", "orbit_slot", "orbit_append_slot", "out_slot"};
-    }
-
-    std::string Tag() override { return "rqt_node"; }
 };
 
+/*
 class SimpleNode : public Producer
 {
     Request now_serving_;
@@ -222,5 +214,5 @@ public:
     }
     std::string Tag() override { return "rq_node"; }
 };
-//};
+//};*/
 #endif

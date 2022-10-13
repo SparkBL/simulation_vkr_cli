@@ -1,112 +1,117 @@
-#include <iostream>
-#include <fstream>
-#include <chrono>
-#include <memory>
-#include <vector>
-#include <algorithm>
-#include <thread>
-#include <future>
-
-#include "env.hpp"
+#include "model.hpp"
 #include "orbit.hpp"
-#include "stats.hpp"
+//#include "stats.hpp"
 #include "utils.hpp"
-#include "factory.hpp"
+#include "node.hpp"
+#include "stream.hpp"
+#include "router.hpp"
+#include "request.hpp"
+#include "python3.8/Python.h"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/complex.h>
+#include <pybind11/functional.h>
+#include <pybind11/chrono.h>
+#include <pybind11/stl_bind.h>
+namespace py = pybind11;
+PYBIND11_MAKE_OPAQUE(std::vector<double, std::allocator<double>>);
 
-int main(int argc, char *argv[])
+PYBIND11_MODULE(rq, m)
 {
-    // stringify args
-    std::vector<std::string> args(argv, argv + argc);
+    m.doc() = "Python library for retrial queuing system modeling";
+    /* py::class_<std::vector<double, std::allocator<double>>>(m, "FloatVector")
+         .def(py::init<>())
+         .def("clear", &std::vector<double, std::allocator<double>>::clear)
+         .def("pop_back", &std::vector<double, std::allocator<double>>::pop_back)
+         .def("__len__", [](const std::vector<double, std::allocator<double>> &v)
+              { return v.size(); })
+         .def(
+             "__iter__", [](std::vector<double, std::allocator<double>> &v)
+             { return py::make_iterator(v.begin(), v.end()); },
+             py::keep_alive<0, 1>());*/
+    py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector");
+    py::class_<Request>(m, "Request")
+        .def(py::init())
+        .def_readwrite("rtype", &Request::rtype)
+        .def_readwrite("status", &Request::status)
+        .def_readwrite("status_change_at", &Request::status_change_at);
+    m.attr("TYPE_INPUT") = py::int_(typeInput);
+    m.attr("TYPE_CALLED") = py::int_(typeCalled);
+    m.attr("TYPE_STATE") = py::int_(typeState);
 
-    std::ifstream in(args[1], std::ios::in);
-    using json = nlohmann::json;
-    json params;
-    in >> params;
+    m.attr("STATUS_TRAVEL") = py::int_(statusTravel);
+    m.attr("STATUS_SERVING") = py::int_(statusServing);
+    m.attr("STATUS_SERVED") = py::int_(statusServed);
+    m.attr("STATUS_LEAVE") = py::int_(statusLeave);
+    m.attr("STATUS_ARRIVE") = py::int_(statusArrive);
 
-    json input_param = params.at("input");
-    json called_input_param = params.at("called_input");
-    json node_param = params.at("node");
-    json orbit_param = params.at("orbit");
-    json stat_param = params.at("stat");
-    std::string prefix = params.at("export_prefix").get<std::string>();
-    std::string export_dir = params.at("export_dir").get<std::string>();
-    std::vector<std::string> exports = params.at("exports").get<std::vector<std::string>>();
+    py::class_<Producer>(m, "Producer")
+        .def("produce", &Producer::Produce)
+        .def("input_connect", &Producer::InputAtConnect)
+        .def("output_connect", &Producer::OutputAtConnect)
+        .def("inputs", &Producer::Inputs)
+        .def("outputs", &Producer::Outputs)
+        .def("tag", &Producer::Tag)
+        .def_readwrite("queue", &Producer::queue, py::return_value_policy::automatic_reference);
 
-    DelayTypeFactory::RegisterFactory("exponential", new ExponentialDelayFactory());
-    DelayTypeFactory::RegisterFactory("uniform", new UniformDelayFactory());
-    DelayTypeFactory::RegisterFactory("gamma", new GammaDelayFactory());
+    py::class_<Model>(m, "RqModel")
+        .def(py::init())
+        .def("init", &Model::Init)
+        .def("add_connection", &Model::AddConnection)
+        .def("add_connection", &Model::AddProducer)
+        .def("next_step", &Model::NextStep)
+        .def("aggregate", &Model::Aggregate)
+        .def_readwrite("time", &Model::time)
+        .def_readwrite("end", &Model::end)
+        .def_readwrite("event_queue", &Model::event_queue);
 
-    ProducerTypeFactory::RegisterFactory("simple_node", new SimpleNodeFactory());
-    ProducerTypeFactory::RegisterFactory("rq_node", new RQNodeFactory());
-    ProducerTypeFactory::RegisterFactory("rqt_node", new RQTNodeFactory());
-    ProducerTypeFactory::RegisterFactory("simple_input", new SimpleInputFactory());
-    ProducerTypeFactory::RegisterFactory("mmpp_input", new MMPPFactory());
-    ProducerTypeFactory::RegisterFactory("orbit", new OrbitFactory());
+    py::class_<Router>(m, "Router")
+        .def(py::init())
+        .def("pop", &Router::Pop)
+        .def("len", &Router::Len)
+        .def("push", &Router::Push)
+        .def("is_empty", &Router::IsEmpty)
+        .def_readwrite("__q__", &Router::q_);
 
-    ProducerTypeFactory::RegisterFactory("stat_collector", new StatCollectorFactory());
+    py::class_<Slot>(m, "Slot")
+        .def(py::init<Router *>())
+        .def("connect", &Slot::Connect);
 
-    Producer
-        *input = ProducerTypeFactory::Create(input_param.at("type").get<std::string>(), input_param.at("parameters")),
-        *called_input = ProducerTypeFactory::Create(called_input_param.at("type").get<std::string>(), called_input_param.at("parameters")),
-        *node = ProducerTypeFactory::Create(node_param.at("type").get<std::string>(), node_param.at("parameters")),
-        *stat_collector = ProducerTypeFactory::Create(stat_param.at("type").get<std::string>(), stat_param.at("parameters"));
-    IOrbit *orbit = static_cast<IOrbit *>(ProducerTypeFactory::Create(orbit_param.at("type").get<std::string>(), orbit_param.at("parameters")));
+    py::class_<InSlot, Slot>(m, "InSlot")
+        .def(py::init<Router *>())
+        .def("pop", &InSlot::Pop)
+        .def("len", &InSlot::Len)
+        .def("is_empty", &InSlot::IsEmpty);
 
-    AddConnection(input, "out_slot", node, "in_slot");
-    AddConnection(called_input, "out_slot", node, "called_slot");
-    AddConnection(orbit, "orbit_slot", node, "orbit_slot");
-    AddConnection(node, "orbit_append_slot", orbit, "orbit_append_slot");
-    AddConnection(node, "out_slot", stat_collector, "in_slot");
-    Time = 0;
-    End = params.at("end").get<double>();
+    py::class_<OutSlot, Slot>(m, "OutSlot")
+        .def(py::init<Router *>())
+        .def("len", &OutSlot::Len)
+        .def("push", &OutSlot::Push);
 
-    using std::chrono::duration;
-    using std::chrono::duration_cast;
-    using std::chrono::high_resolution_clock;
-    using std::chrono::milliseconds;
-    auto t1 = high_resolution_clock::now();
-    Init();
-    while (Time < End)
-    {
-        if (!EventQueue.empty())
-        {
-            auto min = std::min_element(std::begin(EventQueue), std::end(EventQueue),
-                                        [](double c1, double c2)
-                                        {
-                                            return c1 < c2;
-                                        });
-            Time = *min;
-            EventQueue.erase(min);
-        }
-        input->Produce();
-        orbit->Produce();
-        called_input->Produce();
-        node->Produce();
-        orbit->Append();
-        stat_collector->Produce();
-    }
-    auto t2 = high_resolution_clock::now();
+    m.attr("FLOAT_EQ_THRESHOLD") = py::float_(float64_equality_threshold);
 
-    duration<double, std::milli> elapsed = t2 - t1;
-    StatCollector *stat_collector_c = static_cast<StatCollector *>(stat_collector);
-    if (std::find(exports.begin(), exports.end(), "distr") != exports.end())
-        exportMatrix(stat_collector_c->GetDistribution(), "./" + export_dir + "/" + prefix + "distr.csv");
+    py::class_<Delay>(m, "Delay")
+        .def("get", &Delay::Get);
 
-    if (std::find(exports.begin(), exports.end(), "summary_distr") != exports.end())
-        exportVector(stat_collector_c->GetSummaryDistribution(), "./" + export_dir + "/" + prefix + "summary_distr.csv");
+    py::class_<ExponentialDelay, Delay>(m, "ExponentialDelay")
+        .def(py::init<double>());
 
-    if (std::find(exports.begin(), exports.end(), "chars") != exports.end())
-    {
-        std::vector<std::string> labels = {"elapsed", "mean_input", "mean_called", "variation_input", "variation_called"};
-        std::vector<double> values = {elapsed.count() / 1000, stat_collector_c->GetMeanInput(), stat_collector_c->GetMeanCalled(), stat_collector_c->GetVariationIntervalInput(), stat_collector_c->GetVariationIntervalCalled()};
-        if (std::find(params.begin(), params.end(), "info") != params.end())
-            for (auto &el : params.at("info").items())
-            {
-                labels.push_back(el.key());
-                values.push_back(el.value());
-            }
-        exportChars(labels, values, "./" + export_dir + "/" + prefix + "chars.csv");
-    }
+    py::class_<UniformDelay, Delay>(m, "UniformDelay")
+        .def(py::init<double, double>());
 
-    return 0;
+    py::class_<GammaDelay, Delay>(m, "GammaDelay")
+        .def(py::init<double, double>());
+
+    m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
+
+    py::class_<RQTNode, Producer>(m, "RqtNode")
+        .def(py::init<Delay *, Delay *>());
+
+    py::class_<SimpleInput, Producer>(m, "SimpleInput")
+        .def(py::init<Delay *, int, double>());
+
+    py::class_<IOrbit, Producer>(m, "IOrbit")
+        .def("append", &IOrbit::Append);
+    py::class_<Orbit, IOrbit>(m, "Orbit")
+        .def(py::init<Delay *>());
 }

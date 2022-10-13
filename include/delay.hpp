@@ -1,12 +1,12 @@
 #ifndef DELAY_HPP
 #define DELAY_HPP
-#include "env.hpp"
 #include "math.h"
 #include <ctime>
 #include <random>
 #include <vector>
 #include <time.h>
-//namespace delays
+
+// namespace delays
 //{
 const double float64_equality_threshold = 1e-11;
 std::random_device rd;
@@ -15,7 +15,7 @@ std::uniform_real_distribution<double> distribution(0, 1);
 class Delay
 {
 public:
-    virtual double Get() = 0;
+    virtual double Get(double time) = 0;
 };
 
 class ExponentialDelay : public Delay
@@ -29,9 +29,9 @@ public:
         this->intensity_ = intensity;
         aws_ = std::exponential_distribution<double>(intensity_);
     }
-    double Get() override
+    double Get(double time) override
     {
-        return aws_(gen) + Time;
+        return aws_(gen) + time;
     }
 };
 
@@ -47,9 +47,9 @@ public:
         this->b_ = b;
         aws_ = std::uniform_real_distribution<double>(a_, b_);
     }
-    double Get() override
+    double Get(double time) override
     {
-        return aws_(gen) + Time;
+        return aws_(gen) + time;
     }
 };
 
@@ -65,21 +65,22 @@ public:
         this->teta_ = teta;
         aws_ = std::gamma_distribution<double>(k_, teta_);
     }
-    double Get() override
+    double Get(double time) override
     {
-        return aws_(gen) + Time;
+        return aws_(gen) + time;
     }
 };
 
-inline double GetExponentialDelay(double intensity)
+inline double GetExponentialDelay(double intensity, double time)
 {
     auto aws = std::exponential_distribution<double>(intensity);
-    return aws(gen) + Time;
+    return aws(gen) + time;
 }
 
 inline double NextDouble()
 {
     return distribution(gen);
 }
+
 //};
 #endif

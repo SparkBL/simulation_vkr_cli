@@ -3,7 +3,6 @@
 
 #include <queue>
 #include "request.hpp"
-
 // namespace connections
 //{
 class Router

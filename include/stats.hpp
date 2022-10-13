@@ -2,10 +2,11 @@
 #define STATS_HPP
 
 #include <vector>
-#include "env.hpp"
 #include "router.hpp"
 #include "request.hpp"
+#include "producer.hpp"
 #include "math.h"
+#include <unordered_map>
 //#include "easy/profiler.h"
 struct IntervalStat
 {
@@ -33,9 +34,11 @@ public:
         this->cur_ = IntervalStat{input : 0, called : 0};
         this->last_delta_input_ = 0;
         this->last_delta_called_ = 0;
+        outputs_ = {};
+        inputs_ = {{"in_slot", &output_channel_}};
     }
 
-    void Produce() override
+    std::vector<double> Produce(double time) override
     {
         while (!output_channel_.IsEmpty())
         {
@@ -46,7 +49,7 @@ public:
                 cur_ = IntervalStat{input : 0, called : 0};
                 cur_interval_ += interval_;
             }
-            switch (r.type)
+            switch (r.rtype)
             {
             case typeInput:
                 cur_.input++;
@@ -60,6 +63,7 @@ public:
                 break;
             }
         }
+        return GetEvents();
     }
 
     std::vector<std::vector<double>> GetDistribution()
@@ -232,18 +236,10 @@ public:
         return std::sqrt(GetDispersionIntervalCalled()) / GetMeanIntervalCalled();
     }
 
-    Slot *SlotAt(std::string slot_name) override
+    std::string Tag() override
     {
-        if (slot_name == "in_slot")
-            return &output_channel_;
-        return nullptr;
+        return "stat_collector";
     }
-
-    std::vector<std::string> GetSlotNames() override
-    {
-        return std::vector<std::string>{"in_slot"};
-    }
-    std::string Tag() override { return "stat_collector"; }
 };
 /*
 class TimedStatCollector

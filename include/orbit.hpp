@@ -1,7 +1,6 @@
 #ifndef ORBIT_HPP
 #define ORBIT_HPP
 
-#include "env.hpp"
 #include "producer.hpp"
 #include "delay.hpp"
 #include "router.hpp"
@@ -12,7 +11,7 @@
 class IOrbit : public Producer
 {
 public:
-    virtual void Append() = 0;
+    virtual std::vector<double> Append(double time) = 0;
 };
 // namespace orbits
 //{
@@ -28,41 +27,35 @@ public:
     Orbit(Delay *delay)
     {
         this->delay_ = delay;
+        inputs_ = {{"in_slot", &orbit_append_channel_}};
+        outputs_ = {{"out_slot", &orbit_channel_}};
     }
-    void Append() override
+
+    std::vector<double> Append(double time) override
     {
         while (!orbit_append_channel_.IsEmpty())
         {
             Request req = orbit_append_channel_.Pop();
-            req.status_change_at = delay_->Get();
-            EventQueue.push_back(req.status_change_at);
+            req.status_change_at = delay_->Get(time);
+            queue.push_back(req.status_change_at);
             requests_.push_back(req);
         }
+        return GetEvents();
     }
-    void Produce() override
+    std::vector<double> Produce(double time) override
     {
         for (std::vector<Request>::size_type i = 0; i != requests_.size(); i++)
         {
-            if (requests_[i].status_change_at == Time)
+            if (requests_[i].status_change_at == time)
             {
                 orbit_channel_.Push(requests_[i]);
                 requests_.erase(requests_.begin() + i);
-                return;
+                return std::vector<double>();
             }
         }
+        return std::vector<double>();
     }
-    Slot *SlotAt(std::string slot_name) override
-    {
-        if (slot_name == "orbit_slot")
-            return &orbit_channel_;
-        if (slot_name == "orbit_append_slot")
-            return &orbit_append_channel_;
-        return nullptr;
-    }
-    std::vector<std::string> GetSlotNames() override
-    {
-        return std::vector<std::string>{"orbit_slot", "orbit_append_slot"};
-    }
+
     std::string Tag() override { return "orbit"; }
 };
 
@@ -80,7 +73,7 @@ public:
         {
             Request req = orbit_append_channel_->Pop();
             stateChannel->Push(Request{
-                type : typeState,
+                rtype : typeState,
                 status : statusArrive,
                 status_change_at : req.status_change_at,
             });

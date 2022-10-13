@@ -10,9 +10,9 @@ void exportMatrix(std::vector<std::vector<double>> unr, std::string filename)
 {
     std::ofstream file(filename);
 
-    for (int i = 0; i < unr.size(); i++)
+    for (size_t i = 0; i < unr.size(); i++)
     {
-        for (int j = 0; j < unr[i].size(); j++)
+        for (size_t j = 0; j < unr[i].size(); j++)
         {
             if (!(unr[i][j] > 0.0000000))
                 unr[i][j] = 0;
@@ -51,4 +51,14 @@ void exportChars(std::vector<std::string> labels, std::vector<double> values, st
     file.close();
 }
 
+template <typename TK, typename TV>
+std::vector<TK> extract_keys(std::unordered_map<TK, TV> const &input_map)
+{
+    std::vector<TK> retval;
+    for (auto const &element : input_map)
+    {
+        retval.push_back(element.first);
+    }
+    return retval;
+}
 #endif
