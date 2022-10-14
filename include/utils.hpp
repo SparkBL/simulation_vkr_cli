@@ -5,7 +5,8 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
-
+#include <cstdio>
+#include <cassert>
 void exportMatrix(std::vector<std::vector<double>> unr, std::string filename)
 {
     std::ofstream file(filename);
@@ -60,5 +61,19 @@ std::vector<TK> extract_keys(std::unordered_map<TK, TV> const &input_map)
         retval.push_back(element.first);
     }
     return retval;
+}
+
+template <typename... Args>
+std::string string_sprintf(const char *format, Args... args)
+{
+    int length = std::snprintf(nullptr, 0, format, args...);
+    assert(length >= 0);
+
+    char *buf = new char[length + 1];
+    std::snprintf(buf, length + 1, format, args...);
+
+    std::string str(buf);
+    delete[] buf;
+    return str;
 }
 #endif

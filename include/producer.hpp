@@ -19,8 +19,8 @@ public:
 
     virtual void OutputAtConnect(std::string slot_name, Router *router)
     {
-        int a = this->inputs_.size()
-        // return this->inputs_.find(slot_name)->second->Connect(router);
+
+        return this->outputs_.find(slot_name)->second->Connect(router);
     }
 
     virtual std::vector<std::string> Inputs()
