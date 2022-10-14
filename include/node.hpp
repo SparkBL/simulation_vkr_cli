@@ -9,8 +9,6 @@
 #include <unordered_map>
 #include <utils.hpp>
 #include "python3.8/Python.h"
-#include <pybind11/pybind11.h>
-namespace py = pybind11;
 // namespace nodes
 //{
 class RQTNode : public Producer

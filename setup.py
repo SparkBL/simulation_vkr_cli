@@ -5,7 +5,7 @@ from pybind11 import get_cmake_dir
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 # The main interface is through Pybind11Extension.
 # * You can add cxx_std=11/14/17, and then build_ext can be removed.
@@ -29,10 +29,10 @@ ext_modules = [
 setup(
     name="rq_simulation",
     version=__version__,
-    author="Sylvain Corlay",
-    author_email="sylvain.corlay@gmail.com",
-    url="https://github.com/pybind/python_example",
-    description="A test project using pybind11",
+    author="Alexey Blaginin",
+    author_email="alex-b.l@yandex.ru",
+    url="https://github.com/SparkBL/simulation_vkr_cli/tree/py_lib",
+    description="RQ system simulation tool",
     long_description="",
     ext_modules=ext_modules,
    # extras_require={"test": "pytest"},

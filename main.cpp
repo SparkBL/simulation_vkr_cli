@@ -87,8 +87,8 @@ PYBIND11_MODULE(rq, m)
         .def_readwrite("time", &Model::time)
         .def_readwrite("end", &Model::end)
         .def_readwrite("event_queue", &Model::event_queue)
-        .def_readonly("components", &Model::Components, py::return_value_policy::reference_internal)
-        .def_readonly("routers", &Model::Routers, py::return_value_policy::reference_internal);
+        .def_readwrite("components", &Model::components, py::return_value_policy::reference_internal)
+        .def_readwrite("routers", &Model::routers, py::return_value_policy::reference_internal);
 
     py::class_<Router>(m, "Router")
         .def(py::init())
