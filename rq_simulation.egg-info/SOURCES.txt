@@ -1,9 +1,0 @@
-README.rst
-setup.py
-rq_simulation.egg-info/PKG-INFO
-rq_simulation.egg-info/SOURCES.txt
-rq_simulation.egg-info/dependency_links.txt
-rq_simulation.egg-info/not-zip-safe
-rq_simulation.egg-info/requires.txt
-rq_simulation.egg-info/top_level.txt
-src/binding.cpp
