@@ -35,7 +35,7 @@ setup(
     ext_modules=ext_modules,
     extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
-    url="https://github.com/SparkBL/simulation_vkr_cli/tree/py_lib",
+    url="https://github.com/SparkBL/simulation_vkr_cli.git",
     zip_safe=False,
     install_requires=[
         "numpy"
