@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "router.hpp"
 #include "producer.hpp"
-#include <cmath>
 
 class Model
 {
@@ -53,13 +52,11 @@ public:
 			auto min = std::min_element(std::begin(event_queue), std::end(event_queue),
 										[](double c1, double c2)
 										{
-											return c1 < c2 && !std::isinf(c2);
+											return c1 < c2;
 										});
 			time = *min;
 			event_queue.erase(min);
-			return time;
 		}
-		time = end;
 		return time;
 	}
 

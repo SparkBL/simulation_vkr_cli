@@ -10,7 +10,7 @@ model.add_producer(rq.MMPPInput(
     [[-0.359,0.191,0.168],
     [0.286,-0.41,0.123],
     [0.302,0.075,-0.378]],0,0),"input")
-model.add_producer(rq.SimpleInput(rq.ExponentialDelay(0),1,0),"call")
+model.add_producer(rq.SimpleInput(rq.ExponentialDelay(0.6),1,0),"call")
 model.add_producer(rq.Orbit(rq.ExponentialDelay(0.81)),"orbit")
 model.add_producer(rq.RqtNode(rq.ExponentialDelay(1.3),rq.ExponentialDelay(1)),"node")
 model.add_producer(rq.StatCollector(10),"stat")
@@ -38,13 +38,15 @@ while True:
         
     #    print("Inoking call",model.components["call"])
         model.aggregate(model.components["call"].produce(t))
-        print(model.event_queue)
+        
     #    print("Inoking node",model.components["node"])
         model.aggregate(model.components["node"].produce(t))
     #    print("Inoking orbit append",model.components["orbit"])
         model.aggregate(model.components["orbit"].append(t))
+
+        model.aggregate(model.components["stat"].produce(t))
         if model.is_done():
             break
 print("Time: ",model.time)
 print("Iters: ",c)
-print("Mean input:",model.components["stat"].get_mean_input())
+print("Mean input:",model.components["stat"].get_distribution2d())
