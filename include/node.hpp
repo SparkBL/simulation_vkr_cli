@@ -29,7 +29,7 @@ public:
         this->input_delay_ = input_delay;
         this->called_delay_ = called_delay;
         this->now_serving_ = Request{status : statusServed};
-        inputs_ = {{"in_slot", &in_channel_}, {"called_slot", &call_channel_}, {"orbit_slot", &orbit_channel_}};
+        inputs_ = {{"in_slot", &in_channel_}, {"call_slot", &call_channel_}, {"orbit_slot", &orbit_channel_}};
         outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
     }
 

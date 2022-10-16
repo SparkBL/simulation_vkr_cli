@@ -52,7 +52,7 @@ PYBIND11_MODULE(rq_simulation, m)
     //  py::bind_map<std::unordered_map<std::string, Router *>>(m, "Connections");
     //  py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector", py::buffer_protocol());
     //    py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
-    py::class_<Request>(m, "Request", "Basic unit of simulation")
+    py::class_<Request>(m, "Request", "Basic unit of simulation", py::dynamic_attr())
         .def(py::init())
         .def_readwrite("rtype", &Request::rtype)
         .def_readwrite("status", &Request::status)
@@ -83,11 +83,12 @@ PYBIND11_MODULE(rq_simulation, m)
         .def("tag", &Producer::Tag)
         .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference);
     py::class_<Model>(m, "RqModel")
-        .def(py::init())
-        .def("add_connection", &Model::AddConnection, "from"_a, "from_slot"_a, "to"_a, "to_slot"_a)
-        .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::arg().noconvert())
+        .def(py::init<double>(), "end"_a = 1000)
+        .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a)
+        .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>())
         .def("next_step", &Model::NextStep)
         .def("aggregate", &Model::Aggregate, "events"_a)
+        .def("is_done", &Model::IsDone)
         .def_readwrite("time", &Model::time)
         .def_readwrite("end", &Model::end)
         .def_readwrite("event_queue", &Model::event_queue, py::return_value_policy::reference)
@@ -134,10 +135,10 @@ PYBIND11_MODULE(rq_simulation, m)
     m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
-        .def(py::init<Delay *, Delay *>(), "input_delay"_a, "called_delay"_a);
+        .def(py::init<Delay *, Delay *>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>());
 
     py::class_<SimpleInput, Producer>(m, "SimpleInput")
-        .def(py::init<Delay *, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0);
+        .def(py::init<Delay *, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());
 
     py::class_<MMPP, Producer>(m, "MMPPInput")
         .def(py::init<std::vector<double>, std::vector<std::vector<double>>, int, double>(), "lambda"_a, "Q"_a, "request_type"_a = typeInput, "init_time"_a = 0);
@@ -145,7 +146,7 @@ PYBIND11_MODULE(rq_simulation, m)
     py::class_<IOrbit, Producer>(m, "IOrbit")
         .def("append", &IOrbit::Append, "time"_a);
     py::class_<Orbit, IOrbit>(m, "Orbit")
-        .def(py::init<Delay *>(), "delay"_a);
+        .def(py::init<Delay *>(), "delay"_a, py::keep_alive<1, 2>());
 
     py::class_<StatCollector, Producer>(m, "StatCollector")
         .def(py::init<double>(), "interval"_a)

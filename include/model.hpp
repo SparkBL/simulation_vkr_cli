@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "router.hpp"
 #include "producer.hpp"
+#include <cmath>
 
 class Model
 {
@@ -14,25 +15,27 @@ public:
 	double end;
 	std::unordered_map<std::string, Producer *> components;
 	std::unordered_map<std::string, Router *> routers;
-	Model()
+	Model(double end = 1000)
 	{
+		time = 0;
+		this->end = end;
 		components = {};
 		routers = {};
-		event_queue.reserve(10);
+		event_queue = {};
 	}
 
-	void AddConnection(Producer *from, std::string from_slot, Producer *to, std::string to_slot)
+	void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
 	{
 		Router *r;
-		if (routers.count(to->Tag() + "_" + to_slot))
-			r = routers.at(to->Tag() + "_" + to_slot);
+		if (routers.count(to_producer + "_" + to_slot))
+			r = routers.at(to_producer + "_" + to_slot);
 		else
 		{
 			r = new Router();
-			routers.insert(std::pair<std::string, Router *>(to->Tag() + "_" + to_slot, r));
+			routers.insert(std::pair<std::string, Router *>(to_producer + "_" + to_slot, r));
 		}
-		to->InputAtConnect(to_slot, r);
-		from->OutputAtConnect(from_slot, r);
+		components.at(to_producer)->InputAtConnect(to_slot, r);
+		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}
 
 	void AddProducer(Producer *producer, std::string label)
@@ -44,18 +47,25 @@ public:
 
 	double NextStep()
 	{
-		double t = 0;
 		if (!event_queue.empty())
 		{
+
 			auto min = std::min_element(std::begin(event_queue), std::end(event_queue),
 										[](double c1, double c2)
 										{
-											return c1 < c2;
+											return c1 < c2 && !std::isinf(c2);
 										});
-			t = *min;
+			time = *min;
 			event_queue.erase(min);
+			return time;
 		}
-		return t;
+		time = end;
+		return time;
+	}
+
+	bool IsDone()
+	{
+		return time >= end;
 	}
 
 	void Aggregate(std::vector<double> events)
