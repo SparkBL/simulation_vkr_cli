@@ -8,7 +8,6 @@
 #include "request.hpp"
 #include <unordered_map>
 #include <utils.hpp>
-#include "python3.8/Python.h"
 // namespace nodes
 //{
 class RQTNode : public Producer
