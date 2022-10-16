@@ -6,39 +6,40 @@
 #include "router.hpp"
 #include "producer.hpp"
 
-double Time;
-double End;
-double Interval;
-
-struct Model
+class Model
 {
-	std::unordered_map<std::string, Producer> components;
+public:
 	std::vector<double> event_queue;
 	double time;
 	double end;
-	std::unordered_map<std::string, Router> routers;
-	void Init()
+	std::unordered_map<std::string, Producer *> components;
+	std::unordered_map<std::string, Router *> routers;
+	Model()
 	{
+		components = {};
+		routers = {};
 		event_queue.reserve(10);
 	}
 
 	void AddConnection(Producer *from, std::string from_slot, Producer *to, std::string to_slot)
 	{
-		Router r;
+		Router *r;
 		if (routers.count(to->Tag() + "_" + to_slot))
-			r = routers.at(to->Tag() + to_slot);
+			r = routers.at(to->Tag() + "_" + to_slot);
 		else
 		{
-			r = Router();
-			routers.insert(std::pair<std::string, Router>(to->Tag() + "_" + to_slot, r));
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(to->Tag() + "_" + to_slot, r));
 		}
-		to->InputAtConnect(to_slot, &r);
-		from->OutputAtConnect(from_slot, &r);
+		to->InputAtConnect(to_slot, r);
+		from->OutputAtConnect(from_slot, r);
 	}
 
 	void AddProducer(Producer *producer, std::string label)
 	{
-		components.insert(std::pair<std::string, Producer>(label, *producer));
+		// components.insert(std::pair<std::string, Producer *>(label, producer));
+		components.insert(components.end(), std::pair<std::string, Producer *>(label, producer));
+		// components[label] = producer;
 	}
 
 	double NextStep()

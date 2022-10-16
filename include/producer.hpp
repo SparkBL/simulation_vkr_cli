@@ -9,8 +9,8 @@ class Producer
 
 public:
     std::vector<double> queue;
-    virtual ~Producer() {}
-    virtual std::vector<double> Produce(double time) { return {}; };
+    virtual ~Producer() = default;
+    virtual std::vector<double> Produce(double time) = 0;
     virtual std::string Tag() { return "base"; }
     virtual void InputAtConnect(std::string slot_name, Router *router)
     {

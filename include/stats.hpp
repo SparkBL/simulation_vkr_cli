@@ -241,6 +241,43 @@ public:
         return "stat_collector";
     }
 };
+
+class CustomCollector : public Producer
+{
+    InSlot output_channel_;
+
+public:
+    CustomCollector()
+    {
+        outputs_ = {};
+        inputs_ = {{"in_slot", &output_channel_}};
+    }
+    std::vector<double> Produce(double time)
+    {
+        std::vector<double> time_ended = {};
+        while (!output_channel_.IsEmpty())
+        {
+            Request r = output_channel_.Pop();
+            if (r.status_change_at >= time)
+                time_ended.push_back(r.status_change_at);
+        }
+        return time_ended;
+    }
+
+    std::vector<Request> GetRequests()
+    {
+        std::vector<Request> res = {};
+        while (!output_channel_.IsEmpty())
+        {
+            res.push_back(output_channel_.Pop());
+        }
+        return res;
+    }
+    std::string Tag() override
+    {
+        return "collector_collector";
+    }
+};
 /*
 class TimedStatCollector
 {
