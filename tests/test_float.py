@@ -1,4 +1,4 @@
-from rq_analysis import simulation as rq
+import rq_simulation as rq
 import time
 
 #Init model
@@ -6,10 +6,10 @@ model = rq.RqModel()
 model.time = 0 
 model.end = 1000000
 model.add_producer(rq.MMPPInput(
-    [0.079,0.539,0.102],
-    [[-0.359,0.191,0.168],
-    [0.286,-0.41,0.123],
-    [0.302,0.075,-0.378]],0,0),"input")
+    rq.FloatVector([0.079,0.539,0.102]),
+    rq.FloatMatrix([rq.FloatVector([-0.359,0.191,0.168]),
+    rq.FloatVector([0.286,-0.41,0.123]),
+    rq.FloatVector([0.302,0.075,-0.378])]),0,0),"input")
 model.add_producer(rq.SimpleInput(rq.ExponentialDelay(0.6),1,0),"call")
 model.add_producer(rq.Orbit(rq.ExponentialDelay(0.81)),"orbit")
 model.add_producer(rq.RqtNode(rq.ExponentialDelay(1.3),rq.ExponentialDelay(1)),"node")

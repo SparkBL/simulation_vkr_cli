@@ -21,7 +21,8 @@ namespace py = pybind11;
 
 // PYBIND11_MAKE_OPAQUE(std::unordered_map<std::string, Producer *>);
 // PYBIND11_MAKE_OPAQUE(std::unordered_map<std::string, Router *>);
-//    PYBIND11_MAKE_OPAQUE(std::vector<double, std::allocator<double>>);
+// PYBIND11_MAKE_OPAQUE(std::vector<double, std::allocator<double>>);
+// PYBIND11_MAKE_OPAQUE(std::vector<std::vector<double>>);
 template <typename Sequence>
 inline py::array_t<typename Sequence::value_type> as_pyarray(Sequence &&seq)
 {
@@ -45,13 +46,14 @@ struct TestS
     std::unordered_map<std::string, Producer *> comps = {};
 };
 
-PYBIND11_MODULE(rq_simulation, m)
+PYBIND11_MODULE(_simulation, m)
 {
     m.doc() = "Python library for retrial queuing system modeling";
-    // py::bind_map<std::unordered_map<std::string, Producer *>>(m, "Components");
-    //  py::bind_map<std::unordered_map<std::string, Router *>>(m, "Connections");
-    //  py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector", py::buffer_protocol());
-    //    py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
+    // m.attr("__name__") = "rq_simulation.simulation";
+    //  py::bind_map<std::unordered_map<std::string, Producer *>>(m, "Components");
+    //   py::bind_map<std::unordered_map<std::string, Router *>>(m, "Connections");
+    //   py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector", py::buffer_protocol());
+    //  py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
     py::class_<Request>(m, "Request", "Basic unit of simulation", py::dynamic_attr())
         .def(py::init())
         .def_readwrite("rtype", &Request::rtype)
@@ -73,7 +75,7 @@ PYBIND11_MODULE(rq_simulation, m)
     m.attr("STATUS_ARRIVE") = py::int_(statusArrive);
 
     py::class_<Producer>(m, "Producer")
-        .def("produce", &Producer::Produce, py::return_value_policy::reference)
+        .def("produce", &Producer::Produce, py::return_value_policy::reference_internal)
         //.def("produce", [](Producer &r, double time)
         //      { return as_pyarray(r.Produce(time)); })
         .def("input_connect", &Producer::InputAtConnect, "slot_name"_a, "router"_a)
@@ -81,7 +83,7 @@ PYBIND11_MODULE(rq_simulation, m)
         .def("inputs", &Producer::Inputs)
         .def("outputs", &Producer::Outputs)
         .def("tag", &Producer::Tag)
-        .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference);
+        .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference_internal);
     py::class_<Model>(m, "RqModel")
         .def(py::init<double>(), "end"_a = 1000)
         .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a)
@@ -91,9 +93,9 @@ PYBIND11_MODULE(rq_simulation, m)
         .def("is_done", &Model::IsDone)
         .def_readwrite("time", &Model::time)
         .def_readwrite("end", &Model::end)
-        .def_readwrite("event_queue", &Model::event_queue, py::return_value_policy::reference)
-        .def_readwrite("routers", &Model::routers, py::return_value_policy::reference)
-        .def_readwrite("components", &Model::components, py::return_value_policy::reference);
+        .def_readwrite("event_queue", &Model::event_queue, py::return_value_policy::reference_internal)
+        .def_readwrite("routers", &Model::routers, py::return_value_policy::reference_internal)
+        .def_readwrite("components", &Model::components, py::return_value_policy::reference_internal);
 
     py::class_<Router>(m, "Router")
         .def(py::init())
