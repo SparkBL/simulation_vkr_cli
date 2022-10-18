@@ -59,10 +59,12 @@ PYBIND11_MODULE(_simulation, m)
         .def_readwrite("rtype", &Request::rtype)
         .def_readwrite("status", &Request::status)
         .def_readwrite("status_change_at", &Request::status_change_at)
+        .def_readwrite("emitted_at", &Request::emitted_at)
+        .def_readwrite("emitted_at", &Request::wait_time)
         .def("__repr__",
              [](const Request r)
              {
-                 return string_sprintf("Request{rtype = %d, status = %d, status_change_at = %g}", r.rtype, r.status, r.status_change_at);
+                 return string_sprintf("Request{rtype = %d, status = %d, emitted_at = %g, wait_time = %g, status_change_at = %g}", r.rtype, r.status, r.emitted_at, r.wait_time, r.status_change_at);
              });
     m.attr("TYPE_INPUT") = py::int_(typeInput);
     m.attr("TYPE_CALLED") = py::int_(typeCalled);
@@ -138,6 +140,12 @@ PYBIND11_MODULE(_simulation, m)
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
         .def(py::init<Delay *, Delay *>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>());
+
+    py::class_<SimpleNode, Producer>(m, "SimpleNode")
+        .def(py::init<Delay *>(), "input_delay"_a, py::keep_alive<1, 2>());
+
+    py::class_<RQNode, Producer>(m, "RqNode")
+        .def(py::init<Delay *>(), "input_delay"_a, py::keep_alive<1, 2>());
 
     py::class_<SimpleInput, Producer>(m, "SimpleInput")
         .def(py::init<Delay *, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());

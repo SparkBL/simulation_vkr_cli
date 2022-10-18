@@ -48,6 +48,7 @@ public:
             else
             {
                 now_serving_ = in_channel_.Pop();
+                now_serving_.wait_time = time;
                 now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -63,6 +64,7 @@ public:
             else
             {
                 now_serving_ = orbit_channel_.Pop();
+                now_serving_.wait_time = time;
                 now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -92,7 +94,6 @@ public:
     }
 };
 
-/*
 class SimpleNode : public Producer
 {
     Request now_serving_;
@@ -105,11 +106,13 @@ public:
     {
         this->delay_ = delay;
         this->now_serving_ = Request{status : statusServed};
+        inputs_ = {{"in_slot", &in_channel_}};
+        outputs_ = {{"out_slot", &out_channel_}};
     }
 
-    void Produce() override
+    std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == Time)
+        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
         {
             now_serving_.status = statusServed;
             out_channel_.Push(now_serving_);
@@ -119,24 +122,15 @@ public:
             if (now_serving_.status != statusServing)
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.status_change_at = delay_->Get();
+                now_serving_.wait_time = time;
+                now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
         }
+        return GetEvents();
     }
-    Slot *SlotAt(std::string slot_name) override
-    {
-        if (slot_name == "in_slot")
-            return &in_channel_;
-        if (slot_name == "out_slot")
-            return &out_channel_;
-        return nullptr;
-    }
-    std::vector<std::string> GetSlotNames() override
-    {
-        return std::vector<std::string>{"in_slot", "orbit_slot"};
-    }
+
     std::string Tag() override { return "simple_node"; }
 };
 
@@ -154,11 +148,13 @@ public:
     {
         this->delay_ = delay;
         this->now_serving_ = Request{status : statusServed};
+        inputs_ = {{"in_slot", &in_channel_}, {"orbit_slot", &orbit_channel_}};
+        outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
     }
 
-    void Produce() override
+    std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == Time)
+        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
         {
             now_serving_.status = statusServed;
             out_channel_.Push(now_serving_);
@@ -172,9 +168,10 @@ public:
             else
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.status_change_at = delay_->Get();
+                now_serving_.wait_time = time;
+                now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
         }
 
@@ -187,29 +184,15 @@ public:
             else
             {
                 now_serving_ = orbit_channel_.Pop();
-                now_serving_.status_change_at = delay_->Get();
+                now_serving_.wait_time = time;
+                now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
-                EventQueue.push_back(now_serving_.status_change_at);
+                queue.push_back(now_serving_.status_change_at);
             }
         }
+        return GetEvents();
     }
-    Slot *SlotAt(std::string slot_name) override
-    {
-        if (slot_name == "in_slot")
-            return &in_channel_;
-        if (slot_name == "orbit_slot")
-            return &orbit_channel_;
-        if (slot_name == "orbit_append_slot")
-            return &orbit_append_channel_;
-        if (slot_name == "out_slot")
-            return &out_channel_;
-        return nullptr;
-    }
-    std::vector<std::string> GetSlotNames() override
-    {
-        return std::vector<std::string>{"in_slot", "orbit_slot", "orbit_append_slot", "out_slot"};
-    }
+
     std::string Tag() override { return "rq_node"; }
 };
-//};*/
 #endif

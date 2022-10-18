@@ -54,7 +54,8 @@ public:
         this->q_ = q;
         outputs_ = {{"out_slot", &channel_}};
         inputs_ = {};
-        next_produce_ = Request{rtype : request_type_, status : statusTravel, status_change_at : GetExponentialDelay(l_[0], init_time)};
+        double t = GetExponentialDelay(l_[0], init_time);
+        next_produce_ = Request{rtype : request_type_, status : statusTravel, emitted_at : t, status_change_at : t};
         queue.push_back(next_produce_.status_change_at);
         state_ = 0;
         shift_time_ = GetExponentialDelay(-q_[0][0], init_time);
@@ -67,7 +68,8 @@ public:
         if (next_produce_.status_change_at == time)
         {
             channel_.Push(next_produce_);
-            next_produce_ = Request{rtype : request_type_, status : statusTravel, status_change_at : GetExponentialDelay(l_[state_], time)};
+            double t = GetExponentialDelay(l_[state_], time);
+            next_produce_ = Request{rtype : request_type_, status : statusTravel, emitted_at : t, status_change_at : t};
             if (next_produce_.status_change_at < shift_time_)
             {
                 queue.push_back(next_produce_.status_change_at);
@@ -93,10 +95,12 @@ public:
         this->request_type_ = request_type;
         inputs_ = {};
         outputs_ = {{"out_slot", &channel_}};
+        double t = delay_->Get(init_time);
         next_produce_ = Request{
             rtype : request_type_,
             status : statusTravel,
-            status_change_at : delay_->Get(init_time)
+            emitted_at : t,
+            status_change_at : t
         };
         queue.push_back(next_produce_.status_change_at);
     }
@@ -106,7 +110,8 @@ public:
         if (next_produce_.status_change_at == time)
         {
             channel_.Push(next_produce_);
-            next_produce_ = Request{rtype : request_type_, status : statusTravel, status_change_at : delay_->Get(time)};
+            double t = delay_->Get(time);
+            next_produce_ = Request{rtype : request_type_, status : statusTravel, emitted_at : t, status_change_at : t};
             queue.push_back(next_produce_.status_change_at);
         }
         return GetEvents();

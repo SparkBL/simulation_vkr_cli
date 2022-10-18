@@ -17,6 +17,8 @@ struct Request
 {
     int rtype;
     int status;
+    double emitted_at;
+    double wait_time;
     double status_change_at;
 };
 
