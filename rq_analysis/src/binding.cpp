@@ -54,7 +54,7 @@ PYBIND11_MODULE(_simulation, m)
     //   py::bind_map<std::unordered_map<std::string, Router *>>(m, "Connections");
     //   py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector", py::buffer_protocol());
     //  py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
-    py::class_<Request>(m, "Request", "Basic unit of simulation", py::dynamic_attr())
+    py::class_<Request>(m, "Request", "Basic unit of simulation.\nrtype - request type\nstatus_change_at\nstatus - current status of request\nmoment of model time, when request has to change its status\nemitted_at - moment of time, when request was emitted from input process", py::dynamic_attr())
         .def(py::init())
         .def_readwrite("rtype", &Request::rtype)
         .def_readwrite("status", &Request::status)
@@ -76,7 +76,7 @@ PYBIND11_MODULE(_simulation, m)
     m.attr("STATUS_LEAVE") = py::int_(statusLeave);
     m.attr("STATUS_ARRIVE") = py::int_(statusArrive);
 
-    py::class_<Producer>(m, "Producer")
+    py::class_<Producer>(m, "Producer", "Base class for every processing unit.")
         .def("produce", &Producer::Produce, py::return_value_policy::reference_internal)
         //.def("produce", [](Producer &r, double time)
         //      { return as_pyarray(r.Produce(time)); })
@@ -86,25 +86,25 @@ PYBIND11_MODULE(_simulation, m)
         .def("outputs", &Producer::Outputs)
         .def("tag", &Producer::Tag)
         .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference_internal);
-    py::class_<Model>(m, "RqModel")
+    py::class_<Model>(m, "RqModel", "Container for managing simulation process.")
         .def(py::init<double>(), "end"_a = 1000)
-        .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a)
-        .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>())
-        .def("next_step", &Model::NextStep)
-        .def("aggregate", &Model::Aggregate, "events"_a)
-        .def("is_done", &Model::IsDone)
-        .def_readwrite("time", &Model::time)
-        .def_readwrite("end", &Model::end)
-        .def_readwrite("event_queue", &Model::event_queue, py::return_value_policy::reference_internal)
-        .def_readwrite("routers", &Model::routers, py::return_value_policy::reference_internal)
-        .def_readwrite("components", &Model::components, py::return_value_policy::reference_internal);
+        .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a, "Adds request flow between OUT slot of producer A to IN slot of producer B")
+        .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>(), "Adds producer to model")
+        .def("next_step", &Model::NextStep, "Set model time to moment of next event")
+        .def("aggregate", &Model::Aggregate, "events"_a, "Gathers return of method 'produce' to sort events in ascending order")
+        .def("is_done", &Model::IsDone, "Checks if time == end")
+        .def_readwrite("time", &Model::time, "Current moment of simulation")
+        .def_readwrite("end", &Model::end, "Moment when simulation has to stop")
+        .def_readwrite("event_queue", &Model::event_queue, py::return_value_policy::reference_internal, "List of events, which must occur in the model")
+        .def_readwrite("routers", &Model::routers, py::return_value_policy::reference_internal, "List of connections added by 'add_connection'")
+        .def_readwrite("components", &Model::components, py::return_value_policy::reference_internal, "List of producers added by 'add_producer'");
 
-    py::class_<Router>(m, "Router")
+    py::class_<Router>(m, "Router", "Makes requests flow through itself")
         .def(py::init())
-        .def("pop", &Router::Pop)
-        .def("len", &Router::Len)
-        .def("push", &Router::Push, "request"_a)
-        .def("is_empty", &Router::IsEmpty)
+        .def("pop", &Router::Pop, "Get first pushed request")
+        .def("len", &Router::Len, "Returns number of requests contained")
+        .def("push", &Router::Push, "request"_a, "Push request in queue")
+        .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
         .def_readwrite("__q__", &Router::q_);
 
     py::class_<Slot>(m, "Slot")
