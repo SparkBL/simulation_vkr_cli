@@ -46,8 +46,9 @@ struct TestS
     std::unordered_map<std::string, Producer *> comps = {};
 };
 
-PYBIND11_MODULE(_simulation, m)
+PYBIND11_MODULE(simulation, m)
 {
+    m.attr("__name__") = "rq_analysis.simulation";
     m.doc() = "Python library for retrial queuing system modeling";
     // m.attr("__name__") = "rq_simulation.simulation";
     //  py::bind_map<std::unordered_map<std::string, Producer *>>(m, "Components");

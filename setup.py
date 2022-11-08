@@ -133,13 +133,14 @@ setup(
     author_email='alex-b.l@yandex.ru',
     description='A minimal self-contained tool for RQ system analysis',
     long_description=open("README.rst").read(),
-    ext_modules=[CMakeExtension("_simulation")],
+    ext_modules=[CMakeExtension("simulation")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     url="https://github.com/SparkBL/simulation_vkr_cli.git",
-    extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
+    packages=find_packages(),
     install_requires=[
         "numpy","scipy"
-    ]
+    ],
+    py_modules=['_simulation']
 )
