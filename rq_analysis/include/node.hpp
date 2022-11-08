@@ -48,7 +48,7 @@ public:
             else
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time;
+                now_serving_.wait_time = time - now_serving_.emitted_at;
                 now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -64,7 +64,7 @@ public:
             else
             {
                 now_serving_ = orbit_channel_.Pop();
-                now_serving_.wait_time = time;
+                now_serving_.wait_time = time - now_serving_.emitted_at;
                 now_serving_.status_change_at = input_delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -122,7 +122,7 @@ public:
             if (now_serving_.status != statusServing)
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time;
+                now_serving_.wait_time = time - now_serving_.emitted_at;
                 now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -168,7 +168,7 @@ public:
             else
             {
                 now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time;
+                now_serving_.wait_time = time - now_serving_.emitted_at;
                 now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -184,7 +184,7 @@ public:
             else
             {
                 now_serving_ = orbit_channel_.Pop();
-                now_serving_.wait_time = time;
+                now_serving_.wait_time = time - now_serving_.emitted_at;
                 now_serving_.status_change_at = delay_->Get(time);
                 now_serving_.status = statusServing;
                 queue.push_back(now_serving_.status_change_at);
@@ -195,4 +195,17 @@ public:
 
     std::string Tag() override { return "rq_node"; }
 };
+
+//Прибор с поломкой
+/*
+class PoleNode{
+
+}*/
+
+//Прибор с покиданием заявок
+/*
+class LeaveNode{
+
+}
+*/
 #endif
