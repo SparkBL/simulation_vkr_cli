@@ -23,4 +23,11 @@ struct Request
     double status_change_at;
 };
 
+struct IntervalStat
+{
+    int input;
+    int called;
+    int state;
+};
+
 #endif

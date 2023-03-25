@@ -8,10 +8,9 @@
 #include "stats.hpp"
 #include "stream.hpp"
 #include "utils.hpp"
-#include "reader.hpp"
-// #include <pybind11/complex.h>
-// #include <pybind11/functional.h>
-// #include <pybind11/chrono.h>
+//  #include <pybind11/complex.h>
+//  #include <pybind11/functional.h>
+//  #include <pybind11/chrono.h>
 #include "Python.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -89,6 +88,7 @@ PYBIND11_MODULE(simulation, m)
         .def("outputs", &Producer::Outputs)
         .def("tag", &Producer::Tag)
         .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference_internal);
+
     py::class_<Model>(m, "RqModel", "Container for managing simulation process.")
         .def(py::init<double>(), "end"_a = 1000)
         .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a, "Adds request flow between OUT slot of producer A to IN slot of producer B")
@@ -112,6 +112,12 @@ PYBIND11_MODULE(simulation, m)
         .def_readwrite("pushed_count", &Router::pushed_count)
         .def_readwrite("popped_count", &Router::popped_count)
         .def_readwrite("__q__", &Router::q);
+
+    py::class_<RouterReader>(m, "RouterReader", "Reades requests passing through router")
+        .def("read", &RouterReader::Read, "requrest"_a, "Get first pushed request");
+
+    py::class_<IntervalRouterReader, RouterReader>(m, "IntervalRouterReader")
+        .def(py::init<double>(), "interval"_a);
 
     py::class_<Slot>(m, "Slot")
         .def(py::init<Router *>(), "router"_a)

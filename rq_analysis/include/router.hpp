@@ -2,10 +2,8 @@
 #define ROUTER_HPP
 
 #include <queue>
-#include "request.hpp"
 #include "reader.hpp"
-// namespace connections
-//{
+
 class Router
 {
 public:

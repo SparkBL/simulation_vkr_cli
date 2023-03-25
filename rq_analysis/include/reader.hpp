@@ -1,8 +1,9 @@
-#ifndef ROUTER_READER_HPP
-#define ROUTER_READER_HPP
+#ifndef READER_HPP
+#define READER_HPP
 
 #include "request.hpp"
-#include "stats.hpp"
+#include <vector>
+// #include "reader.hpp"
 
 class RouterReader
 {
@@ -35,7 +36,7 @@ public:
         this->last_delta_called = 0;
     }
 
-    void Read(const Request *r) override
+    virtual void Read(const Request *r) override
     {
         while (r->status_change_at > cur_interval)
         {
@@ -63,4 +64,5 @@ public:
         }
     }
 };
+
 #endif

@@ -8,12 +8,6 @@
 #include "math.h"
 #include <unordered_map>
 // #include "easy/profiler.h"
-struct IntervalStat
-{
-    int input;
-    int called;
-    int state;
-};
 
 class StatCollector : public Producer
 {
