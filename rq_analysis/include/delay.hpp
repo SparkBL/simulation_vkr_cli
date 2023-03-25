@@ -20,54 +20,54 @@ public:
 
 class ExponentialDelay : public Delay
 {
-    double intensity_;
-    std::exponential_distribution<double> aws_;
+    double intensity;
+    std::exponential_distribution<double> aws;
 
 public:
     ExponentialDelay(double intensity)
     {
-        this->intensity_ = intensity;
-        aws_ = std::exponential_distribution<double>(intensity_);
+        this->intensity = intensity;
+        aws = std::exponential_distribution<double>(intensity);
     }
     double Get(double time) override
     {
-        return aws_(gen) + time;
+        return aws(gen) + time;
     }
 };
 
 class UniformDelay : public Delay
 {
     double a_, b_;
-    std::uniform_real_distribution<double> aws_;
+    std::uniform_real_distribution<double> aws;
 
 public:
     UniformDelay(double a, double b)
     {
         this->a_ = a;
         this->b_ = b;
-        aws_ = std::uniform_real_distribution<double>(a_, b_);
+        aws = std::uniform_real_distribution<double>(a_, b_);
     }
     double Get(double time) override
     {
-        return aws_(gen) + time;
+        return aws(gen) + time;
     }
 };
 
 class GammaDelay : public Delay
 {
     double k_, teta_;
-    std::gamma_distribution<double> aws_;
+    std::gamma_distribution<double> aws;
 
 public:
     GammaDelay(double k, double teta)
     {
         this->k_ = k;
         this->teta_ = teta;
-        aws_ = std::gamma_distribution<double>(k_, teta_);
+        aws = std::gamma_distribution<double>(k_, teta_);
     }
     double Get(double time) override
     {
-        return aws_(gen) + time;
+        return aws(gen) + time;
     }
 };
 

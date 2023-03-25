@@ -3,36 +3,51 @@
 
 #include <queue>
 #include "request.hpp"
+#include "reader.hpp"
 // namespace connections
 //{
 class Router
 {
 public:
-    std::vector<Request> q_;
+    std::vector<Request> q;
+    std::vector<RouterReader *> readers = {};
     friend class InSlot;
     friend class OutSlot;
     friend class Slot;
+    int pushed_count = 0;
+    int popped_count = 0;
+
+    virtual void AddReader(RouterReader *r)
+    {
+        this->readers.push_back(r);
+    }
 
     virtual Request Pop()
     {
-        Request ret = q_.front();
-        q_.erase(q_.begin());
+        Request ret = q.front();
+        q.erase(q.begin());
+        popped_count++;
+        for (auto &e : this->readers)
+        {
+            e->Read(&ret);
+        }
         return ret;
     }
 
     virtual int Len()
     {
-        return q_.size();
+        return q.size();
     }
 
     virtual void Push(Request request)
     {
-        q_.push_back(request);
+        q.push_back(request);
+        pushed_count++;
     }
 
     virtual bool IsEmpty()
     {
-        return q_.empty();
+        return q.empty();
     }
 };
 
@@ -61,18 +76,18 @@ public:
 class Slot
 {
 protected:
-    Router *r_;
+    Router *r;
 
 public:
     Slot(Router *r)
     {
-        r_ = r;
+        r = r;
     }
     Slot() {}
 
     void Connect(Router *in)
     {
-        r_ = in;
+        r = in;
     }
 };
 
@@ -85,16 +100,16 @@ public:
 
     int Len()
     {
-        return Slot::r_->Len();
+        return Slot::r->Len();
     }
     bool IsEmpty()
     {
-        return Slot::r_->IsEmpty();
+        return Slot::r->IsEmpty();
     }
 
     Request Pop()
     {
-        return Slot::r_->Pop();
+        return Slot::r->Pop();
     }
 };
 
@@ -107,12 +122,12 @@ public:
 
     int Len()
     {
-        return Slot::r_->Len();
+        return Slot::r->Len();
     }
 
     void Push(Request request)
     {
-        Slot::r_->Push(request);
+        Slot::r->Push(request);
     }
 };
 

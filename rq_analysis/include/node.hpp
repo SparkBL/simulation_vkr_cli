@@ -12,77 +12,77 @@
 //{
 class RQTNode : public Producer
 {
-    Request now_serving_;
-    Delay *input_delay_;
-    Delay *called_delay_;
-    InSlot in_channel_;
-    InSlot call_channel_;
-    InSlot orbit_channel_;
-    OutSlot orbit_append_channel_;
-    OutSlot out_channel_;
+    Request now_serving;
+    Delay *input_delay;
+    Delay *called_delay;
+    InSlot in_channel;
+    InSlot call_channel;
+    InSlot orbit_channel;
+    OutSlot orbit_append_channel;
+    OutSlot out_channel;
 
 public:
     RQTNode(Delay *input_delay,
             Delay *called_delay)
     {
-        this->input_delay_ = input_delay;
-        this->called_delay_ = called_delay;
-        this->now_serving_ = Request{status : statusServed};
-        inputs_ = {{"in_slot", &in_channel_}, {"call_slot", &call_channel_}, {"orbit_slot", &orbit_channel_}};
-        outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
+        this->input_delay = input_delay;
+        this->called_delay = called_delay;
+        this->now_serving = Request{status : statusServed};
+        inputs = {{"in_slot", &in_channel}, {"call_slot", &call_channel}, {"orbit_slot", &orbit_channel}};
+        outputs = {{"orbit_append_slot", &orbit_append_channel}, {"out_slot", &out_channel}};
     }
 
     std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
+        if (now_serving.status == statusServing && now_serving.status_change_at == time)
         {
-            now_serving_.status = statusServed;
-            out_channel_.Push(now_serving_);
+            now_serving.status = statusServed;
+            out_channel.Push(now_serving);
         }
-        if (!in_channel_.IsEmpty())
+        if (!in_channel.IsEmpty())
         {
-            if (now_serving_.status == statusServing)
+            if (now_serving.status == statusServing)
             {
-                orbit_append_channel_.Push(in_channel_.Pop());
+                orbit_append_channel.Push(in_channel.Pop());
             }
             else
             {
-                now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = input_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
-            }
-        }
-
-        if (!orbit_channel_.IsEmpty())
-        {
-            if (now_serving_.status == statusServing)
-            {
-                orbit_append_channel_.Push(orbit_channel_.Pop());
-            }
-            else
-            {
-                now_serving_ = orbit_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = input_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                now_serving = in_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = input_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
             }
         }
 
-        if (!call_channel_.IsEmpty())
+        if (!orbit_channel.IsEmpty())
         {
-            if (now_serving_.status != statusServing)
+            if (now_serving.status == statusServing)
             {
-                now_serving_ = call_channel_.Pop();
-                now_serving_.status_change_at = called_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                orbit_append_channel.Push(orbit_channel.Pop());
             }
             else
             {
-                call_channel_.Pop();
+                now_serving = orbit_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = input_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
+            }
+        }
+
+        if (!call_channel.IsEmpty())
+        {
+            if (now_serving.status != statusServing)
+            {
+                now_serving = call_channel.Pop();
+                now_serving.status_change_at = called_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
+            }
+            else
+            {
+                call_channel.Pop();
             }
         }
         return GetEvents();
@@ -96,36 +96,36 @@ public:
 
 class SimpleNode : public Producer
 {
-    Request now_serving_;
-    Delay *delay_;
-    InSlot in_channel_;
-    OutSlot out_channel_;
+    Request now_serving;
+    Delay *delay;
+    InSlot in_channel;
+    OutSlot out_channel;
 
 public:
     SimpleNode(Delay *delay)
     {
-        this->delay_ = delay;
-        this->now_serving_ = Request{status : statusServed};
-        inputs_ = {{"in_slot", &in_channel_}};
-        outputs_ = {{"out_slot", &out_channel_}};
+        this->delay = delay;
+        this->now_serving = Request{status : statusServed};
+        inputs = {{"in_slot", &in_channel}};
+        outputs = {{"out_slot", &out_channel}};
     }
 
     std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
+        if (now_serving.status == statusServing && now_serving.status_change_at == time)
         {
-            now_serving_.status = statusServed;
-            out_channel_.Push(now_serving_);
+            now_serving.status = statusServed;
+            out_channel.Push(now_serving);
         }
-        if (!in_channel_.IsEmpty())
+        if (!in_channel.IsEmpty())
         {
-            if (now_serving_.status != statusServing)
+            if (now_serving.status != statusServing)
             {
-                now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                now_serving = in_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
             }
         }
         return GetEvents();
@@ -136,58 +136,58 @@ public:
 
 class RQNode : public Producer
 {
-    Request now_serving_;
-    Delay *delay_;
-    InSlot in_channel_;
-    InSlot orbit_channel_;
-    OutSlot orbit_append_channel_;
-    OutSlot out_channel_;
+    Request now_serving;
+    Delay *delay;
+    InSlot in_channel;
+    InSlot orbit_channel;
+    OutSlot orbit_append_channel;
+    OutSlot out_channel;
 
 public:
     RQNode(Delay *delay)
     {
-        this->delay_ = delay;
-        this->now_serving_ = Request{status : statusServed};
-        inputs_ = {{"in_slot", &in_channel_}, {"orbit_slot", &orbit_channel_}};
-        outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
+        this->delay = delay;
+        this->now_serving = Request{status : statusServed};
+        inputs = {{"in_slot", &in_channel}, {"orbit_slot", &orbit_channel}};
+        outputs = {{"orbit_append_slot", &orbit_append_channel}, {"out_slot", &out_channel}};
     }
 
     std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
+        if (now_serving.status == statusServing && now_serving.status_change_at == time)
         {
-            now_serving_.status = statusServed;
-            out_channel_.Push(now_serving_);
+            now_serving.status = statusServed;
+            out_channel.Push(now_serving);
         }
-        if (!in_channel_.IsEmpty())
+        if (!in_channel.IsEmpty())
         {
-            if (now_serving_.status == statusServing)
+            if (now_serving.status == statusServing)
             {
-                orbit_append_channel_.Push(in_channel_.Pop());
+                orbit_append_channel.Push(in_channel.Pop());
             }
             else
             {
-                now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                now_serving = in_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
             }
         }
 
-        if (!orbit_channel_.IsEmpty())
+        if (!orbit_channel.IsEmpty())
         {
-            if (now_serving_.status == statusServing)
+            if (now_serving.status == statusServing)
             {
-                orbit_append_channel_.Push(orbit_channel_.Pop());
+                orbit_append_channel.Push(orbit_channel.Pop());
             }
             else
             {
-                now_serving_ = orbit_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                now_serving = orbit_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
             }
         }
         return GetEvents();
@@ -196,80 +196,86 @@ public:
     std::string Tag() override { return "rq_node"; }
 };
 
-//Прибор с поломкой
+// Прибор с поломкой
 class RQTPollingNode : public Producer
 {
-    Request now_serving_;
-    Delay *input_delay_;
-    Delay *called_delay_;
-    InSlot in_channel_;
-    InSlot call_channel_;
-    InSlot orbit_channel_;
-    OutSlot orbit_append_channel_;
-    OutSlot out_channel_;
+    Request now_serving;
+    Delay *input_delay;
+    Delay *called_delay;
+    InSlot in_channel;
+    InSlot call_channel;
+    InSlot orbit_channel;
+    OutSlot orbit_append_channel;
+    OutSlot out_channel;
+    std::vector<std::vector<double>> Q;
+
+private:
+    void poll()
+    {
+    }
 
 public:
     RQTPollingNode(Delay *input_delay,
                    Delay *called_delay)
     {
-        this->input_delay_ = input_delay;
-        this->called_delay_ = called_delay;
-        this->now_serving_ = Request{status : statusServed};
-        inputs_ = {{"in_slot", &in_channel_}, {"call_slot", &call_channel_}, {"orbit_slot", &orbit_channel_}};
-        outputs_ = {{"orbit_append_slot", &orbit_append_channel_}, {"out_slot", &out_channel_}};
+        this->input_delay = input_delay;
+        this->called_delay = called_delay;
+        this->now_serving = Request{status : statusServed};
+        inputs = {{"in_slot", &in_channel}, {"call_slot", &call_channel}, {"orbit_slot", &orbit_channel}};
+        outputs = {{"orbit_append_slot", &orbit_append_channel}, {"out_slot", &out_channel}};
     }
 
     std::vector<double> Produce(double time) override
     {
-        if (now_serving_.status == statusServing && now_serving_.status_change_at == time)
+        if (now_serving.status == statusServing && now_serving.status_change_at == time)
         {
-            now_serving_.status = statusServed;
-            out_channel_.Push(now_serving_);
+            now_serving.status = statusServed;
+            out_channel.Push(now_serving);
         }
-        if (!in_channel_.IsEmpty())
+        if (!in_channel.IsEmpty())
         {
-            if (now_serving_.status == statusServing)
+            if (now_serving.status == statusServing)
             {
-                orbit_append_channel_.Push(in_channel_.Pop());
+                orbit_append_channel.Push(in_channel.Pop());
             }
             else
             {
-                now_serving_ = in_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = input_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
-            }
-        }
-
-        if (!orbit_channel_.IsEmpty())
-        {
-            if (now_serving_.status == statusServing)
-            {
-                orbit_append_channel_.Push(orbit_channel_.Pop());
-            }
-            else
-            {
-                now_serving_ = orbit_channel_.Pop();
-                now_serving_.wait_time = time - now_serving_.emitted_at;
-                now_serving_.status_change_at = input_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                now_serving = in_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = input_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
             }
         }
 
-        if (!call_channel_.IsEmpty())
+        if (!orbit_channel.IsEmpty())
         {
-            if (now_serving_.status != statusServing)
+            if (now_serving.status == statusServing)
             {
-                now_serving_ = call_channel_.Pop();
-                now_serving_.status_change_at = called_delay_->Get(time);
-                now_serving_.status = statusServing;
-                queue.push_back(now_serving_.status_change_at);
+                orbit_append_channel.Push(orbit_channel.Pop());
             }
             else
             {
-                call_channel_.Pop();
+                now_serving = orbit_channel.Pop();
+                now_serving.wait_time = time - now_serving.emitted_at;
+                now_serving.status_change_at = input_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
+            }
+        }
+
+        if (!call_channel.IsEmpty())
+        {
+            if (now_serving.status != statusServing)
+            {
+                now_serving = call_channel.Pop();
+                now_serving.status_change_at = called_delay->Get(time);
+                now_serving.status = statusServing;
+                queue.push_back(now_serving.status_change_at);
+            }
+            else
+            {
+                call_channel.Pop();
             }
         }
         return GetEvents();
@@ -281,7 +287,7 @@ public:
     }
 };
 
-//Прибор с покиданием заявок
+// Прибор с покиданием заявок
 /*
 class LeaveNode{
 

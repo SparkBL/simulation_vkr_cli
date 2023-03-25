@@ -14,27 +14,27 @@ public:
     virtual std::string Tag() { return "base"; }
     virtual void InputAtConnect(std::string slot_name, Router *router)
     {
-        return this->inputs_.find(slot_name)->second->Connect(router);
+        return this->inputs.find(slot_name)->second->Connect(router);
     }
 
     virtual void OutputAtConnect(std::string slot_name, Router *router)
     {
 
-        return this->outputs_.find(slot_name)->second->Connect(router);
+        return this->outputs.find(slot_name)->second->Connect(router);
     }
 
     virtual std::vector<std::string> Inputs()
     {
-        return extract_keys<std::string, InSlot *>(inputs_);
+        return extract_keys<std::string, InSlot *>(inputs);
     }
     virtual std::vector<std::string> Outputs()
     {
-        return extract_keys<std::string, OutSlot *>(outputs_);
+        return extract_keys<std::string, OutSlot *>(outputs);
     }
 
 protected:
-    std::unordered_map<std::string, InSlot *> inputs_ = {};
-    std::unordered_map<std::string, OutSlot *> outputs_ = {};
+    std::unordered_map<std::string, InSlot *> inputs = {};
+    std::unordered_map<std::string, OutSlot *> outputs = {};
 
     std::vector<double> GetEvents()
     {

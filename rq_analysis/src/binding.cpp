@@ -8,9 +8,10 @@
 #include "stats.hpp"
 #include "stream.hpp"
 #include "utils.hpp"
-//#include <pybind11/complex.h>
-//#include <pybind11/functional.h>
-//#include <pybind11/chrono.h>
+#include "reader.hpp"
+// #include <pybind11/complex.h>
+// #include <pybind11/functional.h>
+// #include <pybind11/chrono.h>
 #include "Python.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -62,10 +63,11 @@ PYBIND11_MODULE(simulation, m)
         .def_readwrite("status_change_at", &Request::status_change_at)
         .def_readwrite("emitted_at", &Request::emitted_at)
         .def_readwrite("emitted_at", &Request::wait_time)
+        .def_readwrite("attempts", &Request::attempts)
         .def("__repr__",
              [](const Request r)
              {
-                 return string_sprintf("Request{rtype = %d, status = %d, emitted_at = %g, wait_time = %g, status_change_at = %g}", r.rtype, r.status, r.emitted_at, r.wait_time, r.status_change_at);
+                 return string_sprintf("Request{rtype = %d, status = %d, emitted_at = %g, wait_time = %g, status_change_at = %g, attempts = %g}", r.rtype, r.status, r.emitted_at, r.wait_time, r.status_change_at, r.attempts);
              });
     m.attr("TYPE_INPUT") = py::int_(typeInput);
     m.attr("TYPE_CALLED") = py::int_(typeCalled);
@@ -106,7 +108,10 @@ PYBIND11_MODULE(simulation, m)
         .def("len", &Router::Len, "Returns number of requests contained")
         .def("push", &Router::Push, "request"_a, "Push request in queue")
         .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
-        .def_readwrite("__q__", &Router::q_);
+        .def("add_reader", &Router::AddReader, "reader"_a, "Add request reader")
+        .def_readwrite("pushed_count", &Router::pushed_count)
+        .def_readwrite("popped_count", &Router::popped_count)
+        .def_readwrite("__q__", &Router::q);
 
     py::class_<Slot>(m, "Slot")
         .def(py::init<Router *>(), "router"_a)

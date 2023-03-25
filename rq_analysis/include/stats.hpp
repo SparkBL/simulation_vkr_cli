@@ -7,59 +7,60 @@
 #include "producer.hpp"
 #include "math.h"
 #include <unordered_map>
-//#include "easy/profiler.h"
+// #include "easy/profiler.h"
 struct IntervalStat
 {
     int input;
     int called;
+    int state;
 };
 
 class StatCollector : public Producer
 {
-    std::vector<IntervalStat> interval_stats_;
-    std::vector<double> time_deltas_input_;
-    std::vector<double> time_deltas_called_;
-    InSlot output_channel_;
-    IntervalStat cur_;
-    double cur_interval_;
-    double interval_;
-    double last_delta_input_;
-    double last_delta_called_;
+    std::vector<IntervalStat> interval_stats;
+    std::vector<double> time_deltas_input;
+    std::vector<double> time_deltas_called;
+    InSlot output_channel;
+    IntervalStat cur;
+    double cur_interval;
+    double interval;
+    double last_delta_input;
+    double last_delta_called;
 
 public:
     StatCollector(double interval)
     {
-        this->interval_ = interval;
-        this->cur_interval_ = interval;
-        this->cur_ = IntervalStat{input : 0, called : 0};
-        this->last_delta_input_ = 0;
-        this->last_delta_called_ = 0;
-        outputs_ = {};
-        inputs_ = {{"in_slot", &output_channel_}};
+        this->interval = interval;
+        this->cur_interval = interval;
+        this->cur = IntervalStat{input : 0, called : 0};
+        this->last_delta_input = 0;
+        this->last_delta_called = 0;
+        outputs = {};
+        inputs = {{"in_slot", &output_channel}};
     }
 
     std::vector<double> Produce(double time) override
     {
-        while (!output_channel_.IsEmpty())
+        while (!output_channel.IsEmpty())
         {
-            Request r = output_channel_.Pop();
-            while (r.status_change_at > cur_interval_)
+            Request r = output_channel.Pop();
+            while (r.status_change_at > cur_interval)
             {
-                interval_stats_.push_back(cur_);
-                cur_ = IntervalStat{input : 0, called : 0};
-                cur_interval_ += interval_;
+                interval_stats.push_back(cur);
+                cur = IntervalStat{input : 0, called : 0};
+                cur_interval += interval;
             }
             switch (r.rtype)
             {
             case typeInput:
-                cur_.input++;
-                time_deltas_input_.push_back(r.status_change_at - last_delta_input_);
-                last_delta_input_ = r.status_change_at;
+                cur.input++;
+                time_deltas_input.push_back(r.status_change_at - last_delta_input);
+                last_delta_input = r.status_change_at;
                 break;
             case typeCalled:
-                cur_.called++;
-                time_deltas_called_.push_back(r.status_change_at - last_delta_input_);
-                last_delta_called_ = r.status_change_at;
+                cur.called++;
+                time_deltas_called.push_back(r.status_change_at - last_delta_called);
+                last_delta_called = r.status_change_at;
                 break;
             }
         }
@@ -69,25 +70,25 @@ public:
     std::vector<std::vector<double>> GetDistribution()
     {
         double dsize_x = 0, dsize_y = 0;
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            if (interval_stats_[i].input > dsize_x)
+            if (interval_stats[i].input > dsize_x)
             {
-                dsize_x = interval_stats_[i].input;
+                dsize_x = interval_stats[i].input;
             }
-            if (interval_stats_[i].called > dsize_y)
+            if (interval_stats[i].called > dsize_y)
             {
-                dsize_y = interval_stats_[i].called;
+                dsize_y = interval_stats[i].called;
             }
         }
         std::vector<double> y(dsize_y + 1, 0.0);
         std::vector<std::vector<double>> distr(dsize_x + 1, y);
 
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            distr[interval_stats_[i].input][interval_stats_[i].called] += 1.0;
+            distr[interval_stats[i].input][interval_stats[i].called] += 1.0;
         }
-        double norm = double(interval_stats_.size());
+        double norm = double(interval_stats.size());
         for (int i = 0; i < distr.size(); i++)
         {
             for (int j = 0; j < distr[i].size(); j++)
@@ -101,20 +102,20 @@ public:
     std::vector<double> GetSummaryDistribution()
     {
         double dsize = 0;
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            if (interval_stats_[i].input + interval_stats_[i].called > dsize)
+            if (interval_stats[i].input + interval_stats[i].called > dsize)
             {
-                dsize = interval_stats_[i].input + interval_stats_[i].called;
+                dsize = interval_stats[i].input + interval_stats[i].called;
             }
         }
         std::vector<double> distr(dsize + 1);
 
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            distr[interval_stats_[i].input + interval_stats_[i].called] += 1.0;
+            distr[interval_stats[i].input + interval_stats[i].called] += 1.0;
         }
-        double norm = double(interval_stats_.size());
+        double norm = double(interval_stats.size());
         for (int i = 0; i < distr.size(); i++)
         {
             distr[i] /= norm;
@@ -125,20 +126,20 @@ public:
     std::vector<double> GetInputDistribution()
     {
         double dsize = 0;
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            if (interval_stats_[i].input > dsize)
+            if (interval_stats[i].input > dsize)
             {
-                dsize = interval_stats_[i].input;
+                dsize = interval_stats[i].input;
             }
         }
         std::vector<double> distr(dsize + 1);
 
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            distr[interval_stats_[i].input] += 1.0;
+            distr[interval_stats[i].input] += 1.0;
         }
-        double norm = double(interval_stats_.size());
+        double norm = double(interval_stats.size());
         for (int i = 0; i < distr.size(); i++)
         {
             distr[i] /= norm;
@@ -149,20 +150,20 @@ public:
     std::vector<double> GetCalledDistribution()
     {
         double dsize = 0;
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            if (interval_stats_[i].called > dsize)
+            if (interval_stats[i].called > dsize)
             {
-                dsize = interval_stats_[i].called;
+                dsize = interval_stats[i].called;
             }
         }
         std::vector<double> distr(dsize + 1);
 
-        for (int i = 0; i < interval_stats_.size(); i++)
+        for (int i = 0; i < interval_stats.size(); i++)
         {
-            distr[interval_stats_[i].called] += 1.0;
+            distr[interval_stats[i].called] += 1.0;
         }
-        double norm = double(interval_stats_.size());
+        double norm = double(interval_stats.size());
         for (int i = 0; i < distr.size(); i++)
         {
             distr[i] /= norm;
@@ -173,33 +174,33 @@ public:
     double GetMeanInput()
     {
         double sum = 0;
-        for (auto it = interval_stats_.begin(); it != interval_stats_.end(); it++)
+        for (auto it = interval_stats.begin(); it != interval_stats.end(); it++)
             sum += double(it->input);
-        return sum / double(interval_stats_.size());
+        return sum / double(interval_stats.size());
     }
 
     double GetMeanCalled()
     {
         double sum = 0;
-        for (auto it = interval_stats_.begin(); it != interval_stats_.end(); it++)
+        for (auto it = interval_stats.begin(); it != interval_stats.end(); it++)
             sum += double(it->called);
-        return sum / double(interval_stats_.size());
+        return sum / double(interval_stats.size());
     }
 
     double GetMeanIntervalInput()
     {
         double sum = 0;
-        for (auto it = time_deltas_input_.begin(); it != time_deltas_input_.end(); it++)
+        for (auto it = time_deltas_input.begin(); it != time_deltas_input.end(); it++)
             sum += *it;
-        return sum / double(time_deltas_input_.size());
+        return sum / double(time_deltas_input.size());
     }
 
     double GetSqMeanIntervalInput()
     {
         double sum = 0;
-        for (auto it = time_deltas_input_.begin(); it != time_deltas_input_.end(); it++)
+        for (auto it = time_deltas_input.begin(); it != time_deltas_input.end(); it++)
             sum += *it * *it;
-        return sum / double(time_deltas_input_.size());
+        return sum / double(time_deltas_input.size());
     }
     double GetDispersionIntervalInput()
     {
@@ -214,17 +215,17 @@ public:
     double GetMeanIntervalCalled()
     {
         double sum = 0;
-        for (auto it = time_deltas_called_.begin(); it != time_deltas_called_.end(); it++)
+        for (auto it = time_deltas_called.begin(); it != time_deltas_called.end(); it++)
             sum += *it;
-        return sum / double(time_deltas_called_.size());
+        return sum / double(time_deltas_called.size());
     }
 
     double GetSqMeanIntervalCalled()
     {
         double sum = 0;
-        for (auto it = time_deltas_called_.begin(); it != time_deltas_called_.end(); it++)
+        for (auto it = time_deltas_called.begin(); it != time_deltas_called.end(); it++)
             sum += *it * *it;
-        return sum / double(time_deltas_called_.size());
+        return sum / double(time_deltas_called.size());
     }
     double GetDispersionIntervalCalled()
     {
@@ -244,20 +245,20 @@ public:
 
 class CustomCollector : public Producer
 {
-    InSlot output_channel_;
+    InSlot output_channel;
 
 public:
     CustomCollector()
     {
-        outputs_ = {};
-        inputs_ = {{"in_slot", &output_channel_}};
+        outputs = {};
+        inputs = {{"in_slot", &output_channel}};
     }
     std::vector<double> Produce(double time)
     {
         std::vector<double> time_ended = {};
-        while (!output_channel_.IsEmpty())
+        while (!output_channel.IsEmpty())
         {
-            Request r = output_channel_.Pop();
+            Request r = output_channel.Pop();
             if (r.status_change_at >= time)
                 time_ended.push_back(r.status_change_at);
         }
@@ -267,9 +268,9 @@ public:
     std::vector<Request> GetRequests()
     {
         std::vector<Request> res = {};
-        while (!output_channel_.IsEmpty())
+        while (!output_channel.IsEmpty())
         {
-            res.push_back(output_channel_.Pop());
+            res.push_back(output_channel.Pop());
         }
         return res;
     }
@@ -423,4 +424,5 @@ public:
         return std::vector<double>(distr.begin(), distr.begin() + maxCount);
     }
 };*/
+
 #endif
