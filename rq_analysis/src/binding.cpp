@@ -138,7 +138,7 @@ PYBIND11_MODULE(simulation, m)
         .def("get_variation_called", &IntervalRouterReader::GetVariationIntervalCalled)
         .def("get_variation_input", &IntervalRouterReader::GetVariationIntervalInput);
 
-    py::class_<AttemptCounter, RouterReader>(m, "IntervalRouterReader", "Collects attempt and wait time statistic on passing requests")
+    py::class_<AttemptCounter, RouterReader>(m, "AttemptCounter", "Collects attempt and wait time statistic on passing requests")
         .def(py::init());
 
     py::class_<Slot>(m, "Slot")
