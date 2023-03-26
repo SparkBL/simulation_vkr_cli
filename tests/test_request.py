@@ -7,3 +7,9 @@ rr = [r]
 print(r)
 r.status_change_at = 0.2
 print(r,rr)
+
+
+rout = rq.Router()
+print(r.id)
+rout.push(r)
+print(rout.pop().id)

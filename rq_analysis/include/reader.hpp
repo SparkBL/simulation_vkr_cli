@@ -254,7 +254,7 @@ public:
         if (r == nullptr)
             return;
         this->attempts[r->id]++;
-        this->wait_time[r->id] += r->status_change_at - r->emitted_at;
+        this->wait_time[r->id] = r->status_change_at - r->emitted_at;
     }
 };
 
