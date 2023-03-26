@@ -1,4 +1,4 @@
-import rq_simulation as rq
+import rq_analysis.simulation as rq
 print(dir(rq))
 print("Test inheritance")
 d1 = rq.ExponentialDelay(0.1)
@@ -13,11 +13,12 @@ print(type(d1),type(d2),type(d3))
 print(type(r1),type(r2),type(r3))
 print(type(o),type(s),type(rq.CustomCollector()))
 print("Produce:")
-print(r1.produce(0))
+#print(r1.produce(0))
 
 
-m = rq.RqModel()
+m = rq.Model()
 
-print(m.components)
+print(m.components())
 m.add_producer(r1,"in")
-print(m.components["in"].produce(0))
+print(m.components())
+print(m.component_at("in").produce(0))
