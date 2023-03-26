@@ -2,22 +2,23 @@
 #define ROUTER_HPP
 
 #include <queue>
+#include <unordered_map>
 #include "reader.hpp"
 
 class Router
 {
 public:
     std::vector<Request> q;
-    std::vector<RouterReader *> readers = {};
+    std::unordered_map<std::string, RouterReader *> readers = {};
     friend class InSlot;
     friend class OutSlot;
     friend class Slot;
     int pushed_count = 0;
     int popped_count = 0;
 
-    virtual void AddReader(RouterReader *r)
+    virtual void AddReader(RouterReader *r, std::string label)
     {
-        this->readers.push_back(r);
+        this->readers[label] = r;
     }
 
     virtual Request Pop()
@@ -27,7 +28,7 @@ public:
         popped_count++;
         for (auto &e : this->readers)
         {
-            e->Read(&ret);
+            e.second->Read(&ret);
         }
         return ret;
     }
@@ -63,6 +64,33 @@ public:
 
     void Push(Request request)
     {
+    }
+
+    bool IsEmpty()
+    {
+        return true;
+    }
+};
+
+class OutputRouter : public Router
+{
+public:
+    Request Pop() override
+    {
+        return Request{};
+    }
+    int Len()
+    {
+        return 0;
+    }
+
+    void Push(Request request)
+    {
+        popped_count++;
+        for (auto &e : this->readers)
+        {
+            e.second->Read(&request);
+        }
     }
 
     bool IsEmpty()

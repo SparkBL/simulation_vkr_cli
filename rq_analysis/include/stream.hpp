@@ -34,7 +34,7 @@ class MMPP : public Producer
                     if (chance <= sum)
                     {
                         state = i;
-                        next_produce = Request{rtype : request_type, status : statusTravel, status_change_at : GetExponentialDelay(l[state], time)};
+                        next_produce = Request{rtype : request_type, status : statusTravel, emitted_at : time, status_change_at : GetExponentialDelay(l[state], time)};
                         shift_time = GetExponentialDelay(-q[state][state], time);
                         queue.push_back(next_produce.status_change_at);
                         queue.push_back(shift_time);

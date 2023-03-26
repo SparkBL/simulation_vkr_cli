@@ -92,6 +92,9 @@ PYBIND11_MODULE(simulation, m)
     py::class_<Model>(m, "Model", "Container for managing simulation process.")
         .def(py::init<double>(), "end"_a = 1000)
         .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a, "Adds request flow between OUT slot of producer A to IN slot of producer B")
+        .def("add_hanging_input", &Model::AddHangingInput, "to_producer"_a, "to_slot"_a, "Adds request flow TO a producer. Method presumes requests will be put into queue manually. Return router's label")
+        .def("add_hanging_output", &Model::AddHangingOutput, "from_producer"_a, "from_slot"_a, "Adds request flow from a producer. Method presumes outgoing requests will be handled manually. Returns router's label")
+        .def("add_hanging_output_noqueue", &Model::AddHangingOutputNoQueue, "from_producer"_a, "from_slot"_a, "Adds request flow from a producer. Requests only will be read by attached readers without storing")
         .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>(), "Adds producer to model")
         .def("next_step", &Model::NextStep, "Set model time to moment of next event")
         .def("aggregate", &Model::Aggregate, "events"_a, "Gathers return of method 'produce' to sort events in ascending order")
@@ -102,22 +105,41 @@ PYBIND11_MODULE(simulation, m)
         .def_readwrite("routers", &Model::routers, py::return_value_policy::reference_internal, "List of connections added by 'add_connection'")
         .def_readwrite("components", &Model::components, py::return_value_policy::reference_internal, "List of producers added by 'add_producer'");
 
-    py::class_<Router>(m, "Router", "Makes requests flow through itself")
+    py::class_<Router>(m, "Router", "Request queue")
         .def(py::init())
         .def("pop", &Router::Pop, "Get first pushed request")
         .def("len", &Router::Len, "Returns number of requests contained")
         .def("push", &Router::Push, "request"_a, "Push request in queue")
         .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
-        .def("add_reader", &Router::AddReader, "reader"_a, "Add request reader")
+        .def("add_reader", &Router::AddReader, "reader"_a, "label"_a, "Add request reader")
         .def_readwrite("pushed_count", &Router::pushed_count)
         .def_readwrite("popped_count", &Router::popped_count)
         .def_readwrite("__q__", &Router::q);
 
+    py::class_<OutputRouter, Router>(m, "OutputRouter", "Endpoint for incoming requests. Popping requests from OutputRouter return empty Request")
+        .def(py::init());
+    // .def("pop", &OutputRouter::Pop, "Get first pushed request")
+    //  .def("len", &OutputRouter::Len, "Returns number of requests contained")
+    // .def("push", &OutputRouter::Push, "request"_a, "Push request in queue")
+    //  .def("is_empty", &OutputRouter::IsEmpty, "Check if queue is empty")
+    // .def("add_reader", &OutputRouter::AddReader, "reader"_a, "Add request reader");
+
     py::class_<RouterReader>(m, "RouterReader", "Reades requests passing through router")
         .def("read", &RouterReader::Read, "requrest"_a, "Get first pushed request");
 
-    py::class_<IntervalRouterReader, RouterReader>(m, "IntervalRouterReader")
-        .def(py::init<double>(), "interval"_a);
+    py::class_<IntervalRouterReader, RouterReader>(m, "IntervalRouterReader", "Collects statistic on passing requests")
+        .def(py::init<double>(), "interval"_a)
+        .def("get_distribution2d", &IntervalRouterReader::GetDistribution)
+        .def("get_distribution_summary", &IntervalRouterReader::GetSummaryDistribution)
+        .def("get_distribution_input", &IntervalRouterReader::GetInputDistribution)
+        .def("get_distribution_called", &IntervalRouterReader::GetCalledDistribution)
+        .def("get_mean_input", &IntervalRouterReader::GetMeanInput)
+        .def("get_mean_called", &IntervalRouterReader::GetMeanCalled)
+        .def("get_variation_called", &IntervalRouterReader::GetVariationIntervalCalled)
+        .def("get_variation_input", &IntervalRouterReader::GetVariationIntervalInput);
+
+    py::class_<AttemptCounter, RouterReader>(m, "IntervalRouterReader", "Collects attempt and wait time statistic on passing requests")
+        .def(py::init());
 
     py::class_<Slot>(m, "Slot")
         .def(py::init<Router *>(), "router"_a)
@@ -159,10 +181,10 @@ PYBIND11_MODULE(simulation, m)
     py::class_<RQNode, Producer>(m, "RqNode")
         .def(py::init<Delay *>(), "input_delay"_a, py::keep_alive<1, 2>());
 
-    py::class_<SimpleInput, Producer>(m, "SimpleInput")
+    py::class_<SimpleInput, Producer>(m, "SimpleInput", "Poisson input process")
         .def(py::init<Delay *, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());
 
-    py::class_<MMPP, Producer>(m, "MMPPInput")
+    py::class_<MMPP, Producer>(m, "MMPPInput", "MMPP input process")
         .def(py::init<std::vector<double>, std::vector<std::vector<double>>, int, double>(), "lambda"_a, "Q"_a, "request_type"_a = typeInput, "init_time"_a = 0);
 
     py::class_<IOrbit, Producer>(m, "IOrbit")

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "router.hpp"
 #include "producer.hpp"
+#include "utils.hpp"
 
 class Model
 {
@@ -23,7 +24,7 @@ public:
 		event_queue = {};
 	}
 
-	void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
+	/*void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
 	{
 		Router *r;
 		if (routers.count(to_producer + "_" + to_slot))
@@ -35,6 +36,66 @@ public:
 		}
 		components.at(to_producer)->InputAtConnect(to_slot, r);
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
+	}*/
+
+	void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
+	{
+		std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
+		Router *r;
+		if (routers.count(q))
+			r = routers.at(q);
+		else
+		{
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
+		}
+		components.at(to_producer)->InputAtConnect(to_slot, r);
+		components.at(from_producer)->OutputAtConnect(from_slot, r);
+	}
+
+	std::string AddHangingInput(std::string to_producer, std::string to_slot)
+	{
+		std::string q = string_sprintf("i:%s:%s", to_producer, to_slot);
+		Router *r;
+		if (routers.count(q))
+			r = routers.at(q);
+		else
+		{
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
+		}
+		components.at(to_producer)->InputAtConnect(to_slot, r);
+		return q;
+	}
+
+	std::string AddHangingOutput(std::string from_producer, std::string from_slot)
+	{
+		std::string q = string_sprintf("o:%s:%s", from_producer, from_slot);
+		Router *r;
+		if (routers.count(q))
+			r = routers.at(q);
+		else
+		{
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
+		}
+		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		return q;
+	}
+
+	std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)
+	{
+		std::string q = string_sprintf("o:%s:%s", from_producer, from_slot);
+		Router *r;
+		if (routers.count(q))
+			r = routers.at(q);
+		else
+		{
+			r = new OutputRouter();
+			routers.insert(std::pair<std::string, Router *>(q, r));
+		}
+		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		return q;
 	}
 
 	void AddProducer(Producer *producer, std::string label)

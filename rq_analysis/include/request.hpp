@@ -1,6 +1,9 @@
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
+static unsigned int sNextId = 0;
+unsigned int getNextId() { return ++sNextId; }
+
 // namespace enums
 //{
 const int typeInput = 0;
@@ -15,11 +18,12 @@ const int statusArrive = 4;
 //};
 struct Request
 {
+    unsigned int id = getNextId();
     int rtype;
     int status;
     double emitted_at;
-    int attempts;
-    double wait_time;
+    int attempts = 0;
+    double wait_time = 0;
     double status_change_at;
 };
 
