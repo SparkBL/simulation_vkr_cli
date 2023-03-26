@@ -6,6 +6,7 @@
 #include "router.hpp"
 #include "producer.hpp"
 #include "utils.hpp"
+#include <sstream>
 
 class Model
 {
@@ -38,9 +39,21 @@ public:
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}*/
 
-	void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
+	std::string AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
 	{
-		std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
+		if (!components.count(from_producer))
+		{
+			throw std::invalid_argument(from_producer + " not found in components");
+		}
+		if (!components.count(to_producer))
+		{
+			throw std::invalid_argument(to_producer + " not found in components");
+		}
+
+		std::ostringstream ss;
+		ss << to_producer << ":" << to_slot << ":" << from_producer << ":" << from_slot;
+		std::string q = ss.str();
+		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
 		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
@@ -51,11 +64,19 @@ public:
 		}
 		components.at(to_producer)->InputAtConnect(to_slot, r);
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		return q;
 	}
 
 	std::string AddHangingInput(std::string to_producer, std::string to_slot)
 	{
-		std::string q = string_sprintf("i:%s:%s", to_producer, to_slot);
+		if (!components.count(to_producer))
+		{
+			throw std::invalid_argument(to_producer + " not found in components");
+		}
+		std::ostringstream ss;
+		ss << "i:" << to_producer << ":" << to_slot;
+		std::string q = ss.str();
+		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
 		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
@@ -70,7 +91,14 @@ public:
 
 	std::string AddHangingOutput(std::string from_producer, std::string from_slot)
 	{
-		std::string q = string_sprintf("o:%s:%s", from_producer, from_slot);
+		if (!components.count(from_producer))
+		{
+			throw std::invalid_argument(from_producer + " not found in components");
+		}
+		std::ostringstream ss;
+		ss << "o:" << from_producer << ":" << from_slot;
+		std::string q = ss.str();
+		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
 		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
@@ -85,6 +113,10 @@ public:
 
 	std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)
 	{
+		if (!components.count(from_producer))
+		{
+			throw std::invalid_argument(from_producer + " not found in components");
+		}
 		std::string q = string_sprintf("o:%s:%s", from_producer, from_slot);
 		Router *r;
 		if (routers.count(q))
@@ -100,6 +132,15 @@ public:
 
 	void AddProducer(Producer *producer, std::string label)
 	{
+		if (components.count(label))
+		{
+			throw std::invalid_argument(label + " already exists in components");
+		}
+		if (producer == nullptr)
+		{
+			throw std::invalid_argument("producer object is nil");
+		}
+
 		// components.insert(std::pair<std::string, Producer *>(label, producer));
 		components.insert(components.end(), std::pair<std::string, Producer *>(label, producer));
 		// components[label] = producer;

@@ -14,12 +14,29 @@ public:
     virtual std::string Tag() { return "base"; }
     virtual void InputAtConnect(std::string slot_name, Router *router)
     {
+        if (router == nullptr)
+        {
+            throw std::invalid_argument("router is nil");
+        }
+
+        if (!this->inputs.count(slot_name))
+        {
+            throw std::invalid_argument(slot_name + " not found in input slot list");
+        }
         return this->inputs.find(slot_name)->second->Connect(router);
     }
 
     virtual void OutputAtConnect(std::string slot_name, Router *router)
     {
+        if (router == nullptr)
+        {
+            throw std::invalid_argument("router is nil");
+        }
 
+        if (!this->outputs.count(slot_name))
+        {
+            throw std::invalid_argument(slot_name + " not found in output slot list");
+        }
         return this->outputs.find(slot_name)->second->Connect(router);
     }
 

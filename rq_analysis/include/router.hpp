@@ -18,6 +18,14 @@ public:
 
     virtual void AddReader(RouterReader *r, std::string label)
     {
+        if (this->readers.count(label))
+        {
+            throw std::invalid_argument(label + " already exists in readers");
+        }
+        if (r == nullptr)
+        {
+            throw std::invalid_argument("router reader objet is nil");
+        }
         this->readers[label] = r;
     }
 

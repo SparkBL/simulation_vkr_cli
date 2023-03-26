@@ -39,6 +39,8 @@ public:
 
     virtual void Read(const Request *r) override
     {
+        if (r == nullptr)
+            return;
         while (r->status_change_at > cur_interval)
         {
             interval_stats.push_back(cur);
@@ -250,6 +252,8 @@ public:
 
     virtual void Read(const Request *r) override
     {
+        if (r == nullptr)
+            return;
         this->attempts[r->id]++;
         this->wait_time[r->id] += r->status_change_at - r->emitted_at;
     }

@@ -26,6 +26,10 @@ protected:
 public:
     Orbit(Delay *delay)
     {
+        if (delay == nullptr)
+        {
+            throw std::invalid_argument("delay object is nil");
+        }
         this->delay = delay;
         inputs = {{"in_slot", &orbit_append_channel}};
         outputs = {{"out_slot", &orbit_channel}};

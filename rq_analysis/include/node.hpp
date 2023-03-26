@@ -25,6 +25,10 @@ public:
     RQTNode(Delay *input_delay,
             Delay *called_delay)
     {
+        if (input_delay == nullptr || called_delay == nullptr)
+        {
+            throw std::invalid_argument("delay object is nil");
+        }
         this->input_delay = input_delay;
         this->called_delay = called_delay;
         this->now_serving = Request{status : statusServed};
@@ -104,6 +108,10 @@ class SimpleNode : public Producer
 public:
     SimpleNode(Delay *delay)
     {
+        if (delay == nullptr)
+        {
+            throw std::invalid_argument("delay object is nil");
+        }
         this->delay = delay;
         this->now_serving = Request{status : statusServed};
         inputs = {{"in_slot", &in_channel}};
@@ -146,6 +154,10 @@ class RQNode : public Producer
 public:
     RQNode(Delay *delay)
     {
+        if (delay == nullptr)
+        {
+            throw std::invalid_argument("delay object is nil");
+        }
         this->delay = delay;
         this->now_serving = Request{status : statusServed};
         inputs = {{"in_slot", &in_channel}, {"orbit_slot", &orbit_channel}};
