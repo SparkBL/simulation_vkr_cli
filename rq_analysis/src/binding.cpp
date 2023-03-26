@@ -112,8 +112,9 @@ PYBIND11_MODULE(simulation, m)
         .def("push", &Router::Push, "request"_a, "Push request in queue")
         .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
         .def("add_reader", &Router::AddReader, "reader"_a, "label"_a, "Add request reader")
-        .def_readwrite("pushed_count", &Router::pushed_count)
-        .def_readwrite("popped_count", &Router::popped_count)
+        .def_readwrite("readers", &Router::readers, "dictionary of readers")
+        .def_readwrite("pushed_count", &Router::pushed_count, "number of pushed requests")
+        .def_readwrite("popped_count", &Router::popped_count, "number of popped requests")
         .def_readwrite("__q__", &Router::q);
 
     py::class_<OutputRouter, Router>(m, "OutputRouter", "Endpoint for incoming requests. Popping requests from OutputRouter return empty Request")

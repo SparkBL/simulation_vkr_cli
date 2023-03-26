@@ -118,7 +118,7 @@ public:
 			throw std::invalid_argument(from_producer + " not found in components");
 		}
 		std::ostringstream ss;
-		ss << "o:" << from_producer << ":" << from_slot;
+		ss << "onq:" << from_producer << ":" << from_slot;
 		std::string q = ss.str();
 		Router *r;
 		if (routers.count(q))
