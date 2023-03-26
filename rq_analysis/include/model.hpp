@@ -51,7 +51,7 @@ public:
 		}
 
 		std::ostringstream ss;
-		ss << to_producer << ":" << to_slot << ":" << from_producer << ":" << from_slot;
+		ss << from_producer << ":" << from_slot << ":" << to_producer << ":" << to_slot;
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
 		Router *r;
@@ -117,7 +117,7 @@ public:
 		{
 			throw std::invalid_argument(from_producer + " not found in components");
 		}
-		std::string q = string_sprintf("o:%s:%s", from_producer, from_slot);
+		std::string q = string_sprintf("onq:%s:%s", from_producer, from_slot);
 		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
