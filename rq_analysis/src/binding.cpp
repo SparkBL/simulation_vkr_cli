@@ -89,7 +89,7 @@ PYBIND11_MODULE(simulation, m)
         .def("tag", &Producer::Tag)
         .def_readwrite("queue", &Producer::queue, py::return_value_policy::reference_internal);
 
-    py::class_<Model>(m, "RqModel", "Container for managing simulation process.")
+    py::class_<Model>(m, "Model", "Container for managing simulation process.")
         .def(py::init<double>(), "end"_a = 1000)
         .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a, "Adds request flow between OUT slot of producer A to IN slot of producer B")
         .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>(), "Adds producer to model")
