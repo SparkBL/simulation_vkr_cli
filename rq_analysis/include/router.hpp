@@ -9,16 +9,24 @@ class Router
 {
 public:
     std::vector<Request> q;
-    std::unordered_map<std::string, RouterReader *> readers = {};
+    std::unordered_map<std::string, RouterReader *> readers;
     friend class InSlot;
     friend class OutSlot;
     friend class Slot;
-    int pushed_count = 0;
-    int popped_count = 0;
+    int pushed_count;
+    int popped_count;
 
-    virtual void AddReader(RouterReader *r, std::string label)
+    Router()
     {
-        if (this->readers.count(label))
+        readers = {};
+        q = {};
+        pushed_count = 0;
+        popped_count = 0;
+    }
+
+    void AddReader(RouterReader *r, std::string label)
+    {
+        if (readers.count(label))
         {
             throw std::invalid_argument(label + " already exists in readers");
         }
@@ -26,7 +34,23 @@ public:
         {
             throw std::invalid_argument("router reader objet is nil");
         }
-        this->readers[label] = r;
+
+        readers.insert(readers.end(), std::pair<std::string, RouterReader *>(label, r));
+    }
+
+    const std::unordered_map<std::string, RouterReader *> *Readers()
+    {
+        const std::unordered_map<std::string, RouterReader *> *p = &readers;
+        return p;
+    }
+
+    RouterReader *ReaderAt(std::string label)
+    {
+        if (!readers.count(label))
+        {
+            throw std::invalid_argument(label + " does not exists in readers");
+        }
+        return readers.at(label);
     }
 
     virtual Request Pop()
@@ -34,7 +58,7 @@ public:
         Request ret = q.front();
         q.erase(q.begin());
         popped_count++;
-        for (auto &e : this->readers)
+        for (auto &e : readers)
         {
             e.second->Read(&ret);
         }
@@ -61,6 +85,8 @@ public:
 class NoneRouter : public Router
 {
 public:
+    NoneRouter() : Router() {}
+
     Request Pop() override
     {
         return Request{};
@@ -83,6 +109,8 @@ public:
 class OutputRouter : public Router
 {
 public:
+    OutputRouter() : Router() {}
+
     Request Pop() override
     {
         return Request{};

@@ -240,11 +240,10 @@ public:
 
 class AttemptCounter : public RouterReader
 {
-private:
+public:
     std::unordered_map<unsigned int, int> attempts;
     std::unordered_map<unsigned int, double> wait_time;
 
-public:
     AttemptCounter()
     {
         attempts = {};

@@ -16,6 +16,7 @@ public:
 	double end;
 	std::unordered_map<std::string, Producer *> components;
 	std::unordered_map<std::string, Router *> routers;
+
 	Model(double end = 1000)
 	{
 		time = 0;
@@ -23,6 +24,45 @@ public:
 		components = {};
 		routers = {};
 		event_queue = {};
+	}
+
+	std::vector<double> Queue()
+	{
+		return event_queue;
+	}
+	void SetTime(double t)
+	{
+		if (t < 0)
+			throw std::invalid_argument("model time must be greater than zero");
+		time = t;
+	}
+	void SetEnd(double t)
+	{
+		if (t < 0)
+			throw std::invalid_argument("model time must be greater than zero");
+		end = t;
+	}
+
+	double Time()
+	{
+		return time;
+	}
+
+	double End()
+	{
+		return end;
+	}
+
+	const std::unordered_map<std::string, Producer *> *Components() const
+	{
+		const std::unordered_map<std::string, Producer *> *p = &components;
+		return p;
+	}
+
+	const std::unordered_map<std::string, Router *> *Routers() const
+	{
+		const std::unordered_map<std::string, Router *> *p = &routers;
+		return p;
 	}
 
 	/*void AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
@@ -38,6 +78,24 @@ public:
 		components.at(to_producer)->InputAtConnect(to_slot, r);
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}*/
+
+	Router *RouterAt(std::string label)
+	{
+		if (!routers.count(label))
+		{
+			throw std::invalid_argument(label + " not found in routers");
+		}
+		return routers.at(label);
+	}
+
+	Producer *ComponentAt(std::string label)
+	{
+		if (!components.count(label))
+		{
+			throw std::invalid_argument(label + " not found in components");
+		}
+		return components.at(label);
+	}
 
 	std::string AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
 	{
@@ -109,6 +167,15 @@ public:
 		}
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 		return q;
+	}
+
+	void AddConnectionReader(std::string connection, std::string label, RouterReader *r)
+	{
+		if (!routers.count(connection))
+		{
+			throw std::invalid_argument(connection + " not found in routers");
+		}
+		routers.at(connection)->AddReader(r, label);
 	}
 
 	std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)

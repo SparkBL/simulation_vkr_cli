@@ -22,7 +22,6 @@ struct Request
     int rtype;
     int status;
     double emitted_at;
-    int attempts = 0;
     double wait_time = 0;
     double status_change_at;
 };
