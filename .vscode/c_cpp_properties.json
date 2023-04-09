@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/include/",
+                "${workspaceFolder}/rq_analysis/include/",
                 "/usr/include/python3.8"
             ],
             "defines": [],

@@ -152,6 +152,10 @@ PYBIND11_MODULE(simulation, m)
         .def_readwrite("attempts", &AttemptCounter::attempts, py::keep_alive<1, 2>(), "dictionary of attempts")
         .def_readwrite("wait_time", &AttemptCounter::wait_time, py::keep_alive<1, 2>(), "dictionary of wait_time");
 
+    py::class_<TimeCounter, RouterReader>(m, "TimeCounter", "Collects moments when request is being pushed into router")
+        .def(py::init())
+        .def_readwrite("counts", &TimeCounter::counts, py::keep_alive<1, 2>(), "vector of moments");
+
     py::class_<Slot>(m, "Slot")
         .def(py::init<Router *>(), "router"_a)
         .def("connect", &Slot::Connect, "router"_a);

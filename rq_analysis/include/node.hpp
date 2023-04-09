@@ -7,6 +7,7 @@
 #include "router.hpp"
 #include "request.hpp"
 #include <unordered_map>
+#include <vector>
 #include <utils.hpp>
 // namespace nodes
 //{
@@ -214,22 +215,57 @@ class RQTPollingNode : public Producer
     Request now_serving;
     Delay *input_delay;
     Delay *called_delay;
+    // Delay *poll_delay;
     InSlot in_channel;
     InSlot call_channel;
     InSlot orbit_channel;
     OutSlot orbit_append_channel;
     OutSlot out_channel;
-    std::vector<std::vector<double>> Q;
+    std::vector<std::vector<double>> q;
+    double poll_time;
+    int state;
 
 private:
-    void poll()
+    void poll(double time)
     {
+        if (poll_time == time)
+        {
+            double sum = 0;
+            double chance = NextDouble();
+            for (int i = 0; i < q.size(); i++)
+            {
+                if (i != state)
+                {
+                    sum += q[state][i] / (-q[state][state]);
+                    if (chance <= sum)
+                    {
+                        state = i;
+                        poll_time = GetExponentialDelay(-q[state][state], time);
+                        queue.push_back(poll_time);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
 public:
     RQTPollingNode(Delay *input_delay,
-                   Delay *called_delay)
+                   Delay *called_delay, std::vector<std::vector<double>> q)
     {
+        if (q.size() != 3)
+        {
+            throw std::invalid_argument("q must be of size 3");
+        }
+        if (q.at(0).size() != 3 || q.at(1).size() != 3 || q.at(2).size() != 3)
+        {
+            throw std::invalid_argument("q must be of size 3");
+        }
+        if (q[0][1] != 0 || q[1][0] != 0)
+        {
+            throw std::invalid_argument("q[0][1] and q[1][0] must equal 0");
+        }
+        this->q = q;
         this->input_delay = input_delay;
         this->called_delay = called_delay;
         this->now_serving = Request{status : statusServed};
@@ -239,6 +275,7 @@ public:
 
     std::vector<double> Produce(double time) override
     {
+
         if (now_serving.status == statusServing && now_serving.status_change_at == time)
         {
             now_serving.status = statusServed;

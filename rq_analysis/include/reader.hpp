@@ -258,4 +258,20 @@ public:
     }
 };
 
+class TimeCounter : public RouterReader
+{
+public:
+    std::vector<double> counts;
+
+    TimeCounter()
+    {
+        counts = {};
+    }
+
+    virtual void Read(const Request *r) override
+    {
+        counts.push_back(r->status_change_at);
+    }
+};
+
 #endif
