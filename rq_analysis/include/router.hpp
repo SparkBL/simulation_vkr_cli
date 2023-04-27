@@ -9,7 +9,7 @@ class Router
 {
 public:
     std::vector<Request> q;
-    std::unordered_map<std::string, RouterReader *> readers;
+    std::unordered_map<std::string, RouterReader &> readers;
     friend class InSlot;
     friend class OutSlot;
     friend class Slot;
@@ -24,43 +24,42 @@ public:
         popped_count = 0;
     }
 
-    void AddReader(RouterReader *r, std::string label)
+    void AddReader(RouterReader &r, std::string label)
     {
         if (readers.count(label))
         {
             throw std::invalid_argument(label + " already exists in readers");
         }
-        if (r == nullptr)
-        {
-            throw std::invalid_argument("router reader objet is nil");
-        }
-
-        readers.insert(readers.end(), std::pair<std::string, RouterReader *>(label, r));
+        readers.insert(readers.end(), std::pair<std::string, RouterReader &>(label, r));
     }
 
-    const std::unordered_map<std::string, RouterReader *> *Readers()
+    std::unordered_map<std::string, RouterReader &> &Readers()
     {
-        const std::unordered_map<std::string, RouterReader *> *p = &readers;
-        return p;
+        return readers;
     }
 
-    RouterReader *ReaderAt(std::string label)
+    RouterReader &ReaderAt(std::string label)
     {
         if (!readers.count(label))
         {
             throw std::invalid_argument(label + " does not exists in readers");
         }
         return readers.at(label);
+        ;
     }
 
     virtual Request Pop()
     {
+        if (q.size() == 0)
+        {
+            throw std::invalid_argument("router is empty");
+        }
         Request ret = q.front();
         q.erase(q.begin());
         popped_count++;
         for (auto &e : readers)
         {
-            e.second->Read(&ret);
+            e.second.Read(ret);
         }
         return ret;
     }
@@ -96,11 +95,11 @@ public:
         return 0;
     }
 
-    void Push(Request request)
+    void Push(Request request) override
     {
     }
 
-    bool IsEmpty()
+    bool IsEmpty() override
     {
         return true;
     }
@@ -115,17 +114,17 @@ public:
     {
         return Request{};
     }
-    int Len()
+    int Len() override
     {
         return 0;
     }
 
-    void Push(Request request)
+    void Push(Request request) override
     {
         popped_count++;
         for (auto &e : this->readers)
         {
-            e.second->Read(&request);
+            e.second.Read(request);
         }
     }
 
@@ -141,15 +140,13 @@ protected:
     Router *r;
 
 public:
-    Slot(Router *r)
+    Slot(Router &r)
     {
-        r = r;
+        this->r = &r;
     }
-    Slot() {}
-
-    void Connect(Router *in)
+    Slot()
     {
-        r = in;
+        r = new NoneRouter();
     }
 };
 
@@ -157,9 +154,8 @@ class InSlot : public Slot
 {
 
 public:
-    InSlot(Router *in) : Slot(in) {}
+    InSlot(Router &in) : Slot(in) {}
     InSlot() : Slot() {}
-
     int Len()
     {
         return Slot::r->Len();
@@ -179,7 +175,7 @@ class OutSlot : public Slot
 {
 
 public:
-    OutSlot(Router *in) : Slot(in) {}
+    OutSlot(Router &in) : Slot(in) {}
     OutSlot() : Slot() {}
 
     int Len()

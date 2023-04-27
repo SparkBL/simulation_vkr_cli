@@ -14,8 +14,8 @@ public:
 	std::vector<double> event_queue;
 	double time;
 	double end;
-	std::unordered_map<std::string, Producer *> components;
-	std::unordered_map<std::string, Router *> routers;
+	std::unordered_map<std::string, Producer &> components;
+	std::unordered_map<std::string, Router &> routers;
 
 	Model(double end = 1000)
 	{
@@ -53,15 +53,15 @@ public:
 		return end;
 	}
 
-	const std::unordered_map<std::string, Producer *> *Components() const
+	const std::unordered_map<std::string, Producer &> &Components() const
 	{
-		const std::unordered_map<std::string, Producer *> *p = &components;
+		const std::unordered_map<std::string, Producer &> &p = components;
 		return p;
 	}
 
-	const std::unordered_map<std::string, Router *> *Routers() const
+	const std::unordered_map<std::string, Router &> &Routers() const
 	{
-		const std::unordered_map<std::string, Router *> *p = &routers;
+		const std::unordered_map<std::string, Router &> &p = routers;
 		return p;
 	}
 
@@ -79,7 +79,7 @@ public:
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}*/
 
-	Router *RouterAt(std::string label)
+	Router &RouterAt(std::string label)
 	{
 		if (!routers.count(label))
 		{
@@ -88,7 +88,7 @@ public:
 		return routers.at(label);
 	}
 
-	Producer *ComponentAt(std::string label)
+	Producer &ComponentAt(std::string label)
 	{
 		if (!components.count(label))
 		{
@@ -112,16 +112,16 @@ public:
 		ss << from_producer << ":" << from_slot << ":" << to_producer << ":" << to_slot;
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router *r;
+		Router r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = new Router();
-			routers.insert(std::pair<std::string, Router *>(q, r));
+			r = Router();
+			routers.insert(std::pair<std::string, Router &>(q, r));
 		}
-		components.at(to_producer)->InputAtConnect(to_slot, r);
-		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		components.at(to_producer).InputAtConnect(to_slot, r);
+		components.at(from_producer).OutputAtConnect(from_slot, r);
 		return q;
 	}
 
@@ -135,15 +135,15 @@ public:
 		ss << "i:" << to_producer << ":" << to_slot;
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router *r;
+		Router r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = new Router();
-			routers.insert(std::pair<std::string, Router *>(q, r));
+			r = Router();
+			routers.insert(std::pair<std::string, Router &>(q, r));
 		}
-		components.at(to_producer)->InputAtConnect(to_slot, r);
+		components.at(to_producer).InputAtConnect(to_slot, r);
 		return q;
 	}
 
@@ -154,28 +154,19 @@ public:
 			throw std::invalid_argument(from_producer + " not found in components");
 		}
 		std::ostringstream ss;
-		ss << "o:" << from_producer << ":" << from_slot;
+		ss << "ho:" << from_producer << ":" << from_slot << ":";
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router *r;
+		Router r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = new Router();
-			routers.insert(std::pair<std::string, Router *>(q, r));
+			r = Router();
+			routers.insert(std::pair<std::string, Router &>(q, r));
 		}
-		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		components.at(from_producer).OutputAtConnect(from_slot, r);
 		return q;
-	}
-
-	void AddConnectionReader(std::string connection, std::string label, RouterReader *r)
-	{
-		if (!routers.count(connection))
-		{
-			throw std::invalid_argument(connection + " not found in routers");
-		}
-		routers.at(connection)->AddReader(r, label);
 	}
 
 	std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)
@@ -187,31 +178,35 @@ public:
 		std::ostringstream ss;
 		ss << "onq:" << from_producer << ":" << from_slot;
 		std::string q = ss.str();
-		Router *r;
+		Router r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = new OutputRouter();
-			routers.insert(std::pair<std::string, Router *>(q, r));
+			r = OutputRouter();
+			routers.insert(std::pair<std::string, Router &>(q, r));
 		}
-		components.at(from_producer)->OutputAtConnect(from_slot, r);
+		components.at(from_producer).OutputAtConnect(from_slot, r);
 		return q;
 	}
 
-	void AddProducer(Producer *producer, std::string label)
+	void AddConnectionReader(std::string connection, std::string label, RouterReader &r)
+	{
+		if (!routers.count(connection))
+		{
+			throw std::invalid_argument(connection + " not found in routers");
+		}
+		routers.at(connection).AddReader(r, label);
+	}
+
+	void AddProducer(Producer &producer, std::string label)
 	{
 		if (components.count(label))
 		{
 			throw std::invalid_argument(label + " already exists in components");
 		}
-		if (producer == nullptr)
-		{
-			throw std::invalid_argument("producer object is nil");
-		}
-
 		// components.insert(std::pair<std::string, Producer *>(label, producer));
-		components.insert(components.end(), std::pair<std::string, Producer *>(label, producer));
+		components.insert(components.end(), std::pair<std::string, Producer &>(label, producer));
 		// components[label] = producer;
 	}
 

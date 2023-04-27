@@ -18,7 +18,8 @@ class MMPP : public Producer
     int state;
     double shift_time;
     Request next_produce;
-    OutSlot channel;
+    const std::vector<std::string> in_slot_names = {};
+    const std::vector<std::string> out_slot_names = {"out_slot"};
 
     void shift(double time)
     {
@@ -52,8 +53,11 @@ public:
 
         this->l = l;
         this->q = q;
-        outputs = {{"out_slot", &channel}};
-        inputs = {};
+        for (auto &s : out_slot_names)
+        {
+            outputs.insert({s, OutSlot()});
+        }
+
         double t = GetExponentialDelay(l[0], init_time);
         next_produce = Request{rtype : request_type, status : statusTravel, emitted_at : t, status_change_at : t};
         queue.push_back(next_produce.status_change_at);
@@ -67,7 +71,7 @@ public:
         shift(time);
         if (next_produce.status_change_at == time)
         {
-            channel.Push(next_produce);
+            outputs.at(out_slot_names[0]).Push(next_produce);
             double t = GetExponentialDelay(l[state], time);
             next_produce = Request{rtype : request_type, status : statusTravel, emitted_at : t, status_change_at : t};
             if (next_produce.status_change_at < shift_time)
@@ -84,18 +88,20 @@ public:
 class SimpleInput : public Producer
 {
     Request next_produce;
-    Delay *delay;
+    Delay &delay;
     int request_type;
-    OutSlot channel;
+    const std::vector<std::string> in_slot_names = {};
+    const std::vector<std::string> out_slot_names = {"out_slot"};
 
 public:
-    SimpleInput(Delay *delay, int request_type, double init_time = 0)
+    SimpleInput(Delay &delay, int request_type, double init_time = 0) : delay(delay)
     {
-        this->delay = delay;
         this->request_type = request_type;
-        inputs = {};
-        outputs = {{"out_slot", &channel}};
-        double t = delay->Get(init_time);
+        for (auto &s : out_slot_names)
+        {
+            outputs.insert({s, OutSlot()});
+        }
+        double t = delay.Get(init_time);
         next_produce = Request{
             rtype : request_type,
             status : statusTravel,
@@ -109,8 +115,8 @@ public:
     {
         if (next_produce.status_change_at == time)
         {
-            channel.Push(next_produce);
-            double t = delay->Get(time);
+            outputs.at(out_slot_names[0]).Push(next_produce);
+            double t = delay.Get(time);
             next_produce = Request{rtype : request_type, status : statusTravel, emitted_at : t, status_change_at : t};
             queue.push_back(next_produce.status_change_at);
         }

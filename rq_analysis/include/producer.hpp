@@ -12,46 +12,39 @@ public:
     virtual ~Producer() = default;
     virtual std::vector<double> Produce(double time) = 0;
     virtual std::string Tag() { return "base"; }
-    virtual void InputAtConnect(std::string slot_name, Router *router)
+    virtual void InputAtConnect(std::string slot_name, Router &router)
     {
-        if (router == nullptr)
-        {
-            throw std::invalid_argument("router is nil");
-        }
-
         if (!this->inputs.count(slot_name))
         {
             throw std::invalid_argument(slot_name + " not found in input slot list");
         }
-        return this->inputs.find(slot_name)->second->Connect(router);
+        this->inputs.erase(slot_name);
+        this->inputs.insert(std::pair<std::string, InSlot>(slot_name, InSlot(router)));
     }
 
-    virtual void OutputAtConnect(std::string slot_name, Router *router)
+    virtual void OutputAtConnect(std::string slot_name, Router &router)
     {
-        if (router == nullptr)
-        {
-            throw std::invalid_argument("router is nil");
-        }
 
         if (!this->outputs.count(slot_name))
         {
             throw std::invalid_argument(slot_name + " not found in output slot list");
         }
-        return this->outputs.find(slot_name)->second->Connect(router);
+        this->inputs.erase(slot_name);
+        this->outputs.insert(std::pair<std::string, OutSlot>(slot_name, OutSlot(router)));
     }
 
     virtual std::vector<std::string> Inputs()
     {
-        return extract_keys<std::string, InSlot *>(inputs);
+        return extract_keys<std::string, InSlot>(inputs);
     }
     virtual std::vector<std::string> Outputs()
     {
-        return extract_keys<std::string, OutSlot *>(outputs);
+        return extract_keys<std::string, OutSlot>(outputs);
     }
 
 protected:
-    std::unordered_map<std::string, InSlot *> inputs = {};
-    std::unordered_map<std::string, OutSlot *> outputs = {};
+    std::unordered_map<std::string, InSlot> inputs = {};
+    std::unordered_map<std::string, OutSlot> outputs = {};
 
     std::vector<double> GetEvents()
     {

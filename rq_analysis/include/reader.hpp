@@ -9,7 +9,7 @@
 class RouterReader
 {
 public:
-    virtual void Read(const Request *r) = 0;
+    virtual void Read(const Request &r) = 0;
     virtual ~RouterReader() = default;
 };
 
@@ -37,32 +37,31 @@ public:
         this->last_delta_called = 0;
     }
 
-    virtual void Read(const Request *r) override
+    virtual void Read(const Request &r) override
     {
-        if (r == nullptr)
-            return;
-        while (r->status_change_at > cur_interval)
+
+        while (r.status_change_at > cur_interval)
         {
             interval_stats.push_back(cur);
             cur = IntervalStat{input : 0, called : 0};
             cur_interval += interval;
         }
-        switch (r->rtype)
+        switch (r.rtype)
         {
         case typeInput:
             cur.input++;
-            time_deltas_input.push_back(r->status_change_at - last_delta_input);
-            last_delta_input = r->status_change_at;
+            time_deltas_input.push_back(r.status_change_at - last_delta_input);
+            last_delta_input = r.status_change_at;
             break;
         case typeCalled:
             cur.called++;
-            time_deltas_called.push_back(r->status_change_at - last_delta_input);
-            last_delta_called = r->status_change_at;
+            time_deltas_called.push_back(r.status_change_at - last_delta_input);
+            last_delta_called = r.status_change_at;
             break;
         case typeState:
             cur.state++;
-            time_deltas_state.push_back(r->status_change_at - last_delta_input);
-            last_delta_state = r->status_change_at;
+            time_deltas_state.push_back(r.status_change_at - last_delta_input);
+            last_delta_state = r.status_change_at;
             break;
         }
     }
@@ -247,14 +246,13 @@ public:
     AttemptCounter()
     {
         attempts = {};
+        wait_time = {};
     }
 
-    virtual void Read(const Request *r) override
+    virtual void Read(const Request &r) override
     {
-        if (r == nullptr)
-            return;
-        this->attempts[r->id]++;
-        this->wait_time[r->id] = r->status_change_at - r->emitted_at;
+        this->attempts[r.id]++;
+        this->wait_time[r.id] = r.status_change_at - r.emitted_at;
     }
 };
 
@@ -268,9 +266,9 @@ public:
         counts = {};
     }
 
-    virtual void Read(const Request *r) override
+    virtual void Read(const Request &r) override
     {
-        counts.push_back(r->status_change_at);
+        counts.push_back(r.status_change_at);
     }
 };
 

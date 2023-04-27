@@ -5,7 +5,6 @@
 #include "orbit.hpp"
 #include "request.hpp"
 #include "router.hpp"
-#include "stats.hpp"
 #include "stream.hpp"
 #include "utils.hpp"
 //  #include <pybind11/complex.h>
@@ -57,7 +56,7 @@ PYBIND11_MODULE(simulation, m)
     //  py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
     py::class_<Request>(m, "Request", "Basic unit of simulation.\nrtype - request type\nstatus_change_at\nstatus - current status of request\nmoment of model time, when request has to change its status\nemitted_at - moment of time, when request was emitted from input process", py::dynamic_attr())
         .def(py::init())
-        .def_readonly("id", &Request::id)
+        .def_readwrite("id", &Request::id)
         .def_readwrite("rtype", &Request::rtype)
         .def_readwrite("status", &Request::status)
         .def_readwrite("status_change_at", &Request::status_change_at)
@@ -67,7 +66,7 @@ PYBIND11_MODULE(simulation, m)
         .def("__repr__",
              [](const Request r)
              {
-                 return string_sprintf("Request{rtype : %d, status : %d, emitted_at : %g, wait_time : %g, status_change_at : %g}", r.rtype, r.status, r.emitted_at, r.wait_time, r.status_change_at);
+                 return string_sprintf("Request{id: %d, rtype : %d, status : %d, emitted_at : %g, wait_time : %g, status_change_at : %g}", r.id, r.rtype, r.status, r.emitted_at, r.wait_time, r.status_change_at);
              });
     m.attr("TYPE_INPUT") = py::int_(typeInput);
     m.attr("TYPE_CALLED") = py::int_(typeCalled);
@@ -97,7 +96,7 @@ PYBIND11_MODULE(simulation, m)
         .def("add_hanging_output", &Model::AddHangingOutput, "from_producer"_a, "from_slot"_a, "Adds request flow from a producer. Method presumes outgoing requests will be handled manually. Returns router's label")
         .def("add_hanging_output_noqueue", &Model::AddHangingOutputNoQueue, "from_producer"_a, "from_slot"_a, "Adds request flow from a producer. Requests only will be read by attached readers without storing")
         .def("add_producer", &Model::AddProducer, "producer"_a, "label"_a, py::keep_alive<1, 2>(), "Adds producer to model")
-        .def("add_connection_reader", &Model::AddConnectionReader, "connection"_a, "label"_a, "reader"_a, py::keep_alive<1, 4>(), "Adds producer to model")
+        .def("add_connection_reader", &Model::AddConnectionReader, "connection"_a, "label"_a, "reader"_a, py::keep_alive<1, 2>(), "Adds producer to model")
         .def("next_step", &Model::NextStep, "Set model time to moment of next event")
         .def("aggregate", &Model::Aggregate, py::keep_alive<1, 2>(), "events"_a, "Gathers return of method 'produce' to sort events in ascending order")
         .def("is_done", &Model::IsDone, "Checks if time == end")
@@ -105,23 +104,24 @@ PYBIND11_MODULE(simulation, m)
         .def("time", &Model::Time, "Current moment of simulation")
         .def("set_end", &Model::SetEnd, "Set moment when simulation has to stop")
         .def("end", &Model::End, "Moment when simulation has to stop")
-        .def("event_queue", &Model::Queue, py::keep_alive<1, 2>(), "List of events, which must occur in the model")
-        .def("routers", &Model::Routers, py::keep_alive<1, 0>(), "List of connections added by 'add_connection'")
-        .def("components", &Model::Components, py::keep_alive<1, 0>(), "List of producers added by 'add_producer'")
-        .def("component_at", &Model::ComponentAt, py::keep_alive<1, 2>(), "Get producer")
-        .def("router_at", &Model::RouterAt, py::keep_alive<1, 2>(), "Get router");
+        .def("event_queue", &Model::Queue, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "List of events, which must occur in the model")
+        .def("routers", &Model::Routers, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "List of connections added by 'add_connection'")
+        .def("components", &Model::Components, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "List of producers added by 'add_producer'")
+        .def("component_at", &Model::ComponentAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "Get producer")
+        .def("router_at", &Model::RouterAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "Get router");
 
     py::class_<Router>(m, "Router", "Request queue")
         .def(py::init())
-        .def("pop", &Router::Pop, "Get first pushed request")
         .def("len", &Router::Len, "Returns number of requests contained")
         .def("push", &Router::Push, "request"_a, "Push request in queue")
+        .def("pop", &Router::Pop, "Pop request from queue")
         .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
         .def("add_reader", &Router::AddReader, "reader"_a, "label"_a, py::keep_alive<1, 2>(), "Add request reader")
-        .def("readers", &Router::Readers, py::keep_alive<1, 0>(), "dictionary of readers")
-        .def("reader_at", &Router::ReaderAt, py::keep_alive<1, 2>(), "get reader")
-        .def_readonly("pushed_count", &Router::pushed_count, "number of pushed requests")
-        .def_readonly("popped_count", &Router::popped_count, "number of popped requests")
+        .def("readers", &Router::Readers, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "dictionary of readers")
+        .def("reader_at", &Router::ReaderAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "get reader")
+        .def_readonly("pushed_count", &Router::pushed_count, py::return_value_policy::reference_internal, "number of pushed requests")
+        .def_readonly("popped_count", &Router::popped_count, py::return_value_policy::reference_internal, "number of popped requests")
+        .def_readwrite("__readers__", &Router::readers, py::return_value_policy::reference_internal)
         .def_readonly("__q__", &Router::q);
 
     py::class_<OutputRouter, Router>(m, "OutputRouter", "Endpoint for incoming requests. Popping requests from OutputRouter return empty Request")
@@ -149,27 +149,30 @@ PYBIND11_MODULE(simulation, m)
 
     py::class_<AttemptCounter, RouterReader>(m, "AttemptCounter", "Collects attempt and wait time statistic on passing requests")
         .def(py::init())
-        .def_readwrite("attempts", &AttemptCounter::attempts, py::keep_alive<1, 2>(), "dictionary of attempts")
-        .def_readwrite("wait_time", &AttemptCounter::wait_time, py::keep_alive<1, 2>(), "dictionary of wait_time");
+        .def_readwrite("attempts", &AttemptCounter::attempts, py::keep_alive<1, 0>(), "dictionary of attempts")
+        .def_readwrite("wait_time", &AttemptCounter::wait_time, py::keep_alive<1, 0>(), "dictionary of wait_time");
 
     py::class_<TimeCounter, RouterReader>(m, "TimeCounter", "Collects moments when request is being pushed into router")
         .def(py::init())
-        .def_readwrite("counts", &TimeCounter::counts, py::keep_alive<1, 2>(), "vector of moments");
+        .def_readwrite("counts", &TimeCounter::counts, py::keep_alive<1, 0>(), "vector of moments");
 
     py::class_<Slot>(m, "Slot")
-        .def(py::init<Router *>(), "router"_a)
-        .def("connect", &Slot::Connect, "router"_a);
+        .def(py::init<Router &>())
+        .def(py::init<>());
+    //.def("connect", &Slot::Connect, "router"_a, py::keep_alive<1, 2>());
 
     py::class_<InSlot, Slot>(m, "InSlot")
-        .def(py::init<Router *>(), "router"_a)
+        .def(py::init<Router &>())
+        .def(py::init<>())
         .def("pop", &InSlot::Pop)
         .def("len", &InSlot::Len)
         .def("is_empty", &InSlot::IsEmpty);
 
     py::class_<OutSlot, Slot>(m, "OutSlot")
-        .def(py::init<Router *>(), "router"_a)
+        .def(py::init<Router &>())
+        .def(py::init<>())
         .def("len", &OutSlot::Len)
-        .def("push", &OutSlot::Push, "request"_a);
+        .def("push", &OutSlot::Push, "request"_a, py::keep_alive<1, 2>());
 
     m.attr("FLOAT_EQ_THRESHOLD") = py::float_(float64_equality_threshold);
 
@@ -188,16 +191,18 @@ PYBIND11_MODULE(simulation, m)
     m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
-        .def(py::init<Delay *, Delay *>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>());
+        .def(py::init<Delay &, Delay &>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>());
 
     py::class_<SimpleNode, Producer>(m, "SimpleNode")
-        .def(py::init<Delay *>(), "input_delay"_a, py::keep_alive<1, 2>());
+        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>());
+
+    py::class_<DumpNode, Producer>(m, "DumpNode").def(py::init<>());
 
     py::class_<RQNode, Producer>(m, "RqNode")
-        .def(py::init<Delay *>(), "input_delay"_a, py::keep_alive<1, 2>());
+        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>());
 
     py::class_<SimpleInput, Producer>(m, "SimpleInput", "Poisson input process")
-        .def(py::init<Delay *, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());
+        .def(py::init<Delay &, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());
 
     py::class_<MMPP, Producer>(m, "MMPPInput", "MMPP input process")
         .def(py::init<std::vector<double>, std::vector<std::vector<double>>, int, double>(), "lambda"_a, "Q"_a, "request_type"_a = typeInput, "init_time"_a = 0);
@@ -205,20 +210,5 @@ PYBIND11_MODULE(simulation, m)
     py::class_<IOrbit, Producer>(m, "IOrbit")
         .def("append", &IOrbit::Append, "time"_a);
     py::class_<Orbit, IOrbit>(m, "Orbit")
-        .def(py::init<Delay *>(), "delay"_a, py::keep_alive<1, 2>());
-
-    py::class_<StatCollector, Producer>(m, "StatCollector")
-        .def(py::init<double>(), "interval"_a)
-        .def("get_distribution_2d", &StatCollector::GetDistribution)
-        .def("get_distribution_summary", &StatCollector::GetSummaryDistribution)
-        .def("get_distribution_input", &StatCollector::GetInputDistribution)
-        .def("get_distribution_called", &StatCollector::GetCalledDistribution)
-        .def("get_mean_input", &StatCollector::GetMeanInput)
-        .def("get_mean_called", &StatCollector::GetMeanCalled)
-        .def("get_variation_called", &StatCollector::GetVariationIntervalCalled)
-        .def("get_variation_input", &StatCollector::GetVariationIntervalInput);
-
-    py::class_<CustomCollector, Producer>(m, "CustomCollector")
-        .def(py::init())
-        .def("get_requests", &CustomCollector::GetRequests);
+        .def(py::init<Delay &>(), "delay"_a, py::keep_alive<1, 2>());
 }

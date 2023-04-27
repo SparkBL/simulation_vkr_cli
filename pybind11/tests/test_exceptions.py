@@ -4,6 +4,7 @@ import pytest
 
 import env
 import pybind11_cross_module_tests as cm
+import pybind11_tests  # noqa: F401
 from pybind11_tests import exceptions as m
 
 
@@ -72,9 +73,9 @@ def test_cross_module_exceptions(msg):
 
 # TODO: FIXME
 @pytest.mark.xfail(
-    "env.PYPY and env.MACOS",
+    "env.MACOS and (env.PYPY or pybind11_tests.compiler_info.startswith('Homebrew Clang'))",
     raises=RuntimeError,
-    reason="Expected failure with PyPy and libc++ (Issue #2847 & PR #2999)",
+    reason="See Issue #2847, PR #2999, PR #4324",
 )
 def test_cross_module_exception_translator():
     with pytest.raises(KeyError):
@@ -93,8 +94,7 @@ def ignore_pytest_unraisable_warning(f):
     if hasattr(pytest, unraisable):  # Python >= 3.8 and pytest >= 6
         dec = pytest.mark.filterwarnings(f"ignore::pytest.{unraisable}")
         return dec(f)
-    else:
-        return f
+    return f
 
 
 # TODO: find out why this fails on PyPy, https://foss.heptapod.net/pypy/pypy/-/issues/3583
@@ -182,7 +182,7 @@ def test_custom(msg):
         m.throws5_1()
     assert msg(excinfo.value) == "MyException5 subclass"
 
-    with pytest.raises(m.MyException5) as excinfo:
+    with pytest.raises(m.MyException5) as excinfo:  # noqa: PT012
         try:
             m.throws5()
         except m.MyException5_1 as err:
@@ -211,7 +211,7 @@ def test_nested_throws(capture):
         m.try_catch(m.MyException5, throw_myex)
     assert str(excinfo.value) == "nested error"
 
-    def pycatch(exctype, f, *args):
+    def pycatch(exctype, f, *args):  # noqa: ARG001
         try:
             f(*args)
         except m.MyException as e:
@@ -302,12 +302,12 @@ class FlakyException(Exception):
 
 
 @pytest.mark.parametrize(
-    "exc_type, exc_value, expected_what",
-    (
+    ("exc_type", "exc_value", "expected_what"),
+    [
         (ValueError, "plain_str", "ValueError: plain_str"),
         (ValueError, ("tuple_elem",), "ValueError: tuple_elem"),
         (FlakyException, ("happy",), "FlakyException: FlakyException.__str__"),
-    ),
+    ],
 )
 def test_error_already_set_what_with_happy_exceptions(
     exc_type, exc_value, expected_what
@@ -317,6 +317,11 @@ def test_error_already_set_what_with_happy_exceptions(
     assert what == expected_what
 
 
+@pytest.mark.skipif(
+    # Intentionally very specific:
+    "sys.version_info == (3, 12, 0, 'alpha', 7)",
+    reason="WIP: https://github.com/python/cpython/issues/102594",
+)
 @pytest.mark.skipif("env.PYPY", reason="PyErr_NormalizeException Segmentation fault")
 def test_flaky_exception_failure_point_init():
     with pytest.raises(RuntimeError) as excinfo:
@@ -341,10 +346,7 @@ def test_flaky_exception_failure_point_str():
     )
     assert not py_err_set_after_what
     lines = what.splitlines()
-    if env.PYPY and len(lines) == 3:
-        n = 3  # Traceback is missing.
-    else:
-        n = 5
+    n = 3 if env.PYPY and len(lines) == 3 else 5
     assert (
         lines[:n]
         == [
@@ -380,3 +382,12 @@ def test_pypy_oserror_normalization():
     # https://github.com/pybind/pybind11/issues/4075
     what = m.test_pypy_oserror_normalization()
     assert "this_filename_must_not_exist" in what
+
+
+def test_fn_cast_int_exception():
+    with pytest.raises(RuntimeError) as excinfo:
+        m.test_fn_cast_int(lambda: None)
+
+    assert str(excinfo.value).startswith(
+        "Unable to cast Python instance of type <class 'NoneType'> to C++ type"
+    )
