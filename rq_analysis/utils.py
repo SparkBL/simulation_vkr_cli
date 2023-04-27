@@ -1,5 +1,5 @@
 import numpy as np
-
+from multiprocessing import Process
 
 def icfft2(n, m, matrix):
     d = np.zeros((n, m), dtype=complex)
@@ -37,3 +37,10 @@ def k_distance2(mat1, mat2):
             if abs(mat2[i][j] - mat1[i][j]) > max:
                 max = abs(mat2[i][j] - mat1[i][j])
     return max
+
+def run_cpu_tasks_in_parallel(tasks):
+    running_tasks = [Process(target=task) for task in tasks]
+    for running_task in running_tasks:
+        running_task.start()
+    for running_task in running_tasks:
+        running_task.join()

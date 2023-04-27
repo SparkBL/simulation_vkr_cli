@@ -19,28 +19,29 @@ class Orbit : public IOrbit
 {
 protected:
     std::vector<Request> requests;
-    Delay *delay;
-    OutSlot orbit_channel;
-    InSlot orbit_append_channel;
+    Delay &delay;
+    const std::vector<std::string> in_slot_names = {"in_slot"};
+    const std::vector<std::string> out_slot_names = {"out_slot"};
 
 public:
-    Orbit(Delay *delay)
+    Orbit(Delay &delay) : delay(delay)
     {
-        if (delay == nullptr)
+        for (auto &s : out_slot_names)
         {
-            throw std::invalid_argument("delay object is nil");
+            outputs.insert({s, OutSlot()});
         }
-        this->delay = delay;
-        inputs = {{"in_slot", &orbit_append_channel}};
-        outputs = {{"out_slot", &orbit_channel}};
+        for (auto &s : in_slot_names)
+        {
+            inputs.insert({s, InSlot()});
+        }
     }
 
     std::vector<double> Append(double time) override
     {
-        while (!orbit_append_channel.IsEmpty())
+        while (!inputs[in_slot_names[0]].IsEmpty())
         {
-            Request req = orbit_append_channel.Pop();
-            req.status_change_at = delay->Get(time);
+            Request req = inputs[in_slot_names[0]].Pop();
+            req.status_change_at = delay.Get(time);
             queue.push_back(req.status_change_at);
             requests.push_back(req);
         }
@@ -52,7 +53,7 @@ public:
         {
             if (requests[i].status_change_at == time)
             {
-                orbit_channel.Push(requests[i]);
+                outputs[out_slot_names[0]].Push(requests[i]);
                 requests.erase(requests.begin() + i);
                 return std::vector<double>();
             }
