@@ -82,6 +82,11 @@ public:
     {
         return q.empty();
     }
+
+    virtual void Flush()
+    {
+        q.clear();
+    }
 };
 
 class NoneRouter : public Router
