@@ -82,8 +82,8 @@ PYBIND11_MODULE(simulation, m)
         .def("produce", &Producer::Produce)
         //.def("produce", [](Producer &r, double time)
         //      { return as_pyarray(r.Produce(time)); })
-        .def("input_connect", &Producer::InputAtConnect, "slot_name"_a, "router"_a)
-        .def("output_connect", &Producer::OutputAtConnect, "slot_name"_a, "router"_a)
+        .def("input_connect", &Producer::InputAtConnect, "slot_name"_a, "router"_a, py::keep_alive<1, 3>())
+        .def("output_connect", &Producer::OutputAtConnect, "slot_name"_a, "router"_a, py::keep_alive<1, 3>())
         .def("inputs", &Producer::Inputs)
         .def("outputs", &Producer::Outputs)
         .def("tag", &Producer::Tag)
@@ -126,12 +126,9 @@ PYBIND11_MODULE(simulation, m)
 
     py::class_<OutputRouter, Router>(m, "OutputRouter", "Endpoint for incoming requests. Popping requests from OutputRouter return empty Request")
         .def(py::init());
-    //.def_readwrite("readers", &Router::readers, "dictionary of readers");
-    // .def("pop", &OutputRouter::Pop, "Get first pushed request")
-    //  .def("len", &OutputRouter::Len, "Returns number of requests contained")
-    // .def("push", &OutputRouter::Push, "request"_a, "Push request in queue")
-    //  .def("is_empty", &OutputRouter::IsEmpty, "Check if queue is empty")
-    // .def("add_reader", &OutputRouter::AddReader, "reader"_a, "Add request reader");
+
+    py::class_<NoneRouter, Router>(m, "NoneRouter", "Always empty queue")
+        .def(py::init());
 
     py::class_<RouterReader>(m, "RouterReader", "Reades requests passing through router")
         .def("read", &RouterReader::Read, py::keep_alive<1, 2>(), "request"_a, "Get first pushed request");
@@ -158,8 +155,8 @@ PYBIND11_MODULE(simulation, m)
 
     py::class_<Slot>(m, "Slot")
         .def(py::init<Router &>())
-        .def(py::init<>());
-    //.def("connect", &Slot::Connect, "router"_a, py::keep_alive<1, 2>());
+        .def(py::init<>())
+        .def("connect", &Slot::Connect, "router"_a, py::keep_alive<1, 2>());
 
     py::class_<InSlot, Slot>(m, "InSlot")
         .def(py::init<Router &>())

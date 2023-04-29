@@ -1,0 +1,26 @@
+import rq_analysis.simulation as rq
+
+m = rq.Router()
+q = rq.ExponentialDelay(1)
+inp = rq.SimpleInput(q)
+out = rq.SimpleNode(q)
+out.input_connect('in_slot',m)
+inp.output_connect('out_slot',m)
+
+
+t = inp.produce(0)
+print(t)
+t = inp.produce(t[0])
+print(t)
+t = inp.produce(t[0])
+print(t)
+t = inp.produce(t[0])
+print(t)
+t = inp.produce(t[0])
+print(t)
+print(m.len())
+print(m.pop())
+print(m.pop())
+print(m.pop())
+print(m.pop())
+print(m.pop())
