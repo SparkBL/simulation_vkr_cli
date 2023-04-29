@@ -10,6 +10,7 @@ class Router
 public:
     std::vector<Request> q;
     std::unordered_map<std::string, RouterReader &> readers;
+    std::unordered_map<std::string, double> tests;
     friend class InSlot;
     friend class OutSlot;
     friend class Slot;

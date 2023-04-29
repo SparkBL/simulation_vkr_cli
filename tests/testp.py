@@ -24,12 +24,12 @@ print("Components:",model.components())
 nodein = model.add_connection("input","out_slot","node","in_slot")
 model.add_connection("call","out_slot","node","call_slot")
 model.add_connection("orbit","out_slot","node","orbit_slot")
-output = model.add_hanging_output("node","out_slot")
+output = model.add_hanging_output_noqueue("node","out_slot")
 model.add_connection("node","orbit_append_slot","orbit","in_slot")
 
 print("Connections",model.routers())
 
-model.add_connection_reader(output,"count",rq.TimeCounter())
+model.router_at(output).add_reader(rq.TimeCounter(),"count")
 start = time.time()
 end = 0
 c = 0
@@ -52,5 +52,5 @@ print("Time: ",model.time())
 print("Iters: ",c)
 print("Elapsed: ",end - start)
 ll = model.router_at(output)
-print(ll)
-print("Distr:",ll.pop())
+
+print("Distr:",ll.reader_at('count').counts)

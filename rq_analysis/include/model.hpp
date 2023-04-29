@@ -7,7 +7,7 @@
 #include "producer.hpp"
 #include "utils.hpp"
 #include <sstream>
-
+/*
 class CoreModel
 {
 public:
@@ -75,7 +75,7 @@ public:
 		event_queue.insert(event_queue.end(), events.begin(), events.end());
 	}
 };
-
+*/
 class Model
 {
 public:
@@ -147,13 +147,13 @@ public:
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}*/
 
-	Router *RouterAt(std::string label)
+	Router &RouterAt(std::string label)
 	{
 		if (!routers.count(label))
 		{
 			throw std::invalid_argument(label + " not found in routers");
 		}
-		return routers.at(label);
+		return *routers.at(label);
 	}
 
 	Producer &ComponentAt(std::string label)
@@ -256,14 +256,15 @@ public:
 		return q;
 	}
 
-	void AddConnectionReader(std::string connection, std::string label, RouterReader &r)
-	{
-		if (!routers.count(connection))
+	/*	void AddConnectionReader(std::string connection, std::string label, RouterReader &r)
 		{
-			throw std::invalid_argument(connection + " not found in routers");
+			if (!routers.count(connection))
+			{
+				throw std::invalid_argument(connection + " not found in routers");
+			}
+			routers.at(connection)->AddReader(r, label);
 		}
-		routers.at(connection)->AddReader(r, label);
-	}
+	*/
 
 	void AddProducer(Producer &producer, std::string label)
 	{
