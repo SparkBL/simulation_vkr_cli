@@ -4,7 +4,7 @@
 #include <queue>
 #include <unordered_map>
 #include "reader.hpp"
-
+#include <iostream>
 class Router
 {
 public:
@@ -15,6 +15,8 @@ public:
     friend class Slot;
     int pushed_count;
     int popped_count;
+
+    virtual ~Router() = default;
 
     Router()
     {
@@ -97,6 +99,7 @@ public:
 
     void Push(Request request) override
     {
+        std::cout << "pushing into NoneRouter" << std::endl;
     }
 
     bool IsEmpty() override
@@ -147,6 +150,11 @@ public:
     Slot()
     {
         r = new NoneRouter();
+    }
+    void Connect(Router &in)
+    {
+        r = &in;
+        std::cout << "connected" << std::endl;
     }
 };
 

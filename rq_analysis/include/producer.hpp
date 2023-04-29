@@ -18,8 +18,7 @@ public:
         {
             throw std::invalid_argument(slot_name + " not found in input slot list");
         }
-        this->inputs.erase(slot_name);
-        this->inputs.insert(std::pair<std::string, InSlot>(slot_name, InSlot(router)));
+        return this->inputs.find(slot_name)->second.Connect(router);
     }
 
     virtual void OutputAtConnect(std::string slot_name, Router &router)
@@ -29,8 +28,7 @@ public:
         {
             throw std::invalid_argument(slot_name + " not found in output slot list");
         }
-        this->inputs.erase(slot_name);
-        this->outputs.insert(std::pair<std::string, OutSlot>(slot_name, OutSlot(router)));
+        return this->outputs.find(slot_name)->second.Connect(router);
     }
 
     virtual std::vector<std::string> Inputs()
