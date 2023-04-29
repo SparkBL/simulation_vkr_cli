@@ -6,7 +6,7 @@ faulthandler.enable()
 #Init model
 model = rq.Model()
 model.set_time(0) 
-model.set_end (1000000)
+model.set_end (10000)
 model.add_producer(rq.MMPPInput(
     [0.079,0.539,0.102],
     [[-0.359,0.191,0.168],
@@ -29,20 +29,7 @@ model.add_connection("node","orbit_append_slot","orbit","in_slot")
 
 print("Connections",model.routers())
 
-
-
-
-model.add_connection_reader(nodein,"count",rq.AttemptCounter())
 model.add_connection_reader(output,"count",rq.TimeCounter())
-print("here")
-print(model.router_at(nodein).len())
-print(model.router_at(output).len())
-print(model.router_at(output).readers())
-print(model.router_at(output).reader_at("stat"))
-rr = print("Connections",model.routers())
-print(rr)
-#print(model.router_at(output).readers())
-
 start = time.time()
 end = 0
 c = 0
@@ -50,9 +37,13 @@ while True:
         c+=1
         t = model.next_step()
         model.aggregate(model.component_at("input").produce(t))
+       # print(1)
         model.aggregate(model.component_at("orbit").produce(t))
+       # print(2)
         model.aggregate(model.component_at("call").produce(t))
+       # print(3)
         model.aggregate(model.component_at("node").produce(t))
+       # print(4)
         model.aggregate(model.component_at("orbit").append(t))
         if model.is_done():
             end = time.time()
@@ -60,4 +51,6 @@ while True:
 print("Time: ",model.time())
 print("Iters: ",c)
 print("Elapsed: ",end - start)
-print("Distr:",model.router_at(output).reader_at('stat').get_distribution_2d())
+ll = model.router_at(output)
+print(ll)
+print("Distr:",ll.pop())
