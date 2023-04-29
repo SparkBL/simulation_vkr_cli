@@ -7,75 +7,7 @@
 #include "producer.hpp"
 #include "utils.hpp"
 #include <sstream>
-/*
-class CoreModel
-{
-public:
-	std::vector<double> event_queue;
-	double time;
-	double end;
 
-	CoreModel(double end = 1000)
-	{
-		time = 0;
-		this->end = end;
-		event_queue = {};
-	}
-
-	std::vector<double> Queue()
-	{
-		return event_queue;
-	}
-	void SetTime(double t)
-	{
-		if (t < 0)
-			throw std::invalid_argument("model time must be greater than zero");
-		time = t;
-	}
-	void SetEnd(double t)
-	{
-		if (t < 0)
-			throw std::invalid_argument("model time must be greater than zero");
-		end = t;
-	}
-
-	double Time()
-	{
-		return time;
-	}
-
-	double End()
-	{
-		return end;
-	}
-
-	double NextStep()
-	{
-		if (!event_queue.empty())
-		{
-
-			auto min = std::min_element(std::begin(event_queue), std::end(event_queue),
-										[](double c1, double c2)
-										{
-											return c1 < c2;
-										});
-			time = *min;
-			event_queue.erase(min);
-		}
-		return time;
-	}
-
-	bool IsDone()
-	{
-		return time >= end;
-	}
-
-	void Aggregate(std::vector<double> events)
-	{
-		event_queue.insert(event_queue.end(), events.begin(), events.end());
-	}
-};
-*/
 class Model
 {
 public:
@@ -119,6 +51,13 @@ public:
 	double End()
 	{
 		return end;
+	}
+
+	void Flush(){
+		event_queue.clear();
+		for (auto &e : routers){
+			e.second->Flush();
+		}
 	}
 
 	const std::unordered_map<std::string, Producer &> &Components() const
