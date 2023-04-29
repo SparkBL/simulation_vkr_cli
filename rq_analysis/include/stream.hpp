@@ -116,7 +116,7 @@ public:
         if (next_produce.status_change_at == time)
         {
 
-            std::cout << outputs.at(out_slot_names[0]).Len() << std::endl;
+            //   std::cout << outputs.at(out_slot_names[0]).Len() << std::endl;
 
             outputs.at(out_slot_names[0]).Push(next_produce);
             double t = delay.Get(time);

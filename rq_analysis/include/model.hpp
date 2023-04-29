@@ -8,6 +8,74 @@
 #include "utils.hpp"
 #include <sstream>
 
+class CoreModel
+{
+public:
+	std::vector<double> event_queue;
+	double time;
+	double end;
+
+	CoreModel(double end = 1000)
+	{
+		time = 0;
+		this->end = end;
+		event_queue = {};
+	}
+
+	std::vector<double> Queue()
+	{
+		return event_queue;
+	}
+	void SetTime(double t)
+	{
+		if (t < 0)
+			throw std::invalid_argument("model time must be greater than zero");
+		time = t;
+	}
+	void SetEnd(double t)
+	{
+		if (t < 0)
+			throw std::invalid_argument("model time must be greater than zero");
+		end = t;
+	}
+
+	double Time()
+	{
+		return time;
+	}
+
+	double End()
+	{
+		return end;
+	}
+
+	double NextStep()
+	{
+		if (!event_queue.empty())
+		{
+
+			auto min = std::min_element(std::begin(event_queue), std::end(event_queue),
+										[](double c1, double c2)
+										{
+											return c1 < c2;
+										});
+			time = *min;
+			event_queue.erase(min);
+		}
+		return time;
+	}
+
+	bool IsDone()
+	{
+		return time >= end;
+	}
+
+	void Aggregate(std::vector<double> events)
+	{
+		event_queue.insert(event_queue.end(), events.begin(), events.end());
+	}
+};
+
 class Model
 {
 public:
@@ -15,7 +83,7 @@ public:
 	double time;
 	double end;
 	std::unordered_map<std::string, Producer &> components;
-	std::unordered_map<std::string, Router &> routers;
+	std::unordered_map<std::string, Router *> routers;
 
 	Model(double end = 1000)
 	{
@@ -59,9 +127,9 @@ public:
 		return p;
 	}
 
-	const std::unordered_map<std::string, Router &> &Routers() const
+	const std::unordered_map<std::string, Router *> &Routers() const
 	{
-		const std::unordered_map<std::string, Router &> &p = routers;
+		const std::unordered_map<std::string, Router *> &p = routers;
 		return p;
 	}
 
@@ -79,7 +147,7 @@ public:
 		components.at(from_producer)->OutputAtConnect(from_slot, r);
 	}*/
 
-	Router &RouterAt(std::string label)
+	Router *RouterAt(std::string label)
 	{
 		if (!routers.count(label))
 		{
@@ -111,17 +179,16 @@ public:
 		std::ostringstream ss;
 		ss << from_producer << ":" << from_slot << ":" << to_producer << ":" << to_slot;
 		std::string q = ss.str();
-		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router r;
+		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = Router();
-			routers.insert(std::pair<std::string, Router &>(q, r));
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
 		}
-		components.at(to_producer).InputAtConnect(to_slot, r);
-		components.at(from_producer).OutputAtConnect(from_slot, r);
+		components.at(to_producer).InputAtConnect(to_slot, *r);
+		components.at(from_producer).OutputAtConnect(from_slot, *r);
 		return q;
 	}
 
@@ -134,16 +201,15 @@ public:
 		std::ostringstream ss;
 		ss << "i:" << to_producer << ":" << to_slot;
 		std::string q = ss.str();
-		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router r;
+		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = Router();
-			routers.insert(std::pair<std::string, Router &>(q, r));
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
 		}
-		components.at(to_producer).InputAtConnect(to_slot, r);
+		components.at(to_producer).InputAtConnect(to_slot, *r);
 		return q;
 	}
 
@@ -157,15 +223,15 @@ public:
 		ss << "ho:" << from_producer << ":" << from_slot << ":";
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
-		Router r;
+		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = Router();
-			routers.insert(std::pair<std::string, Router &>(q, r));
+			r = new Router();
+			routers.insert(std::pair<std::string, Router *>(q, r));
 		}
-		components.at(from_producer).OutputAtConnect(from_slot, r);
+		components.at(from_producer).OutputAtConnect(from_slot, *r);
 		return q;
 	}
 
@@ -178,15 +244,15 @@ public:
 		std::ostringstream ss;
 		ss << "onq:" << from_producer << ":" << from_slot;
 		std::string q = ss.str();
-		Router r;
+		Router *r;
 		if (routers.count(q))
 			r = routers.at(q);
 		else
 		{
-			r = OutputRouter();
-			routers.insert(std::pair<std::string, Router &>(q, r));
+			r = new OutputRouter();
+			routers.insert(std::pair<std::string, Router *>(q, r));
 		}
-		components.at(from_producer).OutputAtConnect(from_slot, r);
+		components.at(from_producer).OutputAtConnect(from_slot, *r);
 		return q;
 	}
 
@@ -196,7 +262,7 @@ public:
 		{
 			throw std::invalid_argument(connection + " not found in routers");
 		}
-		routers.at(connection).AddReader(r, label);
+		routers.at(connection)->AddReader(r, label);
 	}
 
 	void AddProducer(Producer &producer, std::string label)

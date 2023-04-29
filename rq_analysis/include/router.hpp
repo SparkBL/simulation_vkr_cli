@@ -154,7 +154,7 @@ public:
     void Connect(Router &in)
     {
         r = &in;
-        std::cout << "connected" << std::endl;
+        // std::cout << "connected" << std::endl;
     }
 };
 
