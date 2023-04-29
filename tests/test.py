@@ -24,7 +24,7 @@ print("Components:",model.components())
 nodein = model.add_connection("input","out_slot","node","in_slot")
 model.add_connection("call","out_slot","node","call_slot")
 model.add_connection("orbit","out_slot","node","orbit_slot")
-output = model.add_hanging_output("node","out_slot")
+output = model.add_hanging_output_no_queue("node","out_slot")
 model.add_connection("node","orbit_append_slot","orbit","in_slot")
 
 print("Connections",model.routers())
