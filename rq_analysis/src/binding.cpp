@@ -187,6 +187,12 @@ PYBIND11_MODULE(simulation, m)
     py::class_<GammaDelay, Delay>(m, "GammaDelay")
         .def(py::init<double, double>(), "k"_a, "theta"_a);
 
+    py::class_<WeibullDelay, Delay>(m, "WeibullDelay")
+        .def(py::init<double, double>(), "a"_a, "b"_a);
+
+    py::class_<LognormalDelay, Delay>(m, "LognormalDelay")
+        .def(py::init<double, double>(), "m"_a, "s"_a);
+
     m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
