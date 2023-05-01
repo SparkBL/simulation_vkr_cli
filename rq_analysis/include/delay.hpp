@@ -35,6 +35,44 @@ public:
     }
 };
 
+class WeibullDelay : public Delay
+{
+    double a;
+    double b;
+    std::weibull_distribution<double> aws;
+
+public:
+    WeibullDelay(double a, double b)
+    {
+        this->a = a;
+        this->b = b;
+        aws = std::weibull_distribution<double>(a, b);
+    }
+    double Get(double time) override
+    {
+        return aws(gen) + time;
+    }
+};
+
+class LognormalDelay : public Delay
+{
+    double m;
+    double s;
+    std::lognormal_distribution<double> aws;
+
+public:
+    LognormalDelay(double m, double s)
+    {
+        this->m = m;
+        this->s = s;
+        aws = std::lognormal_distribution<double>(m, s);
+    }
+    double Get(double time) override
+    {
+        return aws(gen) + time;
+    }
+};
+
 class UniformDelay : public Delay
 {
     double a_, b_;
