@@ -53,9 +53,11 @@ public:
 		return end;
 	}
 
-	void Flush(){
+	void Flush()
+	{
 		event_queue.clear();
-		for (auto &e : routers){
+		for (auto &e : routers)
+		{
 			e.second->Flush();
 		}
 	}

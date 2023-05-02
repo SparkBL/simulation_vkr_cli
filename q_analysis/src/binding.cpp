@@ -40,22 +40,13 @@ inline py::array_t<typename Sequence::value_type> to_pyarray(const Sequence &seq
 {
     return py::array(seq.size(), seq.data());
 }
-struct TestS
-{
-    std::unordered_map<std::string, Producer *> comps = {};
-};
 
 PYBIND11_MODULE(simulation, m)
 {
-    m.attr("__name__") = "rq_analysis.simulation";
+    m.attr("__name__") = "q_analysis.simulation";
     m.doc() = "Python library for retrial queuing system modeling";
-    // m.attr("__name__") = "rq_simulation.simulation";
-    //  py::bind_map<std::unordered_map<std::string, Producer *>>(m, "Components");
-    //   py::bind_map<std::unordered_map<std::string, Router *>>(m, "Connections");
-    //   py::bind_vector<std::vector<double, std::allocator<double>>>(m, "FloatVector", py::buffer_protocol());
-    //  py::bind_vector<std::vector<std::vector<double>>>(m, "FloatMatrix");
     py::class_<Request>(m, "Request", "Basic unit of simulation.\nrtype - request type\nstatus_change_at\nstatus - current status of request\nmoment of model time, when request has to change its status\nemitted_at - moment of time, when request was emitted from input process", py::dynamic_attr())
-        .def(py::init())
+        .def(py::init(), py::return_value_policy::reference_internal)
         .def_readwrite("id", &Request::id)
         .def_readwrite("rtype", &Request::rtype)
         .def_readwrite("status", &Request::status)
@@ -79,18 +70,21 @@ PYBIND11_MODULE(simulation, m)
     m.attr("STATUS_ARRIVE") = py::int_(statusArrive);
 
     py::class_<Producer>(m, "Producer", "Base class for every processing unit.")
-        .def("produce", &Producer::Produce)
+        .def("produce", &Producer::Produce, py::return_value_policy::reference_internal)
         //.def("produce", [](Producer &r, double time)
         //      { return as_pyarray(r.Produce(time)); })
         .def("input_connect", &Producer::InputAtConnect, "slot_name"_a, "router"_a, py::keep_alive<1, 3>())
         .def("output_connect", &Producer::OutputAtConnect, "slot_name"_a, "router"_a, py::keep_alive<1, 3>())
-        .def("inputs", &Producer::Inputs)
-        .def("outputs", &Producer::Outputs)
+        .def("inputs", &Producer::Inputs, py::return_value_policy::reference_internal)
+        .def("outputs", &Producer::Outputs, py::return_value_policy::reference_internal)
         .def("tag", &Producer::Tag)
-        .def_readwrite("queue", &Producer::queue);
+        .def_readonly("queue", &Producer::queue, py::return_value_policy::reference_internal);
 
     py::class_<Model>(m, "Model", "Container for managing simulation process.")
-        .def(py::init<double>(), "end"_a = 1000)
+        .def(py::init<double>(), "end"_a = 1000, py::return_value_policy::reference_internal)
+        .def_readonly("__componenets__", &Model::components, py::return_value_policy::reference_internal)
+        .def_readonly("__routers__", &Model::routers, py::return_value_policy::reference_internal)
+        .def_readonly("__queue__", &Model::event_queue, py::return_value_policy::reference_internal)
         .def("add_connection", &Model::AddConnection, "from_producer"_a, "from_slot"_a, "to_producer"_a, "to_slot"_a, "Adds request flow between OUT slot of producer A to IN slot of producer B")
         .def("add_hanging_input", &Model::AddHangingInput, "to_producer"_a, "to_slot"_a, "Adds request flow TO a producer. Method presumes requests will be put into queue manually. Return router's label")
         .def("add_hanging_output", &Model::AddHangingOutput, "from_producer"_a, "from_slot"_a, "Adds request flow from a producer. Method presumes outgoing requests will be handled manually. Returns router's label")
@@ -105,71 +99,71 @@ PYBIND11_MODULE(simulation, m)
         .def("time", &Model::Time, "Current moment of simulation")
         .def("set_end", &Model::SetEnd, "Set moment when simulation has to stop")
         .def("end", &Model::End, "Moment when simulation has to stop")
-        .def("event_queue", &Model::Queue, py::return_value_policy::reference, "List of events, which must occur in the model")
-        .def("routers", &Model::Routers, py::return_value_policy::reference, "List of connections added by 'add_connection'")
-        .def("components", &Model::Components, py::return_value_policy::reference, "List of producers added by 'add_producer'")
-        .def("component_at", &Model::ComponentAt, py::keep_alive<1, 0>(), py::return_value_policy::reference, "Get producer")
-        .def("router_at", &Model::RouterAt, py::keep_alive<1, 0>(), py::return_value_policy::reference, "Get router");
+        .def("event_queue", &Model::Queue, py::return_value_policy::reference_internal, "List of events, which must occur in the model")
+        .def("routers", &Model::Routers, py::return_value_policy::reference_internal, "List of connections added by 'add_connection'")
+        .def("components", &Model::Components, py::return_value_policy::reference_internal, "List of producers added by 'add_producer'")
+        .def("component_at", &Model::ComponentAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "Get producer")
+        .def("router_at", &Model::RouterAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "Get router");
 
     py::class_<Router>(m, "Router", "Request queue")
-        .def(py::init())
+        .def(py::init(), py::return_value_policy::reference_internal)
         .def("len", &Router::Len, "Returns number of requests contained")
         .def("push", &Router::Push, "request"_a, "Push request in queue")
-        .def("pop", &Router::Pop, "Pop request from queue")
+        .def("pop", &Router::Pop, "Pop request from queue", py::return_value_policy::reference_internal)
         .def("is_empty", &Router::IsEmpty, "Check if queue is empty")
         .def("flush", &Router::Flush, "Clears router queue")
         .def("add_reader", &Router::AddReader, "reader"_a, "label"_a, py::keep_alive<1, 2>(), "Add request reader")
-        .def("readers", &Router::Readers, py::return_value_policy::reference, "dictionary of readers")
-        .def("reader_at", &Router::ReaderAt, py::keep_alive<1, 0>(), py::return_value_policy::reference, "get reader")
+        .def("readers", &Router::Readers, py::return_value_policy::reference_internal, "dictionary of readers")
+        .def("reader_at", &Router::ReaderAt, py::keep_alive<1, 0>(), py::return_value_policy::reference_internal, "get reader")
         .def_readonly("pushed_count", &Router::pushed_count, "number of pushed requests")
         .def_readonly("popped_count", &Router::popped_count, "number of popped requests")
-        .def_readwrite("__readers__", &Router::readers)
-        .def_readonly("__q__", &Router::q);
+        .def_readwrite("__readers__", &Router::readers, py::return_value_policy::reference_internal)
+        .def_readonly("__q__", &Router::q, py::return_value_policy::reference_internal);
 
     py::class_<OutputRouter, Router>(m, "OutputRouter", "Endpoint for incoming requests. Popping requests from OutputRouter return empty Request")
-        .def(py::init());
+        .def(py::init(), py::return_value_policy::reference_internal);
 
     py::class_<NoneRouter, Router>(m, "NoneRouter", "Always empty queue")
-        .def(py::init());
+        .def(py::init(), py::return_value_policy::reference_internal);
 
     py::class_<RouterReader>(m, "RouterReader", "Reades requests passing through router")
         .def("read", &RouterReader::Read, py::keep_alive<1, 2>(), "request"_a, "Get first pushed request");
 
     py::class_<IntervalRouterReader, RouterReader>(m, "IntervalRouterReader", "Collects statistic on passing requests")
-        .def(py::init<double>(), "interval"_a)
-        .def("get_distribution_2d", &IntervalRouterReader::GetDistribution)
-        .def("get_distribution_summary", &IntervalRouterReader::GetSummaryDistribution)
-        .def("get_distribution_input", &IntervalRouterReader::GetInputDistribution)
-        .def("get_distribution_called", &IntervalRouterReader::GetCalledDistribution)
+        .def(py::init<double>(), "interval"_a, py::return_value_policy::reference_internal)
+        .def("get_distribution_2d", &IntervalRouterReader::GetDistribution, py::return_value_policy::reference_internal)
+        .def("get_distribution_summary", &IntervalRouterReader::GetSummaryDistribution, py::return_value_policy::reference_internal)
+        .def("get_distribution_input", &IntervalRouterReader::GetInputDistribution, py::return_value_policy::reference_internal)
+        .def("get_distribution_called", &IntervalRouterReader::GetCalledDistribution, py::return_value_policy::reference_internal)
         .def("get_mean_input", &IntervalRouterReader::GetMeanInput)
         .def("get_mean_called", &IntervalRouterReader::GetMeanCalled)
         .def("get_variation_called", &IntervalRouterReader::GetVariationIntervalCalled)
         .def("get_variation_input", &IntervalRouterReader::GetVariationIntervalInput);
 
     py::class_<AttemptCounter, RouterReader>(m, "AttemptCounter", "Collects attempt and wait time statistic on passing requests")
-        .def(py::init())
-        .def_readwrite("attempts", &AttemptCounter::attempts, py::keep_alive<1, 0>(), "dictionary of attempts")
-        .def_readwrite("wait_time", &AttemptCounter::wait_time, py::keep_alive<1, 0>(), "dictionary of wait_time");
+        .def(py::init(), py::return_value_policy::reference_internal)
+        .def_readwrite("attempts", &AttemptCounter::attempts, py::keep_alive<1, 0>(), "dictionary of attempts", py::return_value_policy::reference_internal)
+        .def_readwrite("wait_time", &AttemptCounter::wait_time, py::keep_alive<1, 0>(), "dictionary of wait_time", py::return_value_policy::reference_internal);
 
     py::class_<TimeCounter, RouterReader>(m, "TimeCounter", "Collects moments when request is being pushed into router")
-        .def(py::init())
-        .def_readwrite("counts", &TimeCounter::counts, py::keep_alive<1, 0>(), "vector of moments");
+        .def(py::init(), py::return_value_policy::reference_internal)
+        .def_readwrite("counts", &TimeCounter::counts, py::keep_alive<1, 0>(), "vector of moments", py::return_value_policy::reference_internal);
 
     py::class_<Slot>(m, "Slot")
-        .def(py::init<Router &>())
-        .def(py::init<>())
+        .def(py::init<Router &>(), py::return_value_policy::reference_internal)
+        .def(py::init<>(), py::return_value_policy::reference_internal)
         .def("connect", &Slot::Connect, "router"_a, py::keep_alive<1, 2>());
 
     py::class_<InSlot, Slot>(m, "InSlot")
-        .def(py::init<Router &>())
-        .def(py::init<>())
-        .def("pop", &InSlot::Pop)
+        .def(py::init<Router &>(), py::return_value_policy::reference_internal)
+        .def(py::init<>(), py::return_value_policy::reference_internal)
+        .def("pop", &InSlot::Pop, py::return_value_policy::reference_internal)
         .def("len", &InSlot::Len)
         .def("is_empty", &InSlot::IsEmpty);
 
     py::class_<OutSlot, Slot>(m, "OutSlot")
-        .def(py::init<Router &>())
-        .def(py::init<>())
+        .def(py::init<Router &>(), py::return_value_policy::reference_internal)
+        .def(py::init<>(), py::return_value_policy::reference_internal)
         .def("len", &OutSlot::Len)
         .def("push", &OutSlot::Push, "request"_a, py::keep_alive<1, 2>());
 
@@ -179,41 +173,41 @@ PYBIND11_MODULE(simulation, m)
         .def("get", &Delay::Get);
 
     py::class_<ExponentialDelay, Delay>(m, "ExponentialDelay")
-        .def(py::init<double>(), "intensity"_a);
+        .def(py::init<double>(), "intensity"_a, py::return_value_policy::reference_internal);
 
     py::class_<UniformDelay, Delay>(m, "UniformDelay")
-        .def(py::init<double, double>(), "a"_a, "b"_a);
+        .def(py::init<double, double>(), "a"_a, "b"_a, py::return_value_policy::reference_internal);
 
     py::class_<GammaDelay, Delay>(m, "GammaDelay")
-        .def(py::init<double, double>(), "k"_a, "theta"_a);
+        .def(py::init<double, double>(), "k"_a, "theta"_a, py::return_value_policy::reference_internal);
 
     py::class_<WeibullDelay, Delay>(m, "WeibullDelay")
-        .def(py::init<double, double>(), "a"_a, "b"_a);
+        .def(py::init<double, double>(), "a"_a, "b"_a, py::return_value_policy::reference_internal);
 
     py::class_<LognormalDelay, Delay>(m, "LognormalDelay")
-        .def(py::init<double, double>(), "m"_a, "s"_a);
+        .def(py::init<double, double>(), "m"_a, "s"_a, py::return_value_policy::reference_internal);
 
     m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
-        .def(py::init<Delay &, Delay &>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>());
+        .def(py::init<Delay &, Delay &>(), "input_delay"_a, "called_delay"_a, py::keep_alive<1, 2>(), py::keep_alive<1, 3>(), py::return_value_policy::reference_internal);
 
     py::class_<SimpleNode, Producer>(m, "SimpleNode")
-        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>());
+        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>(), py::return_value_policy::reference_internal);
 
-    py::class_<DumpNode, Producer>(m, "DumpNode").def(py::init<>());
+    py::class_<DumpNode, Producer>(m, "DumpNode").def(py::init<>(), py::return_value_policy::reference_internal);
 
     py::class_<RQNode, Producer>(m, "RqNode")
-        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>());
+        .def(py::init<Delay &>(), "input_delay"_a, py::keep_alive<1, 2>(), py::return_value_policy::reference_internal);
 
     py::class_<SimpleInput, Producer>(m, "SimpleInput", "Poisson input process")
-        .def(py::init<Delay &, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>());
+        .def(py::init<Delay &, int, double>(), "delay"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::keep_alive<1, 2>(), py::return_value_policy::reference_internal);
 
     py::class_<MMPP, Producer>(m, "MMPPInput", "MMPP input process")
-        .def(py::init<std::vector<double>, std::vector<std::vector<double>>, int, double>(), "lambda"_a, "Q"_a, "request_type"_a = typeInput, "init_time"_a = 0);
+        .def(py::init<std::vector<double>, std::vector<std::vector<double>>, int, double>(), "lambda"_a, "Q"_a, "request_type"_a = typeInput, "init_time"_a = 0, py::return_value_policy::reference_internal);
 
     py::class_<IOrbit, Producer>(m, "IOrbit")
         .def("append", &IOrbit::Append, "time"_a);
     py::class_<Orbit, IOrbit>(m, "Orbit")
-        .def(py::init<Delay &>(), "delay"_a, py::keep_alive<1, 2>());
+        .def(py::init<Delay &>(), "delay"_a, py::keep_alive<1, 2>(), py::return_value_policy::reference_internal);
 }

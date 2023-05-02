@@ -127,11 +127,11 @@ class CMakeBuild(build_ext):
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
-    name='rq_analysis',
+    name='q_analysis',
     version=__version__,
     author='Alexey Blaginin',
     author_email='alex-b.l@yandex.ru',
-    description='A minimal self-contained tool for RQ system analysis',
+    description='A minimal self-contained tool for queueing system analysis',
     long_description=open("README.rst").read(),
     ext_modules=[CMakeExtension("simulation")],
     cmdclass={"build_ext": CMakeBuild},
