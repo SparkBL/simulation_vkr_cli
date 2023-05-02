@@ -1,4 +1,4 @@
-from rq_analysis import simulation as rq
+from q_analysis import simulation as rq
 import time
 import faulthandler
 faulthandler.enable()
@@ -19,45 +19,48 @@ model.add_producer(rq.DumpNode(),"dump")
 #model.add_producer(rq.StatCollector(10),"stat")
 
 print("Components:",model.components())
-
+if 1 == 1:
 #Init connections
-nodein = model.add_connection("input","out_slot","node","in_slot")
-model.add_connection("call","out_slot","node","call_slot")
-model.add_connection("orbit","out_slot","node","orbit_slot")
-output = model.add_hanging_output_no_queue("node","out_slot")
-model.add_connection("node","orbit_append_slot","orbit","in_slot")
+    nodein = model.add_connection("input","out_slot","node","in_slot")
+    model.add_connection("call","out_slot","node","call_slot")
+    model.add_connection("orbit","out_slot","node","orbit_slot")
+    output = model.add_hanging_output_no_queue("node","out_slot")
+    model.add_connection("node","orbit_append_slot","orbit","in_slot")
 
-print("Connections",model.routers())
-
-
+    print("Connections",model.routers())
 
 
-model.add_connection_reader(nodein,"count",rq.AttemptCounter())
-model.add_connection_reader(output,"count",rq.TimeCounter())
-print("here")
-print(model.router_at(nodein).len())
-print(model.router_at(output).len())
-print(model.router_at(output).readers())
-print(model.router_at(output).reader_at("stat"))
-rr = print("Connections",model.routers())
-print(rr)
-#print(model.router_at(output).readers())
 
-start = time.time()
-end = 0
-c = 0
-while True:
-        c+=1
-        t = model.next_step()
-        model.aggregate(model.component_at("input").produce(t))
-        model.aggregate(model.component_at("orbit").produce(t))
-        model.aggregate(model.component_at("call").produce(t))
-        model.aggregate(model.component_at("node").produce(t))
-        model.aggregate(model.component_at("orbit").append(t))
-        if model.is_done():
-            end = time.time()
-            break
-print("Time: ",model.time())
-print("Iters: ",c)
-print("Elapsed: ",end - start)
-print("Distr:",model.router_at(output).reader_at('stat').get_distribution_2d())
+
+    model.add_connection_reader(nodein,"count",rq.AttemptCounter())
+    model.add_connection_reader(output,"count",rq.TimeCounter())
+    print("here")
+    print(model.router_at(nodein).len())
+    print(model.router_at(output).len())
+    print(model.router_at(output).readers())
+    print(model.router_at(output).reader_at("stat"))
+    rr = print("Connections",model.routers())
+    print(rr)
+    #print(model.router_at(output).readers())
+
+    start = time.time()
+    end = 0
+    c = 0
+    while True:
+            c+=1
+            t = model.next_step()
+            model.aggregate(model.component_at("input").produce(t))
+            model.aggregate(model.component_at("orbit").produce(t))
+            model.aggregate(model.component_at("call").produce(t))
+            model.aggregate(model.component_at("node").produce(t))
+            model.aggregate(model.component_at("orbit").append(t))
+            if model.is_done():
+                end = time.time()
+                model.flush()
+                break
+    print("Time: ",model.time())
+    print("Iters: ",c)
+    print("Elapsed: ",end - start)
+    print("Distr:",model.router_at(output).reader_at('stat').get_distribution_2d())
+
+    

@@ -1,0 +1,30 @@
+ definitely lost: 1,344 bytes in 14 blocks
+==1203==    indirectly lost: 160 bytes in 4 blocks
+==1203==      possibly lost: 3,192 bytes in 6 blocks
+==1203==    still reachable: 388,746 bytes in 222 blocks
+==1203==         suppressed: 0 bytes in 0 blocks
+
+ definitely lost: 1,440 bytes in 15 blocks
+==2210==    indirectly lost: 232 bytes in 6 blocks
+==2210==      possibly lost: 3,192 bytes in 6 blocks
+==2210==    still reachable: 388,578 bytes in 219 blocks
+==2210==         suppressed: 0 bytes in 0 blocks
+
+  definitely lost: 328,800 bytes in 15 blocks
+==3512==    indirectly lost: 0 bytes in 0 blocks
+==3512==      possibly lost: 3,192 bytes in 6 blocks
+==3512==    still reachable: 388,610 bytes in 220 blocks
+==3512==         suppressed: 0 bytes in 0 blocks
+
+==4045==    definitely lost: 864 bytes in 9 blocks
+==4045==    indirectly lost: 0 bytes in 0 blocks
+==4045==      possibly lost: 3,192 bytes in 6 blocks
+==4045==    still reachable: 1,516,061 bytes in 801 blocks
+==4045==         suppressed: 0 bytes in 0 blocks
+
+==4467== LEAK SUMMARY:
+==4467==    definitely lost: 864 bytes in 9 blocks
+==4467==    indirectly lost: 0 bytes in 0 blocks
+==4467==      possibly lost: 3,192 bytes in 6 blocks
+==4467==    still reachable: 1,515,959 bytes in 796 blocks
+==4467==         suppressed: 0 bytes in 0 blocks

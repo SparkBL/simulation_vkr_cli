@@ -1,4 +1,4 @@
-from rq_analysis import simulation as rq
+from q_analysis import simulation as rq
 import time
 
 print("### Request test ###")

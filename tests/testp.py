@@ -1,7 +1,5 @@
-from rq_analysis import simulation as rq
+from q_analysis import simulation as rq
 import time
-import faulthandler
-faulthandler.enable()
 
 #Init model
 model = rq.Model()
@@ -47,6 +45,7 @@ while True:
         model.aggregate(model.component_at("orbit").append(t))
         if model.is_done():
             end = time.time()
+            model.flush()
             break
 print("Time: ",model.time())
 print("Iters: ",c)
@@ -54,3 +53,5 @@ print("Elapsed: ",end - start)
 ll = model.router_at(output)
 
 print("Distr:",ll.reader_at('count').counts)
+
+del model
