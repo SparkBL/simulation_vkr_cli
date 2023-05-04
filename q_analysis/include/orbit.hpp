@@ -17,15 +17,15 @@ public:
 //{
 class Orbit : public IOrbit
 {
-protected:
-    std::vector<Request> requests;
+public:
+    std::unordered_map<double, Request> requests;
     Delay &delay;
     const std::vector<std::string> in_slot_names = {"in_slot"};
     const std::vector<std::string> out_slot_names = {"out_slot"};
 
-public:
     Orbit(Delay &delay) : delay(delay)
     {
+        requests = {};
         for (auto &s : out_slot_names)
         {
             outputs.insert({s, OutSlot()});
@@ -43,20 +43,26 @@ public:
             Request req = inputs[in_slot_names[0]].Pop();
             req.status_change_at = delay.Get(time);
             queue.push_back(req.status_change_at);
-            requests.push_back(req);
+            requests.insert(std::make_pair(req.status_change_at, req));
+            // requests.push_back(req);
         }
         return GetEvents();
     }
     std::vector<double> Produce(double time) override
     {
-        for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
+        /*  for (std::vector<Request>::size_type i = 0; i != requests.size(); i++)
+          {
+              if (requests[i].status_change_at == time)
+              {
+                  outputs[out_slot_names[0]].Push(requests[i]);
+                  requests.erase(requests.begin() + i);
+                  return std::vector<double>();
+              }
+          }*/
+        if (requests.find(time) != requests.end())
         {
-            if (requests[i].status_change_at == time)
-            {
-                outputs[out_slot_names[0]].Push(requests[i]);
-                requests.erase(requests.begin() + i);
-                return std::vector<double>();
-            }
+            outputs[out_slot_names[0]].Push(requests[time]);
+            requests.erase(time);
         }
         return std::vector<double>();
     }

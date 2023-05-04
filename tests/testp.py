@@ -4,9 +4,9 @@ import time
 #Init model
 model = rq.Model()
 model.set_time(0) 
-model.set_end (10000)
+model.set_end (1000000)
 model.add_producer(rq.MMPPInput(
-    [0.079,0.539,0.102],
+    [1,0.539,1.2],
     [[-0.359,0.191,0.168],
     [0.286,-0.41,0.123],
     [0.302,0.075,-0.378]],0,0),"input")
@@ -52,6 +52,6 @@ print("Iters: ",c)
 print("Elapsed: ",end - start)
 ll = model.router_at(output)
 
-print("Distr:",ll.reader_at('count').counts)
-
+print("Distr:",len(ll.reader_at('count').counts))
+print("len orbit", len(model.component_at('orbit').__requests__))
 del model

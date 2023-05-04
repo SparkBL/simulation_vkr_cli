@@ -209,5 +209,6 @@ PYBIND11_MODULE(simulation, m)
     py::class_<IOrbit, Producer>(m, "IOrbit")
         .def("append", &IOrbit::Append, "time"_a);
     py::class_<Orbit, IOrbit>(m, "Orbit")
-        .def(py::init<Delay &>(), "delay"_a, py::keep_alive<1, 2>(), py::return_value_policy::reference);
+        .def(py::init<Delay &>(), "delay"_a, py::keep_alive<1, 2>(), py::return_value_policy::reference)
+        .def_readonly("__requests__", &Orbit::requests, py::return_value_policy::reference);
 }
