@@ -44,6 +44,7 @@ public:
         std::ostringstream ss;
         ss << "DumpNode";
         std::string q = ss.str();
+        return
     }
 };
 
