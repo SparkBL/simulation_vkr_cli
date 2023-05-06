@@ -106,7 +106,7 @@ public:
 		return components.at(label);
 	}
 
-	std::string AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
+	const std::string AddConnection(std::string from_producer, std::string from_slot, std::string to_producer, std::string to_slot)
 	{
 		if (!components.count(from_producer))
 		{
@@ -133,7 +133,7 @@ public:
 		return q;
 	}
 
-	std::string AddHangingInput(std::string to_producer, std::string to_slot)
+	const std::string AddHangingInput(std::string to_producer, std::string to_slot)
 	{
 		if (!components.count(to_producer))
 		{
@@ -154,14 +154,14 @@ public:
 		return q;
 	}
 
-	std::string AddHangingOutput(std::string from_producer, std::string from_slot)
+	const std::string AddHangingOutput(std::string from_producer, std::string from_slot)
 	{
 		if (!components.count(from_producer))
 		{
 			throw std::invalid_argument(from_producer + " not found in components");
 		}
 		std::ostringstream ss;
-		ss << "ho:" << from_producer << ":" << from_slot << ":";
+		ss << "o:" << from_producer << ":" << from_slot << ":";
 		std::string q = ss.str();
 		//	std::string q = string_sprintf("%s:%s:%s:%s", to_producer, to_slot, from_producer, from_slot);
 		Router *r;
@@ -176,7 +176,7 @@ public:
 		return q;
 	}
 
-	std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)
+	const std::string AddHangingOutputNoQueue(std::string from_producer, std::string from_slot)
 	{
 		if (!components.count(from_producer))
 		{

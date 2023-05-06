@@ -34,6 +34,14 @@ public:
         {
             inputs.insert({s, InSlot()});
         }
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Orbit " << std::endl
+           << "Delays:" << std::endl
+           << "# Return Delay:" << std::endl
+           << delay.Describe() << std::endl;
+        description = ss.str();
     }
 
     std::vector<double> Append(double time) override
