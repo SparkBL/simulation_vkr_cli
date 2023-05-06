@@ -1,4 +1,4 @@
-import rq_analysis.simulation as rq
+import q_analysis.simulation as rq
 
 m = rq.Router()
 q = rq.ExponentialDelay(1)

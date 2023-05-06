@@ -64,6 +64,11 @@ public:
         state = 0;
         shift_time = GetExponentialDelay(-q[0][0], init_time);
         queue.push_back(shift_time);
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "MMPP Input Process" << std::endl;
+        description = ss.str();
     }
 
     std::vector<double> Produce(double time) override
@@ -109,6 +114,9 @@ public:
             status_change_at : t
         };
         queue.push_back(next_produce.status_change_at);
+        std::ostringstream ss;
+        ss << "Simple Input Process" << std::endl;
+        description = ss.str();
     }
 
     std::vector<double> Produce(double time) override

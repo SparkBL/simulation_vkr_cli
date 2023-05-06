@@ -4,7 +4,20 @@
 #include "vector"
 #include "router.hpp"
 #include "utils.hpp"
-class Producer
+
+class Descriptable
+{
+protected:
+    std::string description = "";
+
+public:
+    virtual const std::string Describe()
+    {
+        return description;
+    }
+};
+
+class Producer : public Descriptable
 {
 
 public:
@@ -43,7 +56,6 @@ public:
 protected:
     std::unordered_map<std::string, InSlot> inputs = {};
     std::unordered_map<std::string, OutSlot> outputs = {};
-
     std::vector<double> GetEvents()
     {
         std::vector<double> ret = queue;

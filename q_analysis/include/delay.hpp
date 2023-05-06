@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include <time.h>
+#include "producer.hpp"
 
 // namespace delays
 //{
@@ -12,7 +13,7 @@ const double float64_equality_threshold = 1e-11;
 std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<double> distribution(0, 1);
-class Delay
+class Delay : public Descriptable
 {
 public:
     virtual double Get(double time) = 0;
@@ -28,6 +29,12 @@ public:
     {
         this->intensity = intensity;
         aws = std::exponential_distribution<double>(intensity);
+        // Description gen
+        std::ostringstream ss;
+        ss << "Exponential delay generator" << std::endl
+           << "Parameters:" << std::endl
+           << "# Intensity = " << intensity;
+        description = ss.str();
     }
     double Get(double time) override
     {
@@ -47,6 +54,14 @@ public:
         this->a = a;
         this->b = b;
         aws = std::weibull_distribution<double>(a, b);
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Weibull delay generator" << std::endl
+           << "Parameters:" << std::endl
+           << "# A = " << a << std::endl
+           << "# B = " << b;
+        description = ss.str();
     }
     double Get(double time) override
     {
@@ -66,6 +81,14 @@ public:
         this->m = m;
         this->s = s;
         aws = std::lognormal_distribution<double>(m, s);
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Lognormal delay generator" << std::endl
+           << "Parameters:" << std::endl
+           << "# M = " << m << std::endl
+           << "# S = " << s;
+        description = ss.str();
     }
     double Get(double time) override
     {
@@ -75,15 +98,23 @@ public:
 
 class UniformDelay : public Delay
 {
-    double a_, b_;
+    double a, b;
     std::uniform_real_distribution<double> aws;
 
 public:
     UniformDelay(double a, double b)
     {
-        this->a_ = a;
-        this->b_ = b;
-        aws = std::uniform_real_distribution<double>(a_, b_);
+        this->a = a;
+        this->b = b;
+        aws = std::uniform_real_distribution<double>(a, b);
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Uniform delay generator" << std::endl
+           << "Parameters:" << std::endl
+           << "# A = " << a << std::endl
+           << "# B = " << b;
+        description = ss.str();
     }
     double Get(double time) override
     {
@@ -102,6 +133,14 @@ public:
         this->k_ = k;
         this->teta_ = teta;
         aws = std::gamma_distribution<double>(k_, teta_);
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Gamma delay generator" << std::endl
+           << "Parameters:" << std::endl
+           << "# K = " << k << std::endl
+           << "# Theta = " << teta_;
+        description = ss.str();
     }
     double Get(double time) override
     {

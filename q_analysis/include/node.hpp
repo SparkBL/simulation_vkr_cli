@@ -38,6 +38,13 @@ public:
         return GetEvents();
     }
     std::string Tag() override { return "dump_node"; }
+
+    const std::string Describe() override
+    {
+        std::ostringstream ss;
+        ss << "DumpNode";
+        std::string q = ss.str();
+    }
 };
 
 class RQTNode : public Producer
@@ -61,6 +68,16 @@ public:
         {
             inputs.insert({s, InSlot()});
         }
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Retrial Queue Node with Two-Way Connection" << std::endl
+           << "Delays:" << std::endl
+           << "# Input delay:" << std::endl
+           << input_delay.Describe() << std::endl
+           << "# Called delay:" << std::endl
+           << called_delay.Describe() << std::endl;
+        description = ss.str();
     }
 
     std::vector<double> Produce(double time) override
@@ -144,6 +161,15 @@ public:
         {
             inputs.insert({s, InSlot()});
         }
+
+        // Description gen
+        std::ostringstream ss;
+        ss << "Simple Node" << std::endl
+           << "Delays:" << std::endl
+           << "# Input delay:" << std::endl
+           << delay.Describe() << std::endl;
+
+        description = ss.str();
     }
 
     std::vector<double> Produce(double time) override
@@ -189,6 +215,13 @@ public:
         {
             inputs.insert({s, InSlot()});
         }
+        // Description gen
+        std::ostringstream ss;
+        ss << "Retrial Queue Node" << std::endl
+           << "Delays:" << std::endl
+           << "# Input delay:" << std::endl
+           << delay.Describe() << std::endl;
+        description = ss.str();
     }
 
     std::vector<double> Produce(double time) override

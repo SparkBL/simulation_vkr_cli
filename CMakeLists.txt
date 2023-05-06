@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.4...3.18)
 project(q_analysis)
 
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ version selection")  # or 11, 14, 17, 20
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ version selection")  # or 11, 14, 17, 20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "-O3 -Ofast -std=c++17")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -std=c++17")
+set(CMAKE_CXX_FLAGS "-O3 -Ofast -std=c++2a")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -std=c++2a")
 include_directories(q_analysis/include)
 
 
