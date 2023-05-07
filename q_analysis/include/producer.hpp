@@ -59,7 +59,7 @@ protected:
     std::vector<double> GetEvents()
     {
         std::vector<double> ret = queue;
-        queue = {};
+        queue.clear();
         return ret;
     }
 };

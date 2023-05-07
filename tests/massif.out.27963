@@ -1,0 +1,1265 @@
+desc: (none)
+cmd: python -E -tt ./testp.py
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=917490464
+mem_heap_B=3309964
+mem_heap_extra_B=27516
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=2385011146
+mem_heap_B=5525212
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=3611004077
+mem_heap_B=9850588
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=detailed
+n4: 9850588 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 8388648 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 8388608 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 8388608 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 8388608 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 8388608 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 8388608 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 8388608 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 8388608 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 8388608 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 8388608 0x207754: call_function (ceval.c:5077)
+           n1: 8388608 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 8388608 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 8388608 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 8388608 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 8388608 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 8388608 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 8388608 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 8388608 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 8388608 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 8388608 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 8388608 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 8388608 0x38210A: pymain_run_file (main.c:379)
+                       n1: 8388608 0x38210A: pymain_run_python (main.c:604)
+                        n1: 8388608 0x38210A: Py_RunMain (main.c:683)
+                         n1: 8388608 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 8388608 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n3: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n1: 400968 0x27D9CA: new_keys_object (dictobject.c:570)
+   n3: 400968 0x27D9CA: dictresize (dictobject.c:1223)
+    n1: 242000 0x27E059: insertion_resize (dictobject.c:1040)
+     n1: 242000 0x27E059: insertdict (dictobject.c:1084)
+      n0: 242000 in 30 places, all below massif's threshold (1.00%)
+    n1: 147488 0x24D22B: insertion_resize (dictobject.c:1040)
+     n2: 147488 0x24D22B: PyDict_SetDefault (dictobject.c:2964)
+      n2: 147488 0x24D359: PyUnicode_InternInPlace (unicodeobject.c:15736)
+       n2: 147488 0x2B457C: r_object (marshal.c:1116)
+        n1: 147488 0x2B470F: r_object (marshal.c:1174)
+         n1: 147488 0x2B4A12: r_object (marshal.c:1353)
+          n1: 147488 0x36EF77: read_object (marshal.c:1445)
+           n1: 147488 0x36F030: marshal_loads_impl.isra.9 (marshal.c:1754)
+            n1: 147488 0x36F030: marshal_loads (marshal.c.h:158)
+             n1: 147488 0x2A8D7A: cfunction_vectorcall_O (methodobject.c:516)
+              n1: 147488 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+               n1: 147488 0x207754: PyObject_Vectorcall (abstract.h:127)
+                n1: 147488 0x207754: call_function (ceval.c:5077)
+                 n1: 147488 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+                  n1: 147488 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+                   n1: 147488 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                    n1: 147488 0x29F3C3: _PyFunction_Vectorcall (call.c:396)
+                     n1: 147488 0x20658D: _PyObject_VectorcallTstate (abstract.h:118)
+                      n1: 147488 0x20658D: PyObject_Vectorcall (abstract.h:127)
+                       n1: 147488 0x20658D: call_function (ceval.c:5077)
+                        n1: 147488 0x20658D: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3537)
+                         n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                          n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                           n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                            n1: 147488 0x20772E: _PyObject_VectorcallTstate (abstract.h:118)
+                             n1: 147488 0x20772E: PyObject_Vectorcall (abstract.h:127)
+                              n1: 147488 0x20772E: call_function (ceval.c:5077)
+                               n1: 147488 0x20772E: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3506)
+                                n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                 n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                  n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                   n1: 147488 0x20772E: _PyObject_VectorcallTstate (abstract.h:118)
+                                    n1: 147488 0x20772E: PyObject_Vectorcall (abstract.h:127)
+                                     n1: 147488 0x20772E: call_function (ceval.c:5077)
+                                      n1: 147488 0x20772E: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3506)
+                                       n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                        n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                         n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                          n1: 147488 0x205AE5: _PyObject_VectorcallTstate (abstract.h:118)
+                                           n1: 147488 0x205AE5: PyObject_Vectorcall (abstract.h:127)
+                                            n1: 147488 0x205AE5: call_function (ceval.c:5077)
+                                             n1: 147488 0x205AE5: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3520)
+                                              n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                               n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                                n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                                 n1: 147488 0x205AE5: _PyObject_VectorcallTstate (abstract.h:118)
+                                                  n1: 147488 0x205AE5: PyObject_Vectorcall (abstract.h:127)
+                                                   n1: 147488 0x205AE5: call_function (ceval.c:5077)
+                                                    n1: 147488 0x205AE5: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3520)
+                                                     n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                                      n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                                       n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                                        n1: 147488 0x1DF1B8: _PyObject_VectorcallTstate (abstract.h:118)
+                                                         n1: 147488 0x1DF1B8: object_vacall.cold.2749 (call.c:792)
+                                                          n1: 147488 0x2C9B71: _PyObject_CallMethodIdObjArgs (call.c:883)
+                                                           n1: 147488 0x23FBF4: import_find_and_load (import.c:1776)
+                                                            n1: 147488 0x23FBF4: PyImport_ImportModuleLevelObject (import.c:1877)
+                                                             n1: 147488 0x2E0867: import_name (ceval.c:5198)
+                                                              n1: 147488 0x2E0867: _PyEval_EvalFrameDefault (ceval.c:3099)
+                                                               n1: 147488 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                                                n1: 147488 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                                                                 n1: 147488 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                                                                  n1: 147488 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                                                                   n0: 147488 0x29F45A: PyEval_EvalCode (ceval.c:828)
+        n0: 0 in 1 place, below massif's threshold (1.00%)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+      n0: 0 in 3 places, all below massif's threshold (1.00%)
+    n0: 11480 in 3 places, all below massif's threshold (1.00%)
+  n0: 371252 in 30 places, all below massif's threshold (1.00%)
+  n2: 236848 0x1AA381: _PyObject_GC_Alloc (gcmodule.c:2261)
+   n1: 218896 0x28939B: _PyObject_GC_Malloc (gcmodule.c:2288)
+    n2: 218896 0x28939B: PyType_GenericAlloc (typeobject.c:1047)
+     n1: 133848 0x2D232C: type_new (typeobject.c:2611)
+      n0: 133848 in 2 places, all below massif's threshold (1.00%)
+     n0: 85048 in 6 places, all below massif's threshold (1.00%)
+   n0: 17952 in 1 place, below massif's threshold (1.00%)
+ n1: 262144 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 262144 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 262144 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 262144 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 262144 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 262144 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 262144 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 262144 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 262144 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 262144 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 262144 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 262144 0x207754: call_function (ceval.c:5077)
+             n1: 262144 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 262144 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 262144 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 262144 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 262144 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 262144 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 262144 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 262144 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 262144 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 262144 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 262144 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 262144 0x38210A: pymain_run_file (main.c:379)
+                         n1: 262144 0x38210A: pymain_run_python (main.c:604)
+                          n1: 262144 0x38210A: Py_RunMain (main.c:683)
+                           n1: 262144 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 262144 0x49ED082: (below main) (libc-start.c:308)
+ n0: 190728 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=4
+#-----------
+time=4953506304
+mem_heap_B=9856732
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=5802326282
+mem_heap_B=10118860
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=detailed
+n4: 10118860 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 8388648 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 8388608 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 8388608 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 8388608 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 8388608 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 8388608 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 8388608 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 8388608 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 8388608 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 8388608 0x207754: call_function (ceval.c:5077)
+           n1: 8388608 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 8388608 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 8388608 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 8388608 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 8388608 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 8388608 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 8388608 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 8388608 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 8388608 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 8388608 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 8388608 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 8388608 0x38210A: pymain_run_file (main.c:379)
+                       n1: 8388608 0x38210A: pymain_run_python (main.c:604)
+                        n1: 8388608 0x38210A: Py_RunMain (main.c:683)
+                         n1: 8388608 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 8388608 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n3: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n1: 400968 0x27D9CA: new_keys_object (dictobject.c:570)
+   n3: 400968 0x27D9CA: dictresize (dictobject.c:1223)
+    n1: 242000 0x27E059: insertion_resize (dictobject.c:1040)
+     n1: 242000 0x27E059: insertdict (dictobject.c:1084)
+      n0: 242000 in 30 places, all below massif's threshold (1.00%)
+    n1: 147488 0x24D22B: insertion_resize (dictobject.c:1040)
+     n2: 147488 0x24D22B: PyDict_SetDefault (dictobject.c:2964)
+      n2: 147488 0x24D359: PyUnicode_InternInPlace (unicodeobject.c:15736)
+       n2: 147488 0x2B457C: r_object (marshal.c:1116)
+        n1: 147488 0x2B470F: r_object (marshal.c:1174)
+         n1: 147488 0x2B4A12: r_object (marshal.c:1353)
+          n1: 147488 0x36EF77: read_object (marshal.c:1445)
+           n1: 147488 0x36F030: marshal_loads_impl.isra.9 (marshal.c:1754)
+            n1: 147488 0x36F030: marshal_loads (marshal.c.h:158)
+             n1: 147488 0x2A8D7A: cfunction_vectorcall_O (methodobject.c:516)
+              n1: 147488 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+               n1: 147488 0x207754: PyObject_Vectorcall (abstract.h:127)
+                n1: 147488 0x207754: call_function (ceval.c:5077)
+                 n1: 147488 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+                  n1: 147488 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+                   n1: 147488 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                    n1: 147488 0x29F3C3: _PyFunction_Vectorcall (call.c:396)
+                     n1: 147488 0x20658D: _PyObject_VectorcallTstate (abstract.h:118)
+                      n1: 147488 0x20658D: PyObject_Vectorcall (abstract.h:127)
+                       n1: 147488 0x20658D: call_function (ceval.c:5077)
+                        n1: 147488 0x20658D: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3537)
+                         n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                          n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                           n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                            n1: 147488 0x20772E: _PyObject_VectorcallTstate (abstract.h:118)
+                             n1: 147488 0x20772E: PyObject_Vectorcall (abstract.h:127)
+                              n1: 147488 0x20772E: call_function (ceval.c:5077)
+                               n1: 147488 0x20772E: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3506)
+                                n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                 n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                  n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                   n1: 147488 0x20772E: _PyObject_VectorcallTstate (abstract.h:118)
+                                    n1: 147488 0x20772E: PyObject_Vectorcall (abstract.h:127)
+                                     n1: 147488 0x20772E: call_function (ceval.c:5077)
+                                      n1: 147488 0x20772E: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3506)
+                                       n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                        n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                         n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                          n1: 147488 0x205AE5: _PyObject_VectorcallTstate (abstract.h:118)
+                                           n1: 147488 0x205AE5: PyObject_Vectorcall (abstract.h:127)
+                                            n1: 147488 0x205AE5: call_function (ceval.c:5077)
+                                             n1: 147488 0x205AE5: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3520)
+                                              n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                               n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                                n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                                 n1: 147488 0x205AE5: _PyObject_VectorcallTstate (abstract.h:118)
+                                                  n1: 147488 0x205AE5: PyObject_Vectorcall (abstract.h:127)
+                                                   n1: 147488 0x205AE5: call_function (ceval.c:5077)
+                                                    n1: 147488 0x205AE5: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3520)
+                                                     n1: 147488 0x29F283: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                                      n1: 147488 0x29F283: function_code_fastcall (call.c:330)
+                                                       n1: 147488 0x29F283: _PyFunction_Vectorcall (call.c:367)
+                                                        n1: 147488 0x1DF1B8: _PyObject_VectorcallTstate (abstract.h:118)
+                                                         n1: 147488 0x1DF1B8: object_vacall.cold.2749 (call.c:792)
+                                                          n1: 147488 0x2C9B71: _PyObject_CallMethodIdObjArgs (call.c:883)
+                                                           n1: 147488 0x23FBF4: import_find_and_load (import.c:1776)
+                                                            n1: 147488 0x23FBF4: PyImport_ImportModuleLevelObject (import.c:1877)
+                                                             n1: 147488 0x2E0867: import_name (ceval.c:5198)
+                                                              n1: 147488 0x2E0867: _PyEval_EvalFrameDefault (ceval.c:3099)
+                                                               n1: 147488 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+                                                                n1: 147488 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                                                                 n1: 147488 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                                                                  n1: 147488 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                                                                   n0: 147488 0x29F45A: PyEval_EvalCode (ceval.c:828)
+        n0: 0 in 1 place, below massif's threshold (1.00%)
+       n0: 0 in 2 places, all below massif's threshold (1.00%)
+      n0: 0 in 3 places, all below massif's threshold (1.00%)
+    n0: 11480 in 3 places, all below massif's threshold (1.00%)
+  n0: 371252 in 30 places, all below massif's threshold (1.00%)
+  n2: 236848 0x1AA381: _PyObject_GC_Alloc (gcmodule.c:2261)
+   n1: 218896 0x28939B: _PyObject_GC_Malloc (gcmodule.c:2288)
+    n2: 218896 0x28939B: PyType_GenericAlloc (typeobject.c:1047)
+     n1: 133848 0x2D232C: type_new (typeobject.c:2611)
+      n0: 133848 in 2 places, all below massif's threshold (1.00%)
+     n0: 85048 in 6 places, all below massif's threshold (1.00%)
+   n0: 17952 in 1 place, below massif's threshold (1.00%)
+ n1: 524288 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 524288 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 524288 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 524288 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 524288 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 524288 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 524288 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 524288 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 524288 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 524288 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 524288 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 524288 0x207754: call_function (ceval.c:5077)
+             n1: 524288 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 524288 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 524288 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 524288 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 524288 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 524288 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 524288 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 524288 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 524288 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 524288 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 524288 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 524288 0x38210A: pymain_run_file (main.c:379)
+                         n1: 524288 0x38210A: pymain_run_python (main.c:604)
+                          n1: 524288 0x38210A: Py_RunMain (main.c:683)
+                           n1: 524288 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 524288 0x49ED082: (below main) (libc-start.c:308)
+ n0: 196856 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=6
+#-----------
+time=6550100778
+mem_heap_B=18507468
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=7
+#-----------
+time=7678790119
+mem_heap_B=18507492
+mem_heap_extra_B=31132
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=9235626601
+mem_heap_B=18507468
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=10406628507
+mem_heap_B=18519764
+mem_heap_extra_B=31100
+mem_stacks_B=0
+heap_tree=detailed
+n4: 18519764 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 16777256 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 16777216 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 16777216 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 16777216 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 16777216 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 16777216 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 16777216 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 16777216 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 16777216 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 16777216 0x207754: call_function (ceval.c:5077)
+           n1: 16777216 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 16777216 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 16777216 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 16777216 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 16777216 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 16777216 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 16777216 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 16777216 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 16777216 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 16777216 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 16777216 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 16777216 0x38210A: pymain_run_file (main.c:379)
+                       n1: 16777216 0x38210A: pymain_run_python (main.c:604)
+                        n1: 16777216 0x38210A: Py_RunMain (main.c:683)
+                         n1: 16777216 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 16777216 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n3: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n1: 400968 0x27D9CA: new_keys_object (dictobject.c:570)
+   n2: 400968 0x27D9CA: dictresize (dictobject.c:1223)
+    n1: 242000 0x27E059: insertion_resize (dictobject.c:1040)
+     n1: 242000 0x27E059: insertdict (dictobject.c:1084)
+      n0: 242000 in 30 places, all below massif's threshold (1.00%)
+    n0: 158968 in 4 places, all below massif's threshold (1.00%)
+  n0: 371252 in 30 places, all below massif's threshold (1.00%)
+  n2: 236848 0x1AA381: _PyObject_GC_Alloc (gcmodule.c:2261)
+   n1: 218896 0x28939B: _PyObject_GC_Malloc (gcmodule.c:2288)
+    n1: 218896 0x28939B: PyType_GenericAlloc (typeobject.c:1047)
+     n0: 218896 in 7 places, all below massif's threshold (1.00%)
+   n0: 17952 in 1 place, below massif's threshold (1.00%)
+ n1: 524288 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 524288 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 524288 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 524288 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 524288 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 524288 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 524288 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 524288 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 524288 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 524288 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 524288 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 524288 0x207754: call_function (ceval.c:5077)
+             n1: 524288 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 524288 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 524288 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 524288 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 524288 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 524288 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 524288 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 524288 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 524288 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 524288 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 524288 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 524288 0x38210A: pymain_run_file (main.c:379)
+                         n1: 524288 0x38210A: pymain_run_python (main.c:604)
+                          n1: 524288 0x38210A: Py_RunMain (main.c:683)
+                           n1: 524288 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 524288 0x49ED082: (below main) (libc-start.c:308)
+ n0: 209152 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=10
+#-----------
+time=11941213556
+mem_heap_B=52598492
+mem_heap_extra_B=35156
+mem_stacks_B=0
+heap_tree=detailed
+n4: 52598492 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 50331688 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 50331648 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 50331648 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 50331648 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 50331648 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 50331648 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 50331648 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 50331648 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 50331648 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 50331648 0x207754: call_function (ceval.c:5077)
+           n1: 50331648 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 50331648 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 50331648 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 50331648 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 50331648 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 50331648 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 50331648 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 50331648 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 50331648 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 50331648 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 50331648 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 50331648 0x38210A: pymain_run_file (main.c:379)
+                       n1: 50331648 0x38210A: pymain_run_python (main.c:604)
+                        n1: 50331648 0x38210A: Py_RunMain (main.c:683)
+                         n1: 50331648 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 50331648 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 1048576 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 1048576 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 1048576 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 1048576 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 1048576 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 1048576 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 1048576 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 1048576 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 1048576 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 1048576 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 1048576 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 1048576 0x207754: call_function (ceval.c:5077)
+             n1: 1048576 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 1048576 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 1048576 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 1048576 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 1048576 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 1048576 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 1048576 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 1048576 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 1048576 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 1048576 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 1048576 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 1048576 0x38210A: pymain_run_file (main.c:379)
+                         n1: 1048576 0x38210A: pymain_run_python (main.c:604)
+                          n1: 1048576 0x38210A: Py_RunMain (main.c:683)
+                           n1: 1048576 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 1048576 0x49ED082: (below main) (libc-start.c:308)
+ n1: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 1009068 in 32 places, all below massif's threshold (1.00%)
+ n0: 209160 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=11
+#-----------
+time=13105439673
+mem_heap_B=35821260
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=14649930111
+mem_heap_B=35821252
+mem_heap_extra_B=31092
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=13
+#-----------
+time=15600390950
+mem_heap_B=35821276
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=detailed
+n4: 35821276 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 33554472 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 33554432 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 33554432 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 33554432 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 33554432 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 33554432 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 33554432 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 33554432 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 33554432 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 33554432 0x207754: call_function (ceval.c:5077)
+           n1: 33554432 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 33554432 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 33554432 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 33554432 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 33554432 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 33554432 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 33554432 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 33554432 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 33554432 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 33554432 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 33554432 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 33554432 0x38210A: pymain_run_file (main.c:379)
+                       n1: 33554432 0x38210A: pymain_run_python (main.c:604)
+                        n1: 33554432 0x38210A: Py_RunMain (main.c:683)
+                         n1: 33554432 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 33554432 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 1048576 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 1048576 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 1048576 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 1048576 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 1048576 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 1048576 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 1048576 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 1048576 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 1048576 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 1048576 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 1048576 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 1048576 0x207754: call_function (ceval.c:5077)
+             n1: 1048576 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 1048576 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 1048576 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 1048576 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 1048576 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 1048576 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 1048576 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 1048576 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 1048576 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 1048576 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 1048576 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 1048576 0x38210A: pymain_run_file (main.c:379)
+                         n1: 1048576 0x38210A: pymain_run_python (main.c:604)
+                          n1: 1048576 0x38210A: Py_RunMain (main.c:683)
+                           n1: 1048576 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 1048576 0x49ED082: (below main) (libc-start.c:308)
+ n2: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 608100 in 31 places, all below massif's threshold (1.00%)
+  n1: 400968 0x27D9CA: new_keys_object (dictobject.c:570)
+   n1: 400968 0x27D9CA: dictresize (dictobject.c:1223)
+    n0: 400968 in 5 places, all below massif's threshold (1.00%)
+ n0: 209160 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=14
+#-----------
+time=16592974232
+mem_heap_B=35821276
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=17305825114
+mem_heap_B=35821276
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=16
+#-----------
+time=18256296883
+mem_heap_B=35821260
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=17
+#-----------
+time=19563190989
+mem_heap_B=35821260
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=20394851033
+mem_heap_B=36894428
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=19
+#-----------
+time=21419681843
+mem_heap_B=36894420
+mem_heap_extra_B=31100
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=20
+#-----------
+time=22370138822
+mem_heap_B=36894412
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=detailed
+n4: 36894412 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 33554472 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 33554432 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 33554432 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 33554432 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 33554432 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 33554432 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 33554432 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 33554432 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 33554432 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 33554432 0x207754: call_function (ceval.c:5077)
+           n1: 33554432 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 33554432 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 33554432 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 33554432 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 33554432 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 33554432 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 33554432 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 33554432 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 33554432 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 33554432 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 33554432 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 33554432 0x38210A: pymain_run_file (main.c:379)
+                       n1: 33554432 0x38210A: pymain_run_python (main.c:604)
+                        n1: 33554432 0x38210A: Py_RunMain (main.c:683)
+                         n1: 33554432 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 33554432 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 2097152 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 2097152 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 2097152 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 2097152 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 2097152 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 2097152 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 2097152 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 2097152 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 2097152 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 2097152 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 2097152 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 2097152 0x207754: call_function (ceval.c:5077)
+             n1: 2097152 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 2097152 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 2097152 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 2097152 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 2097152 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 2097152 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 2097152 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 2097152 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 2097152 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 2097152 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 2097152 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 2097152 0x38210A: pymain_run_file (main.c:379)
+                         n1: 2097152 0x38210A: pymain_run_python (main.c:604)
+                          n1: 2097152 0x38210A: Py_RunMain (main.c:683)
+                           n1: 2097152 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 2097152 0x49ED082: (below main) (libc-start.c:308)
+ n2: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 608100 in 31 places, all below massif's threshold (1.00%)
+  n1: 400968 0x27D9CA: new_keys_object (dictobject.c:570)
+   n1: 400968 0x27D9CA: dictresize (dictobject.c:1223)
+    n0: 400968 in 5 places, all below massif's threshold (1.00%)
+ n0: 233720 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=21
+#-----------
+time=23860809755
+mem_heap_B=104003292
+mem_heap_extra_B=35156
+mem_stacks_B=0
+heap_tree=detailed
+n3: 104003292 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 100663336 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 100663296 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 100663296 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 100663296 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 100663296 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 100663296 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 100663296 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 100663296 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 100663296 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 100663296 0x207754: call_function (ceval.c:5077)
+           n1: 100663296 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 100663296 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 100663296 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 100663296 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 100663296 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 100663296 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 100663296 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 100663296 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 100663296 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 100663296 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 100663296 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 100663296 0x38210A: pymain_run_file (main.c:379)
+                       n1: 100663296 0x38210A: pymain_run_python (main.c:604)
+                        n1: 100663296 0x38210A: Py_RunMain (main.c:683)
+                         n1: 100663296 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 100663296 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 2097152 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 2097152 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 2097152 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 2097152 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 2097152 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 2097152 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 2097152 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 2097152 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 2097152 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 2097152 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 2097152 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 2097152 0x207754: call_function (ceval.c:5077)
+             n1: 2097152 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 2097152 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 2097152 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 2097152 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 2097152 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 2097152 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 2097152 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 2097152 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 2097152 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 2097152 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 2097152 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 2097152 0x38210A: pymain_run_file (main.c:379)
+                         n1: 2097152 0x38210A: pymain_run_python (main.c:604)
+                          n1: 2097152 0x38210A: Py_RunMain (main.c:683)
+                           n1: 2097152 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 2097152 0x49ED082: (below main) (libc-start.c:308)
+ n0: 1242804 in 152 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=22
+#-----------
+time=24811267389
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=26000796737
+mem_heap_B=70448844
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=24
+#-----------
+time=26951254106
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=28139325278
+mem_heap_B=70448844
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=26
+#-----------
+time=28852170384
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=detailed
+n4: 70448860 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 67108904 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 67108864 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 67108864 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 67108864 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 67108864 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 67108864 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 67108864 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 67108864 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 67108864 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 67108864 0x207754: call_function (ceval.c:5077)
+           n1: 67108864 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 67108864 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 67108864 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 67108864 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 67108864 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 67108864 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 67108864 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 67108864 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 67108864 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 67108864 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 67108864 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 67108864 0x38210A: pymain_run_file (main.c:379)
+                       n1: 67108864 0x38210A: pymain_run_python (main.c:604)
+                        n1: 67108864 0x38210A: Py_RunMain (main.c:683)
+                         n1: 67108864 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 67108864 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 2097152 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 2097152 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 2097152 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 2097152 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 2097152 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 2097152 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 2097152 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 2097152 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 2097152 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 2097152 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 2097152 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 2097152 0x207754: call_function (ceval.c:5077)
+             n1: 2097152 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 2097152 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 2097152 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 2097152 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 2097152 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 2097152 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 2097152 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 2097152 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 2097152 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 2097152 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 2097152 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 2097152 0x38210A: pymain_run_file (main.c:379)
+                         n1: 2097152 0x38210A: pymain_run_python (main.c:604)
+                          n1: 2097152 0x38210A: Py_RunMain (main.c:683)
+                           n1: 2097152 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 2097152 0x49ED082: (below main) (libc-start.c:308)
+ n1: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 1009068 in 32 places, all below massif's threshold (1.00%)
+ n0: 233736 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=27
+#-----------
+time=30040242490
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=31228312635
+mem_heap_B=70448844
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=detailed
+n4: 70448844 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 67108904 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 67108864 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 67108864 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 67108864 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 67108864 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 67108864 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 67108864 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 67108864 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 67108864 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 67108864 0x207754: call_function (ceval.c:5077)
+           n1: 67108864 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 67108864 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 67108864 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 67108864 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 67108864 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 67108864 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 67108864 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 67108864 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 67108864 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 67108864 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 67108864 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 67108864 0x38210A: pymain_run_file (main.c:379)
+                       n1: 67108864 0x38210A: pymain_run_python (main.c:604)
+                        n1: 67108864 0x38210A: Py_RunMain (main.c:683)
+                         n1: 67108864 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 67108864 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 2097152 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 2097152 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 2097152 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 2097152 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 2097152 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 2097152 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 2097152 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 2097152 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 2097152 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 2097152 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 2097152 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 2097152 0x207754: call_function (ceval.c:5077)
+             n1: 2097152 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 2097152 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 2097152 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 2097152 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 2097152 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 2097152 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 2097152 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 2097152 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 2097152 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 2097152 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 2097152 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 2097152 0x38210A: pymain_run_file (main.c:379)
+                         n1: 2097152 0x38210A: pymain_run_python (main.c:604)
+                          n1: 2097152 0x38210A: Py_RunMain (main.c:683)
+                           n1: 2097152 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 2097152 0x49ED082: (below main) (libc-start.c:308)
+ n1: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 1009068 in 32 places, all below massif's threshold (1.00%)
+ n0: 233720 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=29
+#-----------
+time=32542445899
+mem_heap_B=70448852
+mem_heap_extra_B=31100
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=33492902570
+mem_heap_B=70448844
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=31
+#-----------
+time=35087067638
+mem_heap_B=70448852
+mem_heap_extra_B=31100
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=32
+#-----------
+time=36282691976
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=33
+#-----------
+time=37079775981
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=37876858424
+mem_heap_B=70448860
+mem_heap_extra_B=31116
+mem_stacks_B=0
+heap_tree=detailed
+n4: 70448860 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 67108904 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 67108864 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 67108864 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 67108864 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 67108864 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 67108864 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 67108864 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 67108864 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 67108864 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 67108864 0x207754: call_function (ceval.c:5077)
+           n1: 67108864 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 67108864 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 67108864 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 67108864 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 67108864 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 67108864 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 67108864 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 67108864 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 67108864 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 67108864 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 67108864 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 67108864 0x38210A: pymain_run_file (main.c:379)
+                       n1: 67108864 0x38210A: pymain_run_python (main.c:604)
+                        n1: 67108864 0x38210A: Py_RunMain (main.c:683)
+                         n1: 67108864 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 67108864 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 2097152 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 2097152 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 2097152 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 2097152 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 2097152 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 2097152 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 2097152 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 2097152 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 2097152 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 2097152 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 2097152 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 2097152 0x207754: call_function (ceval.c:5077)
+             n1: 2097152 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 2097152 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 2097152 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 2097152 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 2097152 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 2097152 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 2097152 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 2097152 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 2097152 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 2097152 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 2097152 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 2097152 0x38210A: pymain_run_file (main.c:379)
+                         n1: 2097152 0x38210A: pymain_run_python (main.c:604)
+                          n1: 2097152 0x38210A: Py_RunMain (main.c:683)
+                           n1: 2097152 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 2097152 0x49ED082: (below main) (libc-start.c:308)
+ n1: 1009068 0x235D4A: _PyObject_Malloc (obmalloc.c:1645)
+  n0: 1009068 in 32 places, all below massif's threshold (1.00%)
+ n0: 233736 in 151 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=35
+#-----------
+time=39072481703
+mem_heap_B=70448844
+mem_heap_extra_B=31084
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=39869563819
+mem_heap_B=72545980
+mem_heap_extra_B=35108
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=37
+#-----------
+time=40717870597
+mem_heap_B=72545996
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=38
+#-----------
+time=41514953849
+mem_heap_B=72595164
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=39
+#-----------
+time=42710578189
+mem_heap_B=72595164
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=43906201248
+mem_heap_B=72595148
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=45101825863
+mem_heap_B=72595164
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=42
+#-----------
+time=46297450179
+mem_heap_B=72595164
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=47680531102
+mem_heap_B=206812892
+mem_heap_extra_B=39188
+mem_stacks_B=0
+heap_tree=peak
+n3: 206812892 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n2: 201326632 0x559F154: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 201326592 0x5591B31: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 201326592 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 201326592 0x289E13: cfunction_call (methodobject.c:543)
+     n1: 201326592 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+      n1: 201326592 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+       n1: 201326592 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+        n1: 201326592 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+         n1: 201326592 0x207754: PyObject_Vectorcall (abstract.h:127)
+          n1: 201326592 0x207754: call_function (ceval.c:5077)
+           n1: 201326592 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+            n1: 201326592 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+             n1: 201326592 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+              n1: 201326592 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+               n1: 201326592 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                n1: 201326592 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                 n1: 201326592 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                  n1: 201326592 0x37BF74: run_mod (pythonrun.c:1242)
+                   n1: 201326592 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                    n1: 201326592 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                     n1: 201326592 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                      n1: 201326592 0x38210A: pymain_run_file (main.c:379)
+                       n1: 201326592 0x38210A: pymain_run_python (main.c:604)
+                        n1: 201326592 0x38210A: Py_RunMain (main.c:683)
+                         n1: 201326592 0x382308: Py_BytesMain (main.c:1129)
+                          n0: 201326592 0x49ED082: (below main) (libc-start.c:308)
+  n0: 40 in 6 places, all below massif's threshold (1.00%)
+ n1: 4194304 0x55B7B00: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+  n1: 4194304 0x55B6525: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+   n1: 4194304 0x55BAFB3: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+    n1: 4194304 0x5595C4F: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+     n1: 4194304 0x55A8DC7: ??? (in /root/anaconda3/lib/python3.9/site-packages/q_analysis/simulation.cpython-39-x86_64-linux-gnu.so)
+      n1: 4194304 0x289E13: cfunction_call (methodobject.c:543)
+       n1: 4194304 0x243CAE: _PyObject_MakeTpCall (call.c:191)
+        n1: 4194304 0x1BDFED: _PyObject_VectorcallTstate (abstract.h:116)
+         n1: 4194304 0x1BDFED: method_vectorcall.cold.2469 (classobject.c:53)
+          n1: 4194304 0x207754: _PyObject_VectorcallTstate (abstract.h:118)
+           n1: 4194304 0x207754: PyObject_Vectorcall (abstract.h:127)
+            n1: 4194304 0x207754: call_function (ceval.c:5077)
+             n1: 4194304 0x207754: _PyEval_EvalFrameDefault.cold.2984 (ceval.c:3489)
+              n1: 4194304 0x29E662: _PyEval_EvalFrame (pycore_ceval.h:40)
+               n1: 4194304 0x29E662: _PyEval_EvalCode (ceval.c:4329)
+                n1: 4194304 0x34B45B: _PyEval_EvalCodeWithName (ceval.c:4361)
+                 n1: 4194304 0x34B45B: PyEval_EvalCodeEx (ceval.c:4377)
+                  n1: 4194304 0x29F45A: PyEval_EvalCode (ceval.c:828)
+                   n1: 4194304 0x34B50A: run_eval_code_obj (pythonrun.c:1221)
+                    n1: 4194304 0x37BF74: run_mod (pythonrun.c:1242)
+                     n1: 4194304 0x21C986: pyrun_file.cold.3080 (pythonrun.c:1140)
+                      n1: 4194304 0x381A2E: pyrun_simple_file (pythonrun.c:450)
+                       n1: 4194304 0x381A2E: PyRun_SimpleFileExFlags (pythonrun.c:483)
+                        n1: 4194304 0x38210A: pymain_run_file (main.c:379)
+                         n1: 4194304 0x38210A: pymain_run_python (main.c:604)
+                          n1: 4194304 0x38210A: Py_RunMain (main.c:683)
+                           n1: 4194304 0x382308: Py_BytesMain (main.c:1129)
+                            n0: 4194304 0x49ED082: (below main) (libc-start.c:308)
+ n0: 1291956 in 152 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=44
+#-----------
+time=48477614866
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=49274696615
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=46
+#-----------
+time=50071780112
+mem_heap_B=139704028
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=51012807357
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=52208433088
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=49
+#-----------
+time=53404056369
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=54116902029
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=54829747924
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=55542593570
+mem_heap_B=139704012
+mem_heap_extra_B=35116
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=56255438753
+mem_heap_B=139704028
+mem_heap_extra_B=35148
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=57394110034
+mem_heap_B=139702069
+mem_heap_extra_B=34707
+mem_stacks_B=0
+heap_tree=empty
