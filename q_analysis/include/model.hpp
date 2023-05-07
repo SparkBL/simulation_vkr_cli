@@ -1,6 +1,7 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 #include <vector>
+#include <list>
 #include <unordered_map>
 #include <algorithm>
 #include "router.hpp"
@@ -11,7 +12,7 @@
 class Model
 {
 public:
-	std::vector<double> event_queue;
+	std::list<double> event_queue;
 	double time;
 	double end;
 	std::unordered_map<std::string, Producer &> components;
@@ -26,7 +27,7 @@ public:
 		event_queue = {};
 	}
 
-	std::vector<double> Queue()
+	std::list<double> Queue()
 	{
 		return event_queue;
 	}
