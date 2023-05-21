@@ -270,7 +270,7 @@ class RQSystem:
             pre_res = []
             for j in iii_m:
                 pre_res.append(
-                    complex(self.FF(-np.pi + i * delta_n, -np.pi + j * delta_m, 5)))
+                    complex(self.FF(-np.pi + i * delta_n, -np.pi + j * delta_m, t)))
             res_mat.append(pre_res)
         d = np.zeros((n, m), dtype=complex)
         for j in range(0, n-1):
@@ -293,7 +293,7 @@ class RQSystem:
             pre_res = []
             for j in iii_m:
                 pre_res.append(
-                    complex(self.FF(-np.pi + i * delta_n, -np.pi + j * delta_m, 5)))
+                    complex(self.FF(-np.pi + i * delta_n, -np.pi + j * delta_m, t)))
             res_mat.append(pre_res)
         ti = perf_counter_ns()
         d = np.zeros((n, m), dtype=complex)
