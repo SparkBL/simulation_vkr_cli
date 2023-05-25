@@ -83,6 +83,7 @@ public:
     virtual void Flush()
     {
         q.clear();
+        q.shrink_to_fit();
     }
 };
 

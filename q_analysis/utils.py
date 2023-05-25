@@ -1,5 +1,6 @@
 import numpy as np
 from multiprocessing import Process
+import q_analysis.simulation as rq
 
 def icfft2(n, m, matrix):
     d = np.zeros((n, m), dtype=complex)
@@ -44,3 +45,55 @@ def run_cpu_tasks_in_parallel(tasks):
         running_task.start()
     for running_task in running_tasks:
         running_task.join()
+
+
+class PyModel:
+    components = {}
+    routers = {}
+    time = 0
+    end = 1
+    __queue__ = np.array([])
+    def aggregate(self,l):
+       self.__queue__ =  np.append(self.__queue__,l)
+
+    def next_step(self):
+        if len(self.__queue__)!=0:
+            self.time = np.min(self.__queue__)
+            self.__queue__ = np.delete(self.__queue__, self.__queue__.argmin())
+        return self.time
+    
+    def is_done(self):
+        return self.time>=self.end
+    
+    def add_producer(self,p,l):
+        self.components.update({l:p})
+
+    def component_at(self,l):
+        return self.components[l]
+    
+    def router_at(self,l):
+        return self.routers[l]
+    
+    def add_connection(self,from_c,from_s,to_c,to_s):
+        self.routers.update({f'{from_c}:{from_s}:{to_c}:{to_s}':rq.Router()})
+        self.components[from_c].output_connect(from_s,self.routers[f'{from_c}:{from_s}:{to_c}:{to_s}'])
+        self.components[to_c].input_connect(to_s,self.routers[f'{from_c}:{from_s}:{to_c}:{to_s}'])
+        return f'{from_c}:{from_s}:{to_c}:{to_s}'
+        
+    def add_hanging_output_noqueue(self,from_c,from_s):
+        self.routers.update({f'onq:{from_c}:{from_s}':rq.OutputRouter()})
+        self.components[from_c].output_connect(from_s,self.routers[f'onq:{from_c}:{from_s}'])
+        return f'onq:{from_c}:{from_s}'
+        
+
+    def set_time(self,t):
+        self.time = t
+    
+    def set_end(self,t):
+        self.end = t
+
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return (idx,array[idx])

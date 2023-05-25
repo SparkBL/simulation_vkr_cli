@@ -56,6 +56,7 @@ public:
 	void Flush()
 	{
 		event_queue.clear();
+		event_queue.shrink_to_fit();
 		for (auto &e : routers)
 		{
 			e.second->Flush();
@@ -239,7 +240,7 @@ public:
 		return time >= end;
 	}
 
-	void Aggregate(std::vector<double> events)
+	void Aggregate(const std::vector<double> &events)
 	{
 		event_queue.insert(event_queue.end(), events.begin(), events.end());
 	}

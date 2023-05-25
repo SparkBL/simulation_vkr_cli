@@ -54,4 +54,3 @@ ll = model.router_at(output)
 
 print("Distr:",len(ll.reader_at('count').counts))
 print("len orbit", len(model.component_at('orbit').__requests__))
-del model
