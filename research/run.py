@@ -17,7 +17,7 @@ mod = {'input_intensity':args.inp_i,'orbit_intesity':args.orb_i,'node_intensity'
 
 model = rq.Model()
 model.set_time(0) 
-model.set_end(100000)
+model.set_end(200000)
 #Добавление элементов
 model.add_producer(rq.SimpleInput(rq.ExponentialDelay(args.inp_i),1,0),"input")
 model.add_producer(rq.SimpleInput(rq.ExponentialDelay(1),1,0),"call")
@@ -104,5 +104,3 @@ class NpEncoder(json.JSONEncoder):
     
 with open(f'results/mod_{args.inp_i}_{args.orb_i}_{args.node_i}.json','w', encoding='utf-8') as ff:
     json.dump(mod,ff,cls =NpEncoder)
-
-print('#',end='')
