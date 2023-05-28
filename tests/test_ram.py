@@ -64,7 +64,7 @@ print("Iters: ",c)
 print("Elapsed: ",end - start)
 ll = model.router_at(output)
 
-print("Distr:",len(ll.reader_at('count').counts))
+#print("Distr:",len(ll.reader_at('count').counts))
 print(nodein, model.router_at(nodein).len())
 #print(callsl,  model.router_at(callsl).len())
 #print(orbslot,  model.router_at(orbslot).len())

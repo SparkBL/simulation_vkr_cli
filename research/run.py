@@ -3,6 +3,7 @@ import q_analysis.utils as uu
 import numpy as np
 import json
 import argparse
+from scipy import interpolate
 
 parser = argparse.ArgumentParser(description='Model runner')
 parser.add_argument('inp_i', type=float,
@@ -69,13 +70,14 @@ for v in r:
       cur_count-=1
 if cur_time != 0:
     dist = list([x/cur_time for x in  tmp[:1000]])
+    f = interpolate.interp1d(dist,list(range(0,len(dist))), fill_value='extrapolate')
     upd = {
     'os_distr' : dist,
     'os_mean':np.sum([ i * dist[i] for i in range(0,len(dist))]), #sum(idx * prob)
     'os_std': np.sqrt(np.sum([ (i**2) * dist[i] for i in range(0,len(dist))]) - np.sum([ i * dist[i] for i in range(0,len(dist))]) ** 2),
     'os_var': np.sqrt(np.sum([ (i**2) * dist[i] for i in range(0,len(dist))]) - np.sum([ i * dist[i] for i in range(0,len(dist))]) ** 2)/np.sum([ i * dist[i] for i in range(0,len(dist))]),
-    'os_q95':uu.find_nearest(dist,np.quantile(dist,0.95)),
-    'os_q99':uu.find_nearest(dist,np.quantile(dist,0.99))
+    'os_q95':f(uu.find_nearest(dist,np.quantile(dist,0.95))[1]),
+    'os_q99':f(uu.find_nearest(dist,np.quantile(dist,0.99))[1])
     }
     mod.update(upd)
 wt =  model.router_at(orb_i).reader_at("attempt_count").wait_time
