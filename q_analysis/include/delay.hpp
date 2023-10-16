@@ -17,6 +17,7 @@ class Delay : public Descriptable
 {
 public:
     virtual double Get(double time) = 0;
+    virtual ~Delay() = default;
 };
 
 class ExponentialDelay : public Delay
@@ -29,12 +30,6 @@ public:
     {
         this->intensity = intensity;
         aws = std::exponential_distribution<double>(intensity);
-        // Description gen
-        std::ostringstream ss;
-        ss << "Exponential delay generator" << std::endl
-           << "Parameters:" << std::endl
-           << "# Intensity = " << intensity;
-        description = ss.str();
     }
     double Get(double time) override
     {
@@ -54,14 +49,6 @@ public:
         this->a = a;
         this->b = b;
         aws = std::weibull_distribution<double>(a, b);
-
-        // Description gen
-        std::ostringstream ss;
-        ss << "Weibull delay generator" << std::endl
-           << "Parameters:" << std::endl
-           << "# A = " << a << std::endl
-           << "# B = " << b;
-        description = ss.str();
     }
     double Get(double time) override
     {
@@ -81,14 +68,6 @@ public:
         this->m = m;
         this->s = s;
         aws = std::lognormal_distribution<double>(m, s);
-
-        // Description gen
-        std::ostringstream ss;
-        ss << "Lognormal delay generator" << std::endl
-           << "Parameters:" << std::endl
-           << "# M = " << m << std::endl
-           << "# S = " << s;
-        description = ss.str();
     }
     double Get(double time) override
     {
@@ -107,14 +86,6 @@ public:
         this->a = a;
         this->b = b;
         aws = std::uniform_real_distribution<double>(a, b);
-
-        // Description gen
-        std::ostringstream ss;
-        ss << "Uniform delay generator" << std::endl
-           << "Parameters:" << std::endl
-           << "# A = " << a << std::endl
-           << "# B = " << b;
-        description = ss.str();
     }
     double Get(double time) override
     {
@@ -133,18 +104,33 @@ public:
         this->k_ = k;
         this->teta_ = teta;
         aws = std::gamma_distribution<double>(k_, teta_);
-
-        // Description gen
-        std::ostringstream ss;
-        ss << "Gamma delay generator" << std::endl
-           << "Parameters:" << std::endl
-           << "# K = " << k << std::endl
-           << "# Theta = " << teta_;
-        description = ss.str();
     }
     double Get(double time) override
     {
         return aws(gen) + time;
+    }
+};
+
+class HyperExponential : public Delay
+{
+    std::vector<std::exponential_distribution<double>> aws;
+    std::vector<double> p;
+    std::discrete_distribution<int> dist;
+
+public:
+    HyperExponential(const std::vector<double> &p, const std::vector<double> &i)
+    {
+        this->p = p;
+        for (auto e : i)
+        {
+            aws.push_back(std::exponential_distribution<double>(e));
+        }
+
+        this->dist = std::discrete_distribution<int>(p.begin(), p.end());
+    }
+    double Get(double time) override
+    {
+        return aws[dist(gen)](gen) + time;
     }
 };
 
