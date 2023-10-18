@@ -253,7 +253,7 @@ PYBIND11_MODULE(simulation, m)
              });
 
     py::class_<HyperExponential, Delay>(m, "HyperExponential")
-        .def(py::init < std::vector<double>, std::vector<double>, "p"_a, "i"_a, py::return_value_policy::reference)
+        .def(py::init<const std::vector<double> &, const std::vector<double> &>(), "p"_a, "i"_a, py::return_value_policy::reference)
         .def("__repr__",
              [](const HyperExponential &r)
              {

@@ -118,7 +118,7 @@ class HyperExponential : public Delay
     std::discrete_distribution<int> dist;
 
 public:
-    HyperExponential(const std::vector<double> &p, const std::vector<double> &i)
+    HyperExponential(const std::vector<double>  &p, const std::vector<double>  &i)
     {
         this->p = p;
         for (auto e : i)
