@@ -1,4 +1,4 @@
-import rq_analysis.simulation as rq
+import q_analysis.simulation as rq
 models = []
 
 for i in range(0,10):

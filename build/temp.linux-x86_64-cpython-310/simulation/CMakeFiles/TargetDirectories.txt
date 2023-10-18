@@ -1,0 +1,5 @@
+/home/alexey/Workspace/science/simulation_vkr_cli/build/temp.linux-x86_64-cpython-310/simulation/CMakeFiles/simulation.dir
+/home/alexey/Workspace/science/simulation_vkr_cli/build/temp.linux-x86_64-cpython-310/simulation/CMakeFiles/edit_cache.dir
+/home/alexey/Workspace/science/simulation_vkr_cli/build/temp.linux-x86_64-cpython-310/simulation/CMakeFiles/rebuild_cache.dir
+/home/alexey/Workspace/science/simulation_vkr_cli/build/temp.linux-x86_64-cpython-310/simulation/pybind11/CMakeFiles/edit_cache.dir
+/home/alexey/Workspace/science/simulation_vkr_cli/build/temp.linux-x86_64-cpython-310/simulation/pybind11/CMakeFiles/rebuild_cache.dir

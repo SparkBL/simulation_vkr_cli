@@ -252,6 +252,14 @@ PYBIND11_MODULE(simulation, m)
                  return "LognormalDelay";
              });
 
+    py::class_<HyperExponential, Delay>(m, "HyperExponential")
+        .def(py::init < std::vector<double>, std::vector<double>, "p"_a, "i"_a, py::return_value_policy::reference)
+        .def("__repr__",
+             [](const HyperExponential &r)
+             {
+                 return "HyperExponential";
+             });
+
     m.def("get_exponential_delay", &GetExponentialDelay, "Get Exponential sample");
 
     py::class_<RQTNode, Producer>(m, "RqtNode")
