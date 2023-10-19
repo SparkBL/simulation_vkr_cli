@@ -1,0 +1,5 @@
+/media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/temp.linux-x86_64-cpython-312/simulation/CMakeFiles/simulation.dir
+/media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/temp.linux-x86_64-cpython-312/simulation/CMakeFiles/edit_cache.dir
+/media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/temp.linux-x86_64-cpython-312/simulation/CMakeFiles/rebuild_cache.dir
+/media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/temp.linux-x86_64-cpython-312/simulation/pybind11/CMakeFiles/edit_cache.dir
+/media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/temp.linux-x86_64-cpython-312/simulation/pybind11/CMakeFiles/rebuild_cache.dir

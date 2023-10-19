@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -Ofast -std=c++2a -O3 -Ofast -std=c++2a -flto -shared  -o /media/storage/Repositories/SCIENCE/postgraduate/simulation_vkr_cli/build/lib.linux-x86_64-cpython-312/q_analysis/simulation.cpython-312-x86_64-linux-gnu.so CMakeFiles/simulation.dir/q_analysis/src/binding.cpp.o 

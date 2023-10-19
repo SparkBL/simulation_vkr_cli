@@ -6,3 +6,5 @@ Home-page: https://github.com/SparkBL/simulation_vkr_cli.git
 Author: Alexey Blaginin
 Author-email: alex-b.l@yandex.ru
 Requires-Python: >=3.7
+Requires-Dist: numpy
+Requires-Dist: scipy
